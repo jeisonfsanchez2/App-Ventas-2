@@ -40,8 +40,14 @@
 <body class="flex flex-col md:flex-row min-h-screen">
 
     <!-- Columna Izquierda: Añadir Productos -->
-    <div class="w-full md:w-1/3 lg:w-1/4 bg-gray-900 p-6 flex flex-col md:h-screen md:overflow-y-auto">
+    <!-- ID AÑADIDO: left-panel -->
+    <div id="left-panel" class="w-full md:w-1/3 lg:w-1/4 bg-gray-900 p-6 flex flex-col md:h-screen md:overflow-y-auto">
         <h2 class="text-3xl font-bold mb-6 text-white border-b border-gray-700 pb-2">Sanchez's Sport Bar</h2>
+        
+        <!-- NUEVO: Botón para mostrar/ocultar mesas -->
+        <button id="toggle-tables-btn" class="w-full bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg transition duration-200 shadow-lg mb-4">
+            Mostrar Mesas
+        </button>
         
         <!-- Formulario de Productos -->
         <div class="flex flex-col space-y-4">
@@ -117,7 +123,8 @@
     </div>
 
     <!-- Columna Derecha: Mesas y Zonas -->
-    <div class="w-full md:w-2/3 lg:w-3/4 p-6 flex-1 flex flex-col md:h-screen">
+    <!-- ID AÑADIDO: right-panel -->
+    <div id="right-panel" class="w-full md:w-2/3 lg:w-3/4 p-6 flex-1 flex flex-col md:h-screen">
         
         <!-- Formulario de Abrir Mesa -->
         <div class="mb-6 p-4 bg-gray-800 rounded-lg shadow-md">
@@ -142,7 +149,14 @@
         </div>
 
         <!-- Contenedor de Mesas Abiertas -->
-        <h2 class="text-2xl font-bold mb-4 text-white">Mesas Abiertas</h2>
+        <!-- CAMBIO: Convertido en flex container para añadir el botón de filtro -->
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-2xl font-bold text-white">Mesas Abiertas</h2>
+            <!-- NUEVO: Botón para alternar el filtro de la cuadrícula -->
+            <button id="toggle-filter-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-1 px-3 rounded-lg text-sm transition-all hidden">
+                Mostrar Solo Activa
+            </button>
+        </div>
         <div id="tables-grid" class="flex-1 overflow-y-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 pr-2">
             <!-- Las mesas se generan dinámicamente aquí -->
         </div>
@@ -429,6 +443,14 @@
         // Almacén de datos en memoria para evitar "datos rancios"
         let allTablesData = new Map();
         
+        // NUEVO: Variables para el layout
+        let leftPanel, rightPanel, toggleTablesBtn;
+        let isTablesVisible = false; // El usuario quiere que inicien ocultas
+        
+        // NUEVO: Variables para el filtro de la cuadrícula
+        let toggleFilterBtn;
+        let isGridFiltered = false; 
+        
         // Almacén para los IDs de los documentos filtrados en auditoría
         let currentAuditFilteredIds = [];
         
@@ -446,7 +468,7 @@
                 const app = initializeApp(firebaseConfig);
                 db = getFirestore(app);
                 auth = getAuth(app);
-                setLogLevel('Debug'); // Habilitar logs detallados
+                // setLogLevel('Debug'); // CAMBIO: Comentado para mejorar rendimiento en móviles
 
                 // Usaremos colecciones de primer nivel, que es lo más común.
                 tablesCollectionRef = collection(db, "tables");
@@ -482,7 +504,8 @@
                 // onAuthStateChanged se disparará automáticamente después de esto
             } catch (error) {
                 console.error("Falló el inicio de sesión anónimo:", error);
-                document.getElementById('status-message').textContent = `Error crítico de autenticación: ${error.message}`;
+                // CAMBIO: Escribir directamente al body, ya que 'status-message' puede no existir aún
+                document.body.innerHTML = `<div class='p-8 text-red-400'>Error crítico de autenticación: ${error.message}</div>`;
             }
         }
         
@@ -501,9 +524,16 @@
             setupConfirmationModal();
             setupTransferModal(); 
             
+            // NUEVO: Configurar el layout (MOVIDO AL FINAL)
+            setupLayoutToggle();
+            
+            // NUEVO: Configurar el botón de filtro de la cuadrícula
+            setupGridFilterToggle();
+            
             // Configurar el listener para el nuevo atajo
             document.getElementById('active-table-select').addEventListener('change', (e) => {
-                setActiveTable(e.target.value);
+                // CAMBIO: El atajo ahora SÍ aplica el filtro
+                setActiveTable(e.target.value, true); 
             });
             
             // CAMBIO: Conectar botón de transferir
@@ -512,6 +542,79 @@
                     showTransferModal();
                 }
             });
+        }
+        
+        // NUEVO: Configura el botón para mostrar/ocultar el panel de mesas
+        function setupLayoutToggle() {
+            leftPanel = document.getElementById('left-panel');
+            rightPanel = document.getElementById('right-panel');
+            toggleTablesBtn = document.getElementById('toggle-tables-btn');
+            
+            if (toggleTablesBtn) {
+                toggleTablesBtn.addEventListener('click', () => {
+                    isTablesVisible = !isTablesVisible; // Invertir estado
+                    updateLayout();
+                });
+            }
+            
+            // Aplicar estado inicial (oculto)
+            updateLayout(); 
+        }
+        
+        // NUEVO: Función que actualiza las clases del layout
+        function updateLayout() {
+            if (!leftPanel || !rightPanel || !toggleTablesBtn) {
+                console.warn("Elementos del layout no encontrados, saltando actualización.");
+                return;
+            }
+
+            if (isTablesVisible) {
+                // --- MOSTRAR MESAS ---
+                rightPanel.classList.remove('hidden');
+                // Restaurar clases de ancho fraccional en el panel izquierdo
+                leftPanel.classList.remove('w-full');
+                leftPanel.classList.add('md:w-1/3', 'lg:w-1/4');
+                // Actualizar botón
+                toggleTablesBtn.textContent = 'Ocultar Mesas';
+                toggleTablesBtn.classList.remove('bg-gray-700', 'hover:bg-gray-600');
+                toggleTablesBtn.classList.add('bg-purple-600', 'hover:bg-purple-700'); // Un color diferente para "ocultar"
+            } else {
+                // --- OCULTAR MESAS ---
+                rightPanel.classList.add('hidden');
+                // Expandir panel izquierdo
+                leftPanel.classList.add('w-full');
+                leftPanel.classList.remove('md:w-1/3', 'lg:w-1/4');
+                // Actualizar botón
+                toggleTablesBtn.textContent = 'Mostrar Mesas';
+                toggleTablesBtn.classList.add('bg-gray-700', 'hover:bg-gray-600');
+                toggleTablesBtn.classList.remove('bg-purple-600', 'hover:bg-purple-700');
+            }
+        }
+        
+        // NUEVO: Configura el botón para mostrar/ocultar el filtro de la cuadrícula
+        function setupGridFilterToggle() {
+            toggleFilterBtn = document.getElementById('toggle-filter-btn');
+            if (toggleFilterBtn) {
+                toggleFilterBtn.addEventListener('click', () => {
+                    isGridFiltered = !isGridFiltered; // Invertir estado
+                    updateFilterButtonText();
+                    applyTableGridFilter();
+                });
+            }
+        }
+        
+        // NUEVO: Función que actualiza el texto del botón de filtro
+        function updateFilterButtonText() {
+            if (!toggleFilterBtn) return;
+            if (isGridFiltered) {
+                toggleFilterBtn.textContent = 'Mostrar Todas';
+                toggleFilterBtn.classList.remove('bg-blue-600', 'hover:bg-blue-700');
+                toggleFilterBtn.classList.add('bg-gray-600', 'hover:bg-gray-700');
+            } else {
+                toggleFilterBtn.textContent = 'Mostrar Solo Activa';
+                toggleFilterBtn.classList.add('bg-blue-600', 'hover:bg-blue-700');
+                toggleFilterBtn.classList.remove('bg-gray-600', 'hover:bg-gray-700'); // CORREGIDO: G-700 -> gray-700
+            }
         }
 
         // Carga la lista de productos en el <select>
@@ -622,7 +725,7 @@
                     otherContainer.style.display = 'none';
                     
                     // Activar la nueva mesa
-                    setActiveTable(tableId);
+                    setActiveTable(tableId, true); // CAMBIO: Aplicar filtro al crear
 
                 } catch (error) {
                     console.error("Error al abrir la mesa:", error);
@@ -693,7 +796,10 @@
 
                 // Si la mesa activa ya no existe, la deseleccionamos
                 if (activeTableId && !allTablesData.has(activeTableId)) {
-                    setActiveTable(null);
+                    setActiveTable(null); // Esto ya llamará a applyTableGridFilter
+                } else {
+                    // NUEVO: Re-aplicar el filtro a la cuadrícula
+                    applyTableGridFilter();
                 }
                 
             }, (error) => {
@@ -737,7 +843,8 @@
                 if (e.target.closest('button')) {
                     return;
                 }
-                setActiveTable(table.id);
+                // CAMBIO: Hacer clic en la tarjeta NO aplica el filtro
+                setActiveTable(table.id, false);
             });
             
             // Evento de doble clic para "Zoom"
@@ -2233,6 +2340,32 @@
 
         // --- 8. FUNCIONES UTILITARIAS ---
 
+        // NUEVO: Filtra visualmente la cuadrícula de mesas
+        function applyTableGridFilter() {
+            const tablesGrid = document.getElementById('tables-grid');
+            if (!tablesGrid) return;
+
+            // Iterar sobre todas las tarjetas de mesa
+            Array.from(tablesGrid.children).forEach(card => {
+                const cardId = card.dataset.tableId;
+                
+                // CAMBIO: Lógica de filtro actualizada
+                if (isGridFiltered && activeTableId) {
+                    // Filtro está ACTIVO y hay una mesa seleccionada
+                    if (cardId === activeTableId) {
+                        // Es la mesa activa, mostrarla
+                        card.classList.remove('hidden');
+                    } else {
+                        // No es la mesa activa, ocultarla
+                        card.classList.add('hidden');
+                    }
+                } else {
+                    // Filtro está INACTIVO, mostrar todas
+                    card.classList.remove('hidden');
+                }
+            });
+        }
+
         // Formatea un número como moneda (Peso Colombiano)
         function formatCurrency(value) {
             return new Intl.NumberFormat('es-CO', {
@@ -2263,7 +2396,8 @@
         }
         
         // Establece la mesa activa y actualiza el indicador
-        function setActiveTable(tableId) {
+        // CAMBIO: Añadido parámetro 'shouldApplyFilter'
+        function setActiveTable(tableId, shouldApplyFilter = false) {
             const oldActiveId = activeTableId;
             activeTableId = tableId;
             
@@ -2271,6 +2405,7 @@
             const indicatorName = document.getElementById('active-table-name');
             const activeTableSelect = document.getElementById('active-table-select');
             const transferBtn = document.getElementById('transfer-table-btn'); 
+            // NUEVO: toggleFilterBtn ya está definido globalmente
 
             // Quitar clase 'active' de la mesa anterior
             if (oldActiveId && oldActiveId !== tableId) {
@@ -2305,13 +2440,26 @@
                  }
                  // Sincronizar el atajo
                  activeTableSelect.value = tableId;
+                 
+                 // NUEVO: Lógica del botón de filtro
+                 isGridFiltered = shouldApplyFilter; // Establecer el estado del filtro
+                 updateFilterButtonText();
+                 if (toggleFilterBtn) toggleFilterBtn.classList.remove('hidden'); // Mostrar el botón
+
             } else {
                 // Si no hay mesa activa, ocultar indicador
                 indicator.classList.add('hidden');
                 transferBtn.classList.add('hidden'); 
                 // Sincronizar el atajo
                 activeTableSelect.value = "";
+                
+                // NUEVO: Lógica del botón de filtro
+                isGridFiltered = false; // No hay filtro si no hay mesa activa
+                if (toggleFilterBtn) toggleFilterBtn.classList.add('hidden'); // Ocultar el botón
             }
+            
+            // CAMBIO: Aplicar el filtro visual (movido desde el 'else' al final)
+            applyTableGridFilter();
         }
 
         // CAMBIO: Nueva función para repetir una ronda
@@ -2358,4 +2506,5 @@
     </script>
 </body>
 </html>
+
 
