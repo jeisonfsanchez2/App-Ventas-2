@@ -44,7 +44,34 @@
     <div id="left-panel" class="w-full md:w-1/3 lg:w-1/4 bg-gray-900 p-6 flex flex-col md:h-screen md:overflow-y-auto">
         <h2 class="text-3xl font-bold mb-6 text-white border-b border-gray-700 pb-2">Sanchez's Sport Bar</h2>
         
-        <!-- NUEVO: Botón para mostrar/ocultar mesas -->
+        <!-- CAMBIO: Botón para mostrar formulario de "Nueva Mesa" -->
+        <button id="toggle-open-table-form-btn" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg transition duration-200 shadow-lg mb-4">
+            Nueva Mesa
+        </button>
+
+        <!-- CAMBIO: Formulario de "Abrir Mesa" movido aquí y oculto -->
+        <div id="open-table-form" class="hidden mb-6 p-4 bg-gray-800 rounded-lg shadow-md border border-gray-700">
+            <h3 class="text-xl font-semibold text-green-400 mb-3">Abrir Mesa</h3>
+            <div class="flex flex-col gap-4">
+                <div class="flex-1">
+                    <label for="table-select" class="block text-sm font-medium text-gray-300 mb-1">Mesa Predefinida</label>
+                    <select id="table-select" class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg p-2 text-base focus:ring-green-500 focus:border-green-500">
+                        <!-- Opciones de mesas predefinidas -->
+                    </select>
+                </div>
+                
+                <div id="other-table-name-container" class="flex-1" style="display: none;">
+                    <label for="other-table-name" class="block text-sm font-medium text-gray-300 mb-1">Nombre Mesa Eventual</label>
+                    <input type="text" id="other-table-name" placeholder="Ej: Esquina VIP" class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg p-2 placeholder-gray-400">
+                </div>
+                
+                <button id="open-table-btn" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded-lg transition duration-200 shadow-lg">
+                    Abrir Mesa
+                </button>
+            </div>
+        </div>
+        
+        <!-- Botón para mostrar/ocultar mesas -->
         <button id="toggle-tables-btn" class="w-full bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg transition duration-200 shadow-lg mb-4">
             Mostrar Mesas
         </button>
@@ -80,16 +107,16 @@
                 <span id="active-table-name" class="font-bold text-lg text-white block"></span>
             </div>
 
-            <!-- CAMBIO: Botón "Añadir a la RONDA" -->
+            <!-- Botón "Añadir a la RONDA" -->
             <button id="add-to-round-btn" class="w-full bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200 shadow-lg">
                 Añadir a la Ronda
             </button>
             
-            <!-- CAMBIO: Panel de Ronda Actual -->
+            <!-- Panel de Ronda Actual -->
             <div id="current-round-panel" class="mt-2 p-3 bg-gray-800 rounded-lg border border-gray-700 hidden">
                 <div class="flex justify-between items-center mb-2">
                     <h4 class="text-lg font-semibold text-yellow-400">Ronda Actual</h4>
-                    <button id="cancel-round-btn" class="text-xs text-red-400 hover:text-red-300">&times; Limpiar</button>
+                    <button id="cancel-round-btn" class="text-xs text-red-400 hover:text-red-300">&times; Limpiar</d>
                 </div>
                 <ul id="current-round-list" class="max-h-32 overflow-y-auto divide-y divide-gray-700">
                     <!-- Items de la ronda se añaden aquí -->
@@ -98,14 +125,15 @@
                     <span class="text-sm text-gray-400">Total Ronda:</span>
                     <span id="current-round-total" class="font-bold text-lg text-yellow-400">$0</span>
                 </div>
+                <!-- CAMBIO: Input para nombre de ronda ELIMINADO -->
             </div>
             
-            <!-- CAMBIO: Nuevo Botón "Registrar Ronda" -->
+            <!-- Nuevo Botón "Registrar Ronda" -->
             <button id="register-round-btn" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200 shadow-lg mt-2">
                 Registrar Ronda en la Mesa
             </button>
             
-            <!-- CAMBIO: Botón Transferir Mesa -->
+            <!-- Botón Transferir Mesa -->
             <button id="transfer-table-btn" class="hidden w-full bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200 shadow-lg mt-2">
                 Transferir Mesa
             </button>
@@ -126,33 +154,12 @@
     <!-- ID AÑADIDO: right-panel -->
     <div id="right-panel" class="w-full md:w-2/3 lg:w-3/4 p-6 flex-1 flex flex-col md:h-screen">
         
-        <!-- Formulario de Abrir Mesa -->
-        <div class="mb-6 p-4 bg-gray-800 rounded-lg shadow-md">
-            <h3 class="text-xl font-semibold text-green-400 mb-3">Abrir Mesa</h3>
-            <div class="flex flex-col sm:flex-row gap-4">
-                <div class="flex-1">
-                    <label for="table-select" class="block text-sm font-medium text-gray-300 mb-1">Mesa Predefinida</label>
-                    <select id="table-select" class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg p-2 text-base focus:ring-green-500 focus:border-green-500">
-                        <!-- Opciones de mesas predefinidas -->
-                    </select>
-                </div>
-                
-                <div id="other-table-name-container" class="flex-1" style="display: none;">
-                    <label for="other-table-name" class="block text-sm font-medium text-gray-300 mb-1">Nombre Mesa Eventual</label>
-                    <input type="text" id="other-table-name" placeholder="Ej: Esquina VIP" class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg p-2 placeholder-gray-400">
-                </div>
-                
-                <button id="open-table-btn" class="sm:self-end bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded-lg transition duration-200 shadow-lg">
-                    Abrir Mesa
-                </button>
-            </div>
-        </div>
+        <!-- CAMBIO: Formulario de "Abrir Mesa" movido al panel izquierdo -->
 
         <!-- Contenedor de Mesas Abiertas -->
-        <!-- CAMBIO: Convertido en flex container para añadir el botón de filtro -->
         <div class="flex justify-between items-center mb-4">
             <h2 class="text-2xl font-bold text-white">Mesas Abiertas</h2>
-            <!-- NUEVO: Botón para alternar el filtro de la cuadrícula -->
+            <!-- Botón para alternar el filtro de la cuadrícula -->
             <button id="toggle-filter-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-1 px-3 rounded-lg text-sm transition-all hidden">
                 Mostrar Solo Activa
             </button>
@@ -178,6 +185,7 @@
     </div>
     
     <!-- Modal de Zoom (Solo Lectura) -->
+    <!-- CAMBIO: Estructura interna modificada para PESTAÑAS -->
     <div id="zoom-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-50 hidden">
         <div class="bg-gray-800 rounded-lg shadow-2xl w-full max-w-lg max-h-[90vh] flex flex-col">
             <!-- Cabecera del Modal -->
@@ -185,10 +193,27 @@
                 <h3 class="text-xl font-semibold text-white">Detalle Mesa: <span id="zoom-table-name"></span></h3>
                 <button id="close-zoom-modal-btn" class="text-gray-400 hover:text-white">&times;</button>
             </div>
-            <!-- Contenido del Modal (Zoom) -->
-            <div id="zoom-content" class="p-6 overflow-y-auto">
-                <!-- El resumen ampliado se genera aquí -->
+            
+            <!-- NUEVO: Pestañas -->
+            <div class="flex border-b border-gray-700 px-6">
+                <button id="zoom-tab-product" class="py-2 px-4 font-semibold bg-cyan-600 rounded-t-lg focus:outline-none">
+                    Por Producto
+                </button>
+                <button id="zoom-tab-owner" class="py-2 px-4 font-semibold bg-gray-700 rounded-t-lg focus:outline-none">
+                    Por Dueño
+                </button>
             </div>
+
+            <!-- Contenedor de contenido (este se desplaza) -->
+            <div class="flex-1 overflow-y-auto">
+                <div id="zoom-content" class="p-6">
+                    <!-- El resumen (por producto) se genera aquí -->
+                </div>
+                <div id="zoom-owner-content" class="p-6 hidden">
+                    <!-- El resumen (por dueño) se genera aquí -->
+                </div>
+            </div>
+
             <!-- Pie del Modal (Total) -->
             <div class="p-4 border-t border-gray-700 bg-gray-900 rounded-b-lg">
                 <h4 class="text-2xl font-bold text-right text-green-400" id="zoom-total"></h4>
@@ -305,6 +330,30 @@
                 </button>
                 <button id="transfer-ok-btn" class="bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded-lg transition duration-200">
                     Confirmar Transferencia
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- NUEVO: Modal para Editar Nombre de Ronda -->
+    <div id="edit-round-name-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-gray-800 rounded-lg shadow-2xl w-full max-w-sm">
+            <!-- Cabecera del Modal -->
+            <div class="p-4 border-b border-gray-700">
+                <h3 class="text-xl font-semibold text-white">Asignar Dueño de Ronda</h3>
+            </div>
+            <!-- Contenido del Modal -->
+            <div class="p-6">
+                <label for="round-name-input" class="block text-sm font-medium text-gray-300 mb-2">Nombre (Ej: Juan, Pedro, Apuesta)</label>
+                <input type="text" id="round-name-input" class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg p-2 placeholder-gray-400">
+            </div>
+            <!-- Pie del Modal (Botones) -->
+            <div class="p-4 bg-gray-900 rounded-b-lg flex justify-end gap-4">
+                <button id="edit-round-name-cancel-btn" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-lg transition duration-200">
+                    Cancelar
+                </button>
+                <button id="edit-round-name-save-btn" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg transition duration-200">
+                    Guardar
                 </button>
             </div>
         </div>
@@ -443,13 +492,17 @@
         // Almacén de datos en memoria para evitar "datos rancios"
         let allTablesData = new Map();
         
-        // NUEVO: Variables para el layout
+        // Variables para el layout
         let leftPanel, rightPanel, toggleTablesBtn;
         let isTablesVisible = false; // El usuario quiere que inicien ocultas
         
-        // NUEVO: Variables para el filtro de la cuadrícula
+        // Variables para el filtro de la cuadrícula
         let toggleFilterBtn;
         let isGridFiltered = false; 
+        
+        // CAMBIO: Variables para el formulario de "Nueva Mesa"
+        let toggleOpenTableFormBtn, openTableForm;
+        let isOpenTableFormVisible = false;
         
         // Almacén para los IDs de los documentos filtrados en auditoría
         let currentAuditFilteredIds = [];
@@ -457,7 +510,10 @@
         // Variable para manejar la acción de confirmación
         let onConfirmAction = null;
         
-        // CAMBIO: Variable para rastrear la carga de scripts PDF
+        // NUEVO: Variable para el contexto de edición de nombre de ronda
+        let currentEditContext = null; 
+        
+        // Variable para rastrear la carga de scripts PDF
         let pdfScriptsLoaded = false;
         let isPdfLoading = false; // Para evitar clics múltiples
 
@@ -514,29 +570,34 @@
         function loadAppUI() {
             // Cargar la UI solo después de la autenticación exitosa
             renderProductList();
-            setupOpenTableForm();
+            setupOpenTableForm(); // Configura el formulario (que ahora está a la izquierda)
             setupTableListeners();
-            setupRoundAndSpecialButtons(); // CAMBIO: Renombrada
+            setupRoundAndSpecialButtons();
             setupHistoryModal();
-            setupZoomModal();
+            setupZoomModal(); // CAMBIO: modificado para pestañas
             setupAuditModal(); 
             setupReadOnlyHistoryModal();
             setupConfirmationModal();
             setupTransferModal(); 
             
-            // NUEVO: Configurar el layout (MOVIDO AL FINAL)
+            // Configurar el layout
             setupLayoutToggle();
             
-            // NUEVO: Configurar el botón de filtro de la cuadrícula
+            // CAMBIO: Configurar el nuevo botón "Nueva Mesa"
+            setupOpenTableFormToggle();
+            
+            // Configurar el botón de filtro de la cuadrícula
             setupGridFilterToggle();
+            
+            // NUEVO: Configurar el modal de editar nombre de ronda
+            setupEditRoundNameModal();
             
             // Configurar el listener para el nuevo atajo
             document.getElementById('active-table-select').addEventListener('change', (e) => {
-                // CAMBIO: El atajo ahora SÍ aplica el filtro
                 setActiveTable(e.target.value, true); 
             });
             
-            // CAMBIO: Conectar botón de transferir
+            // Conectar botón de transferir
             document.getElementById('transfer-table-btn').addEventListener('click', () => {
                 if (activeTableId) {
                     showTransferModal();
@@ -544,7 +605,7 @@
             });
         }
         
-        // NUEVO: Configura el botón para mostrar/ocultar el panel de mesas
+        // Configura el botón para mostrar/ocultar el panel de mesas
         function setupLayoutToggle() {
             leftPanel = document.getElementById('left-panel');
             rightPanel = document.getElementById('right-panel');
@@ -561,7 +622,43 @@
             updateLayout(); 
         }
         
-        // NUEVO: Función que actualiza las clases del layout
+        // CAMBIO: Nueva función para el botón "Nueva Mesa"
+        function setupOpenTableFormToggle() {
+            toggleOpenTableFormBtn = document.getElementById('toggle-open-table-form-btn');
+            openTableForm = document.getElementById('open-table-form');
+            
+            if (toggleOpenTableFormBtn && openTableForm) {
+                toggleOpenTableFormBtn.addEventListener('click', () => {
+                    isOpenTableFormVisible = !isOpenTableFormVisible; // Invertir estado
+                    updateOpenTableFormLayout();
+                });
+            }
+            // Aplicar estado inicial (oculto)
+            updateOpenTableFormLayout();
+        }
+        
+        // CAMBIO: Nueva función para actualizar la UI del formulario "Nueva Mesa"
+        function updateOpenTableFormLayout() {
+            if (!toggleOpenTableFormBtn || !openTableForm) return;
+
+            if (isOpenTableFormVisible) {
+                // --- MOSTRAR FORMULARIO ---
+                openTableForm.classList.remove('hidden');
+                // Actualizar botón
+                toggleOpenTableFormBtn.textContent = 'Cancelar';
+                toggleOpenTableFormBtn.classList.remove('bg-green-600', 'hover:bg-green-700');
+                toggleOpenTableFormBtn.classList.add('bg-gray-600', 'hover:bg-gray-700');
+            } else {
+                // --- OCULTAR FORMULARIO ---
+                openTableForm.classList.add('hidden');
+                // Actualizar botón
+                toggleOpenTableFormBtn.textContent = 'Nueva Mesa';
+                toggleOpenTableFormBtn.classList.add('bg-green-600', 'hover:bg-green-700');
+                toggleOpenTableFormBtn.classList.remove('bg-gray-600', 'hover:bg-gray-700');
+            }
+        }
+        
+        // Función que actualiza las clases del layout
         function updateLayout() {
             if (!leftPanel || !rightPanel || !toggleTablesBtn) {
                 console.warn("Elementos del layout no encontrados, saltando actualización.");
@@ -591,7 +688,7 @@
             }
         }
         
-        // NUEVO: Configura el botón para mostrar/ocultar el filtro de la cuadrícula
+        // Configura el botón para mostrar/ocultar el filtro de la cuadrícula
         function setupGridFilterToggle() {
             toggleFilterBtn = document.getElementById('toggle-filter-btn');
             if (toggleFilterBtn) {
@@ -603,7 +700,7 @@
             }
         }
         
-        // NUEVO: Función que actualiza el texto del botón de filtro
+        // Función que actualiza el texto del botón de filtro
         function updateFilterButtonText() {
             if (!toggleFilterBtn) return;
             if (isGridFiltered) {
@@ -613,7 +710,7 @@
             } else {
                 toggleFilterBtn.textContent = 'Mostrar Solo Activa';
                 toggleFilterBtn.classList.add('bg-blue-600', 'hover:bg-blue-700');
-                toggleFilterBtn.classList.remove('bg-gray-600', 'hover:bg-gray-700'); // CORREGIDO: G-700 -> gray-700
+                toggleFilterBtn.classList.remove('bg-gray-600', 'hover:bg-gray-700');
             }
         }
 
@@ -638,14 +735,12 @@
                     const option = document.createElement('option');
                     option.value = product.name;
                     
-                    // CAMBIO: Lógica para mostrar precio (ahora incluye "Otros")
                     if (product.name === 'Descuento' || product.name === 'Otros') {
                         option.textContent = `${product.name} (manual)`;
                     } else {
                         option.textContent = `${product.name} - ${formatCurrency(product.price)}`;
                     }
                     
-                    // Guardamos el precio y nombre en el dataset para fácil acceso
                     option.dataset.price = product.price;
                     option.dataset.name = product.name;
                     optgroup.appendChild(option);
@@ -654,7 +749,7 @@
             }
         }
         
-        // Configura el formulario de "Abrir Mesa"
+        // CAMBIO: Configura el formulario de "Abrir Mesa" (ahora en el panel izquierdo)
         function setupOpenTableForm() {
             const select = document.getElementById('table-select');
             const otherContainer = document.getElementById('other-table-name-container');
@@ -699,21 +794,19 @@
                     return;
                 }
                 
-                // Usamos el nombre como ID (simplificación)
                 const tableId = tableName.replace(/\s+/g, '-').toLowerCase(); // ID más robusto
 
                 // Intentar crear la mesa en Firestore
                 try {
-                    // Verificamos si la mesa ya existe en las ABIERTAS
                     const tableDocRef = doc(tablesCollectionRef, tableId);
                     
                     await setDoc(tableDocRef, {
                         id: tableId,
                         name: tableName,
-                        items: [], // Usar Array para arrayUnion/arrayRemove
+                        items: [], 
                         total: 0,
                         createdAt: new Date().toISOString(),
-                        status: 'open' // Estado para auditoría
+                        status: 'open' 
                     });
                     
                     console.log(`Mesa "${tableName}" abierta.`);
@@ -724,8 +817,12 @@
                     select.value = predefinedTables[0]; // Reset al primer item
                     otherContainer.style.display = 'none';
                     
+                    // CAMBIO: Ocultar el formulario después de crear la mesa
+                    isOpenTableFormVisible = false;
+                    updateOpenTableFormLayout();
+                    
                     // Activar la nueva mesa
-                    setActiveTable(tableId, true); // CAMBIO: Aplicar filtro al crear
+                    setActiveTable(tableId, true); 
 
                 } catch (error) {
                     console.error("Error al abrir la mesa:", error);
@@ -746,59 +843,47 @@
             onSnapshot(tablesCollectionRef, (snapshot) => {
                 const tablesGrid = document.getElementById('tables-grid');
                 
-                const currentTableCards = {}; // Para rastrear las mesas en la UI
+                const currentTableCards = {}; 
                 Array.from(tablesGrid.children).forEach(child => {
                     currentTableCards[child.dataset.tableId] = child;
                 });
                 
-                // Limpiamos el almacén de datos
                 allTablesData.clear();
                 
-                let activeCardElement = null; // Para guardar la tarjeta activa
+                let activeCardElement = null; 
 
                 snapshot.forEach(doc => {
                     const table = doc.data();
-                    // Guardamos la versión más fresca
                     allTablesData.set(table.id, table); 
                     
-                    let card; // Variable para la tarjeta
+                    let card; 
                     if (currentTableCards[table.id]) {
                         card = currentTableCards[table.id];
                         updateTableCard(card, table);
-                        // La marcamos como procesada
                         delete currentTableCards[table.id];
                     } else {
-                        // Si es nueva, la creamos
                         card = createTableCard(table);
                         tablesGrid.appendChild(card);
                     }
                     
-                    // *** CAMBIO: Si esta es la tarjeta activa, la guardamos ***
                     if (table.id === activeTableId) {
                         activeCardElement = card;
                     }
                 });
 
-                // Eliminar mesas de la UI que ya no están en Firestore
                 for (const tableId in currentTableCards) {
                     currentTableCards[tableId].remove();
                 }
                 
-                // *** CAMBIO: Mover la tarjeta activa al inicio del grid ***
                 if (activeCardElement && tablesGrid.firstChild !== activeCardElement) {
                     tablesGrid.prepend(activeCardElement);
                 }
-                // *** FIN DEL CAMBIO ***
 
-
-                // Actualizar el atajo
                 updateActiveTableSelect(activeTableId);
 
-                // Si la mesa activa ya no existe, la deseleccionamos
                 if (activeTableId && !allTablesData.has(activeTableId)) {
-                    setActiveTable(null); // Esto ya llamará a applyTableGridFilter
+                    setActiveTable(null); 
                 } else {
-                    // NUEVO: Re-aplicar el filtro a la cuadrícula
                     applyTableGridFilter();
                 }
                 
@@ -812,12 +897,10 @@
         function updateActiveTableSelect(currentActiveId) {
             const select = document.getElementById('active-table-select');
             
-            // Guardamos las opciones existentes (solo la primero)
             const firstOption = select.options[0];
-            select.innerHTML = ''; // Limpiamos todo
-            select.appendChild(firstOption); // Volvemos a añadir la primera
+            select.innerHTML = ''; 
+            select.appendChild(firstOption); 
 
-            // Ordenar mesas alfabéticamente
             const sortedTables = [...allTablesData.values()].sort((a, b) => a.name.localeCompare(b.name));
 
             sortedTables.forEach(table => {
@@ -827,7 +910,6 @@
                 select.appendChild(option);
             });
             
-            // Reseleccionar la mesa activa
             select.value = currentActiveId || "";
         }
         
@@ -839,11 +921,9 @@
 
             // Evento de clic simple para seleccionar
             card.addEventListener('click', (e) => {
-                // Evitar que el clic en botones seleccione la mesa
                 if (e.target.closest('button')) {
                     return;
                 }
-                // CAMBIO: Hacer clic en la tarjeta NO aplica el filtro
                 setActiveTable(table.id, false);
             });
             
@@ -852,14 +932,12 @@
                 if (e.target.closest('button')) {
                     return;
                 }
-                // Usamos el almacén de datos frescos
                 const freshTable = allTablesData.get(table.id);
                 if (freshTable) {
                     showZoomModal(freshTable);
                 }
             });
 
-            // Renderizamos el contenido interno
             renderTableCardContent(card, table);
 
             return card;
@@ -867,18 +945,15 @@
 
         // Actualiza el HTML de una tarjeta existente
         function updateTableCard(card, table) {
-            // Actualizar clases (activo / tiene items)
             card.classList.toggle('active', table.id === activeTableId);
             card.classList.toggle('has-items', table.items.length > 0);
             
-            // Renderizar contenido interno
             renderTableCardContent(card, table);
         }
 
         // Renderiza el contenido interno de la tarjeta (nombre, items, total, botones)
         function renderTableCardContent(cardElement, table) {
             
-            // Agrupar productos para el resumen
             const groupedItems = groupItems(table.items);
             
             let itemsHtml = '';
@@ -901,7 +976,6 @@
                             <span class="font-semibold ${textColor === 'text-gray-300' ? 'text-white' : ''}">
                                 ${formatCurrency(item.totalPrice)}
                                 
-                                <!-- Botón "x" para eliminar el grupo completo -->
                                 <button data-item-name="${name}" 
                                         class="btn-delete-group text-red-500 hover:text-red-300 font-bold ml-2 px-1 rounded-full">
                                     &times;
@@ -914,7 +988,6 @@
                 itemsHtml = '<li class="text-sm text-gray-500 italic">Mesa vacía</li>';
             }
 
-            // 3 botones
             cardElement.innerHTML = `
                 <h3 class="text-xl font-bold mb-2 truncate ${table.items.length > 0 ? 'text-cyan-400' : 'text-gray-400'}">${table.name}</h3>
                 <ul class="mb-3 h-32 overflow-y-auto pr-1">
@@ -925,7 +998,6 @@
                         <span class="text-gray-400 font-medium">TOTAL</span>
                         <span class="text-2xl font-bold text-green-400">${formatCurrency(table.total)}</span>
                     </div>
-                    <!-- CAMBIO: Botones en 3 columnas -->
                     <div class="grid grid-cols-3 gap-2">
                         <button class="btn-history bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-3 rounded-lg text-sm transition-all">
                             Historial
@@ -942,14 +1014,12 @@
             
             // --- RECONECTAR EVENTOS ---
             
-            // Botón Historial
             cardElement.querySelector('.btn-history').addEventListener('click', () => {
                 const freshTable = allTablesData.get(table.id);
                 if (freshTable) showHistory(freshTable);
             });
 
-            // Botón Factura (PDF) - CAMBIO: Carga dinámica
-            cardElement.querySelector('.btn-pdf').addEventListener('click', async () => { // async
+            cardElement.querySelector('.btn-pdf').addEventListener('click', async () => { 
                 const freshTable = allTablesData.get(table.id);
                 if (freshTable) {
                     if (freshTable.items.length === 0) {
@@ -963,14 +1033,12 @@
                     }
                     
                     try {
-                        // Asegurarse de que los scripts estén cargados
                         const scriptsReady = await ensurePdfScripts(); 
                         if (!scriptsReady) {
                             showStatusMessage("Error al cargar librerías PDF. Intente de nuevo.", true);
                             return;
                         }
                         
-                        // Ahora es seguro llamar a generatePDF
                         generatePDF(freshTable); 
                         showStatusMessage("Factura PDF generada.", false);
                         
@@ -981,13 +1049,11 @@
                 }
             });
 
-            // Botón Cerrar Mesa (sin PDF)
             cardElement.querySelector('.btn-close-table').addEventListener('click', () => {
                 const freshTable = allTablesData.get(table.id);
                 if (freshTable) handleCloseTable(freshTable);
             });
             
-            // Botones "x" (Eliminar Grupo)
             cardElement.querySelectorAll('.btn-delete-group').forEach(btn => {
                 btn.addEventListener('click', () => {
                     const itemName = btn.dataset.itemName;
@@ -1015,21 +1081,19 @@
                     };
                 }
                 
-                // CAMBIO: "Otros" y "Descuento" se agrupan diferente
                 if(item.name === 'Otros' || item.name === 'Descuento') {
-                    grouped[item.name].quantity = 1; // Siempre es 1 solo item
-                    grouped[item.name].totalPrice += item.price; // Sumamos el precio (negativo o positivo)
+                    grouped[item.name].quantity = 1; 
+                    grouped[item.name].totalPrice += item.price; 
                 }
                 else {
-                    // Productos normales (AHORA INCLUYEN LOS DE LAS RONDAS)
-                    grouped[item.name].quantity += 1; // Cada item es 1 unidad
+                    grouped[item.name].quantity += 1; 
                     grouped[item.name].totalPrice += item.price;
                 }
             });
             return grouped;
         }
 
-        // CAMBIO: Muestra el panel de la ronda actual
+        // Muestra el panel de la ronda actual
         function renderCurrentRound() {
             const panel = document.getElementById('current-round-panel');
             const list = document.getElementById('current-round-list');
@@ -1050,7 +1114,11 @@
                 listHtml += `
                     <li class="flex justify-between items-center text-sm py-1 text-gray-300">
                         <span>${item.name} <span class="text-white">x ${item.quantity}</span></span>
-                        <span>${formatCurrency(item.price * item.quantity)}</span>
+                        <!-- CAMBIO: Añadido botón de eliminar item de la ronda -->
+                        <span class="flex items-center">
+                            <span class="mr-2">${formatCurrency(item.price * item.quantity)}</span>
+                            <button class="btn-delete-from-round text-red-500 hover:text-red-300 font-bold px-1" data-item-name="${item.name}" title="Quitar de la ronda">&times;</button>
+                        </span>
                     </li>
                 `;
                 total += item.price * item.quantity;
@@ -1058,9 +1126,20 @@
             
             list.innerHTML = listHtml;
             totalEl.textContent = formatCurrency(total);
+            
+            // CAMBIO: Conectar botones de eliminar de la ronda
+            list.querySelectorAll('.btn-delete-from-round').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const nameToDelete = btn.dataset.itemName;
+                    // Encontrar y eliminar el item de currentRound
+                    currentRound = currentRound.filter(item => item.name !== nameToDelete);
+                    // Volver a renderizar
+                    renderCurrentRound();
+                });
+            });
         }
 
-        // CAMBIO: Nueva función solo para "Descuento" y "Otros"
+        // Nueva función solo para "Descuento" y "Otros"
         async function addSpecialProductToTable(productName, quantity) {
             if (!activeTableId) {
                 showStatusMessage("Por favor, seleccione una mesa primero.", true);
@@ -1079,7 +1158,6 @@
                     const newItem = {
                         id: `item-${Date.now()}`, name: 'Descuento',
                         price: -discountAmount, timestamp: new Date().toISOString()
-                        // CAMBIO: Sin roundId
                     };
                     await updateDoc(tableDocRef, {
                         items: arrayUnion(newItem), total: increment(-discountAmount)
@@ -1095,7 +1173,6 @@
                     const newItem = {
                         id: `item-${Date.now()}`, name: 'Otros',
                         price: additionalAmount, timestamp: new Date().toISOString()
-                        // CAMBIO: Sin roundId
                     };
                     await updateDoc(tableDocRef, {
                         items: arrayUnion(newItem), total: increment(additionalAmount)
@@ -1103,7 +1180,6 @@
                     showStatusMessage(`Cargo "Otros" de ${formatCurrency(additionalAmount)} aplicado.`, false);
                 }
                 
-                // Resetear cantidad a 1
                 document.getElementById('product-quantity').value = "1";
 
             } catch (error) {
@@ -1112,16 +1188,17 @@
             }
         }
         
-        // CAMBIO: Renombrada de setupAddProductButton a setupRoundAndSpecialButtons
+        // Configura botones de ronda y especiales
         function setupRoundAndSpecialButtons() {
-            const addBtn = document.getElementById('add-to-round-btn'); // Renombrado
-            const registerBtn = document.getElementById('register-round-btn'); // Nuevo
-            const cancelBtn = document.getElementById('cancel-round-btn'); // Nuevo
+            const addBtn = document.getElementById('add-to-round-btn'); 
+            const registerBtn = document.getElementById('register-round-btn'); 
+            const cancelBtn = document.getElementById('cancel-round-btn'); 
             
             const select = document.getElementById('product-select');
             const quantityInput = document.getElementById('product-quantity');
+            // CAMBIO: roundNameInput eliminado
 
-            // 1. Botón "Añadir a la Ronda" (antes add-product-btn)
+            // 1. Botón "Añadir a la Ronda"
             addBtn.addEventListener('click', () => {
                 const selectedOption = select.options[select.selectedIndex];
                 const productName = selectedOption.dataset.name;
@@ -1133,20 +1210,17 @@
                      return;
                 }
                 
-                // "Descuento" y "Otros" se aplican directo a la mesa, no a la ronda
                 if (productName === 'Descuento' || productName === 'Otros') {
                     showConfirmationModal(
                         `Confirmar Acción: ${productName}`,
                         `"${productName}" se aplica DIRECTAMENTE a la mesa, no a la ronda.\n\n¿Desea continuar?`,
                         () => {
-                            // Llamamos a la nueva función que sí habla con Firebase
                             addSpecialProductToTable(productName, quantity);
                         }
                     );
-                    return; // Detenemos la adición a la ronda
+                    return; 
                 }
                 
-                // Lógica para productos normales (añadir a la ronda local)
                 const existingItem = currentRound.find(item => item.name === productName);
                 if (existingItem) {
                     existingItem.quantity += quantity;
@@ -1159,7 +1233,7 @@
                 }
                 
                 renderCurrentRound();
-                quantityInput.value = "1"; // Reset
+                quantityInput.value = "1"; 
             });
 
             // 2. Botón "Registrar Ronda en la Mesa"
@@ -1173,37 +1247,37 @@
                     return;
                 }
                 
-                // *** CAMBIO: Desempaquetar la ronda en items individuales ***
                 const roundId = `round-${Date.now()}`;
                 const timestamp = new Date().toISOString();
+                // CAMBIO: roundName se quita de aquí
                 let itemsToAdd = [];
                 let totalRoundPrice = 0;
                 
                 currentRound.forEach(item => {
                     for (let i = 0; i < item.quantity; i++) {
                         itemsToAdd.push({
-                            id: `item-${Date.now()}-${item.name}-${i}`, // ID único por item
+                            id: `item-${Date.now()}-${item.name}-${i}`, 
                             name: item.name,
                             price: item.price,
-                            timestamp: timestamp, // Misma hora para toda la ronda
-                            roundId: roundId      // Mismo ID de ronda
+                            timestamp: timestamp, 
+                            roundId: roundId,
+                            roundName: null // CAMBIO: Se registra como null
                         });
                     }
                     totalRoundPrice += item.price * item.quantity;
                 });
-                // *** FIN DEL CAMBIO ***
 
                 try {
                     const tableDocRef = doc(tablesCollectionRef, activeTableId);
                     await updateDoc(tableDocRef, {
-                        items: arrayUnion(...itemsToAdd), // Añadimos todos los items
+                        items: arrayUnion(...itemsToAdd), 
                         total: increment(totalRoundPrice)
                     });
                     
                     showStatusMessage(`Ronda de ${formatCurrency(totalRoundPrice)} registrada.`, false);
                     
-                    // Limpiar la ronda
                     currentRound = [];
+                    // CAMBIO: ya no se limpia el input
                     renderCurrentRound();
 
                 } catch (error) {
@@ -1215,26 +1289,25 @@
             // 3. Botón "Cancelar Ronda"
             cancelBtn.addEventListener('click', () => {
                 currentRound = [];
+                // CAMBIO: ya no se limpia el input
                 renderCurrentRound();
             });
         }
         
         // --- 6. LÓGICA DE MODALES (Historial, Zoom, Auditoría) ---
         
-        // *** CAMBIO: Nueva función para agrupar el historial por transacciones (Rondas) ***
+        // Agrupa el historial por transacciones (Rondas)
         function groupHistoryByTransaction(items) {
             const groupedByTransaction = new Map();
             
-            // 1. Agrupar items por roundId o (si no tiene) por id
             items.forEach(item => {
-                const key = item.roundId || item.id; // Agrupar por roundId, o tratar como item individual
+                const key = item.roundId || item.id; 
                 if (!groupedByTransaction.has(key)) {
                     groupedByTransaction.set(key, []);
                 }
                 groupedByTransaction.get(key).push(item);
             });
 
-            // 2. Convertir el Map en un array de "transacciones"
             const transactions = [];
             for (const [key, itemsInGroup] of groupedByTransaction.entries()) {
                 const firstItem = itemsInGroup[0];
@@ -1243,7 +1316,6 @@
                     // Es una RONDA
                     const roundTotal = itemsInGroup.reduce((sum, i) => sum + i.price, 0);
                     
-                    // Contar productos dentro de la ronda
                     const detailsMap = new Map();
                     itemsInGroup.forEach(i => {
                         if (!detailsMap.has(i.name)) {
@@ -1259,43 +1331,61 @@
                     }));
 
                     transactions.push({
-                        id: firstItem.roundId, // ID de la transacción es el roundId
+                        id: firstItem.roundId, 
                         name: "Ronda",
                         price: roundTotal,
                         timestamp: firstItem.timestamp,
                         isRound: true,
-                        details: details, // [{name: "Poker", quantity: 3, price: 3200}, ...]
-                        items: itemsInGroup // Array de items originales para el borrado
+                        roundName: firstItem.roundName || null, // CAMBIO: Añadido
+                        details: details, 
+                        items: itemsInGroup 
                     });
                 } else {
-                    // Es un item individual (Descuento, Otros)
+                    // Es un item individual
                     transactions.push({
-                        id: firstItem.id, // ID de la transacción es el itemId
+                        id: firstItem.id, 
                         name: firstItem.name,
                         price: firstItem.price,
                         timestamp: firstItem.timestamp,
                         isRound: false,
-                        details: [], // No tiene detalles
-                        items: itemsInGroup // El array de 1 solo item
+                        roundName: null, 
+                        details: [], 
+                        items: itemsInGroup 
                     });
                 }
             }
             
-            // 3. Ordenar las transacciones por fecha
             return transactions.sort((a, b) => {
                 if (!a.timestamp || !b.timestamp) return 0;
                 return new Date(b.timestamp) - new Date(a.timestamp);
             });
         }
+        
+        // NUEVO: Agrupa transacciones por dueño para el resumen
+        function summarizeByOwner(transactions) {
+            const summary = new Map();
+            for (const tx of transactions) {
+                const owner = tx.roundName || "Sin Asignar"; // Agrupa todo lo no asignado
+                
+                if (!summary.has(owner)) {
+                    summary.set(owner, { total: 0, transactions: [] });
+                }
+                
+                const data = summary.get(owner);
+                data.total += tx.price;
+                data.transactions.push(tx);
+            }
+            return summary;
+        }
 
-        // Configura el modal de historial (botón de cerrar)
+        // Configura el modal de historial
         function setupHistoryModal() {
             document.getElementById('close-history-modal-btn').addEventListener('click', () => {
                 document.getElementById('history-modal').classList.add('hidden');
             });
         }
 
-        // Muestra el modal de historial con los datos de la mesa
+        // Muestra el modal de historial
         function showHistory(table) {
             const modal = document.getElementById('history-modal');
             const content = document.getElementById('history-content');
@@ -1307,13 +1397,10 @@
                 return;
             }
 
-            // *** CAMBIO: Usar la nueva función de agrupación ***
             const sortedTransactions = groupHistoryByTransaction(table.items);
-            // *** FIN DEL CAMBIO ***
 
             let html = '<ul class="divide-y divide-gray-700">';
             
-            // Recorremos las transacciones (Rondas o Items únicos)
             sortedTransactions.forEach(transaction => {
                 const itemTime = transaction.timestamp 
                     ? new Date(transaction.timestamp).toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
@@ -1326,18 +1413,33 @@
                         roundDetailsHtml += `<li class="text-sm text-gray-400">${detail.name} x ${detail.quantity} (${formatCurrency(detail.price * detail.quantity)})</li>`;
                     });
                     roundDetailsHtml += '</ul>';
+                    
+                    // CAMBIO: Botón para asignar/editar nombre
+                    let nameHtml = '';
+                    if (transaction.roundName) {
+                        nameHtml = `
+                            <span class="ml-2 pl-2 border-l border-gray-600 text-lg font-bold text-white">${transaction.roundName}</span>
+                            <button class="btn-edit-round-name text-xs text-blue-400 hover:text-blue-300 ml-2" data-round-id="${transaction.id}">[Editar]</button>
+                        `;
+                    } else {
+                        nameHtml = `
+                            <button class="btn-edit-round-name text-xs bg-blue-600 hover:bg-blue-700 text-white font-semibold py-1 px-2 rounded-lg ml-2" data-round-id="${transaction.id}">[Asignar Dueño]</button>
+                        `;
+                    }
 
                     html += `
-                        <li class="flex justify-between items-start py-3"> <!-- items-start para alinear arriba -->
+                        <li class="flex justify-between items-start py-3"> 
                             <div>
-                                <span class="font-semibold text-yellow-300">Ronda</span>
+                                <div class="flex items-center"> <!-- Contenedor para Ronda y Nombre -->
+                                    <span class="font-semibold text-yellow-300">Ronda</span>
+                                    ${nameHtml} <!-- Aquí va el nombre o el botón -->
+                                </div>
                                 <span class="block text-sm text-gray-400">${itemTime}</span>
-                                ${roundDetailsHtml} <!-- Detalles de la ronda -->
+                                ${roundDetailsHtml} 
                             </div>
-                            <div class="flex items-center flex-shrink-0"> <!-- flex-shrink-0 para que no se encoja -->
+                            <div class="flex items-center flex-shrink-0"> 
                                 <span class="font-semibold text-lg mr-2 text-yellow-300">${formatCurrency(transaction.price)}</span>
                                 
-                                <!-- CAMBIO: Botón Repetir Ronda -->
                                 <button data-item-id="${transaction.id}" 
                                         class="btn-repeat-round bg-yellow-600 hover:bg-yellow-700 text-white font-semibold py-1 px-2 rounded-lg text-xs" title="Repetir Ronda">
                                     Repetir
@@ -1351,7 +1453,7 @@
                         </li>
                     `;
                 } else {
-                    // Es un item normal (Descuento, Otros)
+                    // Es un item normal
                     const isDiscount = transaction.price < 0;
                     const isOther = transaction.price > 0 && (transaction.name === 'Otros');
                     
@@ -1379,25 +1481,29 @@
             html += '</ul>';
             content.innerHTML = html;
             
-            // Conectar botones de eliminar (item individual o ronda)
+            // Conectar botones de eliminar
             content.querySelectorAll('.btn-delete-item').forEach(btn => {
                 btn.addEventListener('click', () => {
-                    const transactionId = btn.dataset.itemId; // Este es el roundId o el itemId
-                    
-                    // *** CAMBIO: Encontrar la transacción a borrar ***
+                    const transactionId = btn.dataset.itemId; 
                     const transactionToDelete = sortedTransactions.find(t => t.id === transactionId);
+                    
                     if (transactionToDelete) {
-                        handleDeleteItem(table, transactionToDelete);
+                        // CAMBIO: Pedir confirmación antes de borrar
+                        const title = `Confirmar Borrado`;
+                        const message = `¿Está seguro que desea eliminar "${transactionToDelete.name}" (${formatCurrency(transactionToDelete.price)})? Esta acción no se puede deshacer.`;
+                        
+                        showConfirmationModal(title, message, () => {
+                            // Esta es la acción de confirmación
+                            handleDeleteItem(table, transactionToDelete);
+                        });
                     }
                 });
             });
 
-            // CAMBIO: Conectar botones de "Repetir Ronda"
+            // Conectar botones de "Repetir Ronda"
             content.querySelectorAll('.btn-repeat-round').forEach(btn => {
                 btn.addEventListener('click', () => {
                     const transactionId = btn.dataset.itemId;
-                    
-                    // Encontrar la transacción a repetir
                     const transactionToRepeat = sortedTransactions.find(t => t.id === transactionId);
                     
                     if (transactionToRepeat && transactionToRepeat.isRound) {
@@ -1405,18 +1511,29 @@
                     }
                 });
             });
+            
+            // NUEVO: Conectar botones de "Asignar/Editar Nombre"
+            content.querySelectorAll('.btn-edit-round-name').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const roundId = btn.dataset.roundId;
+                    const transaction = sortedTransactions.find(t => t.id === roundId);
+                    if (transaction) {
+                        showEditRoundNameModal(table.id, roundId, transaction.roundName);
+                    }
+                });
+            });
 
             modal.classList.remove('hidden');
         }
         
-        // Configura el modal de historial de solo lectura (botón de cerrar)
+        // Configura el modal de historial de solo lectura
         function setupReadOnlyHistoryModal() {
             document.getElementById('close-ro-history-modal-btn').addEventListener('click', () => {
                 document.getElementById('read-only-history-modal').classList.add('hidden');
             });
         }
 
-        // Muestra el modal de historial (SOLO LECTURA - para auditoría)
+        // Muestra el modal de historial (SOLO LECTURA)
         function showReadOnlyHistory(table) {
             const modal = document.getElementById('read-only-history-modal');
             const content = document.getElementById('ro-history-content');
@@ -1428,7 +1545,6 @@
                 return;
             }
 
-            // *** CAMBIO: Usar la nueva función de agrupación ***
             const sortedTransactions = groupHistoryByTransaction(table.items);
 
             let html = '<ul class="divide-y divide-gray-700">';
@@ -1447,18 +1563,20 @@
                     html += `
                         <li class="flex justify-between items-start py-3">
                             <div>
-                                <span class="font-semibold text-yellow-300">Ronda</span>
+                                <div class="flex items-center"> <!-- Contenedor para Ronda y Nombre -->
+                                    <span class="font-semibold text-yellow-300">Ronda</span>
+                                    <!-- CAMBIO: Mostrar nombre de ronda -->
+                                    ${transaction.roundName ? `<span class="ml-2 pl-2 border-l border-gray-600 text-lg font-bold text-white">${transaction.roundName}</span>` : ''}
+                                </div>
                                 <span class="block text-sm text-gray-400">${itemTime}</span>
                                 ${roundDetailsHtml}
                             </div>
                             <div class="flex items-center flex-shrink-0">
                                 <span class="font-semibold text-lg mr-4 text-yellow-300">${formatCurrency(transaction.price)}</span>
-                                <!-- Sin botón de eliminar -->
                             </div>
                         </li>
                     `;
                 } else {
-                    // Item normal (Descuento, Otros)
                     const isDiscount = transaction.price < 0;
                     const isOther = transaction.price > 0 && (transaction.name === 'Otros');
                     
@@ -1474,7 +1592,6 @@
                             </div>
                             <div class="flex items-center">
                                 <span class="font-semibold text-lg mr-4 ${textColor}">${formatCurrency(transaction.price)}</span>
-                                <!-- Sin botón de eliminar -->
                             </div>
                         </li>
                     `;
@@ -1486,53 +1603,132 @@
             modal.classList.remove('hidden');
         }
 
-        // Configura el modal de Zoom (botón de cerrar)
+        // Configura el modal de Zoom
+        // CAMBIO: Añadida lógica para pestañas
         function setupZoomModal() {
             document.getElementById('close-zoom-modal-btn').addEventListener('click', () => {
                 document.getElementById('zoom-modal').classList.add('hidden');
             });
+            
+            // Lógica de pestañas
+            const tabProduct = document.getElementById('zoom-tab-product');
+            const tabOwner = document.getElementById('zoom-tab-owner');
+            const contentProduct = document.getElementById('zoom-content');
+            const contentOwner = document.getElementById('zoom-owner-content');
+
+            tabProduct.addEventListener('click', () => {
+                contentProduct.classList.remove('hidden');
+                contentOwner.classList.add('hidden');
+                tabProduct.classList.add('bg-cyan-600');
+                tabProduct.classList.remove('bg-gray-700');
+                tabOwner.classList.add('bg-gray-700');
+                tabOwner.classList.remove('bg-cyan-600');
+            });
+
+            tabOwner.addEventListener('click', () => {
+                contentProduct.classList.add('hidden');
+                contentOwner.classList.remove('hidden');
+                tabOwner.classList.add('bg-cyan-600');
+                tabOwner.classList.remove('bg-gray-700');
+                tabProduct.classList.add('bg-gray-700');
+                tabProduct.classList.remove('bg-cyan-600');
+            });
         }
         
-        // Muestra el modal de Zoom (solo lectura, ampliado)
+        // Muestra el modal de Zoom
+        // CAMBIO: Añadida lógica para poblar ambas pestañas
         function showZoomModal(table) {
             const modal = document.getElementById('zoom-modal');
-            const content = document.getElementById('zoom-content');
             document.getElementById('zoom-table-name').textContent = table.name;
             document.getElementById('zoom-total').textContent = formatCurrency(table.total);
             
-            // *** CAMBIO: groupItems ahora hace exactamente lo que queremos para el zoom ***
+            // --- Pestaña 1: Resumen por Producto ---
             const groupedItems = groupItems(table.items);
+            const contentProduct = document.getElementById('zoom-content');
             
+            let productHtml = '';
             if (Object.keys(groupedItems).length === 0) {
-                content.innerHTML = '<p class="text-gray-400 italic text-lg">Mesa vacía</p>';
-                modal.classList.remove('hidden');
-                return;
-            }
+                productHtml = '<p class="text-gray-400 italic text-lg">Mesa vacía</p>';
+            } else {
+                productHtml = '<ul class="divide-y divide-gray-700">';
+                for (const name in groupedItems) {
+                    const item = groupedItems[name];
+                    const isDiscount = item.price < 0;
+                    const isOther = item.price > 0 && (name === 'Otros');
+                    
+                    let textColor = 'text-white';
+                    if (isDiscount) textColor = 'text-red-300';
+                    if (isOther) textColor = 'text-yellow-300';
 
-            let html = '<ul class="divide-y divide-gray-700">';
-            for (const name in groupedItems) {
-                const item = groupedItems[name];
-                const isDiscount = item.price < 0;
-                const isOther = item.price > 0 && (name === 'Otros');
-                
-                let textColor = 'text-white';
-                if (isDiscount) textColor = 'text-red-300';
-                if (isOther) textColor = 'text-yellow-300';
-
-                html += `
-                    <li class="flex justify-between items-center py-3">
-                        <span class="text-lg ${textColor}">
-                            ${name} 
-                            <span class="font-medium">${name !== 'Otros' ? 'x ' + item.quantity : ''}</span>
-                        </span>
-                        <span class="font-semibold text-xl ${textColor}">
-                            ${formatCurrency(item.totalPrice)}
-                        </span>
-                    </li>
-                `;
+                    productHtml += `
+                        <li class="flex justify-between items-center py-3">
+                            <span class="text-lg ${textColor}">
+                                ${name} 
+                                <span class="font-medium">${name !== 'Otros' ? 'x ' + item.quantity : ''}</span>
+                            </span>
+                            <span class="font-semibold text-xl ${textColor}">
+                                ${formatCurrency(item.totalPrice)}
+                            </span>
+                        </li>
+                    `;
+                }
+                productHtml += '</ul>';
             }
-            html += '</ul>';
-            content.innerHTML = html;
+            contentProduct.innerHTML = productHtml;
+            
+            // --- Pestaña 2: Resumen por Dueño ---
+            const sortedTransactions = groupHistoryByTransaction(table.items);
+            const ownerSummary = summarizeByOwner(sortedTransactions);
+            const contentOwner = document.getElementById('zoom-owner-content');
+            
+            let ownerHtml = '';
+            if (ownerSummary.size === 0) {
+                ownerHtml = '<p class="text-gray-400 italic text-lg">No hay transacciones.</p>';
+            } else {
+                ownerHtml = '<ul class="divide-y divide-gray-700">';
+                ownerSummary.forEach((data, owner) => {
+                    const ownerColor = (owner === 'Sin Asignar') ? 'text-gray-400' : 'text-cyan-400';
+                    const totalColor = (data.total < 0) ? 'text-red-400' : 'text-green-400';
+                    
+                    ownerHtml += `
+                        <li class="py-3">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-xl font-semibold ${ownerColor}">${owner}</span>
+                                <span class="text-xl font-bold ${totalColor}">${formatCurrency(data.total)}</span>
+                            </div>
+                            <ul class="pl-4 border-l border-gray-600 space-y-1">`;
+                    
+                    data.transactions.forEach(tx => {
+                        const txTime = tx.timestamp ? new Date(tx.timestamp).toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' }) : '';
+                        let txName = tx.name;
+                        // Si es ronda, mostrar detalles breves
+                        if (tx.isRound) {
+                            txName = `Ronda (${tx.details.map(d => `${d.quantity} ${d.name}`).join(', ')})`;
+                        }
+                        
+                        ownerHtml += `
+                            <li class="flex justify-between text-sm ${tx.price < 0 ? 'text-red-400' : 'text-gray-300'}">
+                                <span class="pr-2">${txName} <span class="text-gray-500 text-xs">${txTime}</span></span>
+                                <span class="flex-shrink-0">${formatCurrency(tx.price)}</span>
+                            </li>
+                        `;
+                    });
+                            
+                    ownerHtml += `</ul></li>`;
+                });
+                ownerHtml += '</ul>';
+            }
+            contentOwner.innerHTML = ownerHtml;
+
+            // --- Resetear Pestañas ---
+            const tabProduct = document.getElementById('zoom-tab-product');
+            const tabOwner = document.getElementById('zoom-tab-owner');
+            contentProduct.classList.remove('hidden');
+            contentOwner.classList.add('hidden');
+            tabProduct.classList.add('bg-cyan-600');
+            tabProduct.classList.remove('bg-gray-700');
+            tabOwner.classList.add('bg-gray-700');
+            tabOwner.classList.remove('bg-cyan-600');
             
             modal.classList.remove('hidden');
         }
@@ -1546,27 +1742,22 @@
             const nameInput = document.getElementById('audit-table-name');
             const deleteAllBtn = document.getElementById('delete-all-filtered-btn'); 
 
-            // Poner la fecha de hoy por defecto
             const today = new Date();
             today.setMinutes(today.getMinutes() - today.getTimezoneOffset());
             dateInput.value = today.toISOString().split('T')[0];
 
-            // Abrir
             showBtn.addEventListener('click', () => {
                 modal.classList.remove('hidden');
-                fetchClosedTables(); // Cargar datos al abrir
+                fetchClosedTables(); 
             });
             
-            // Cerrar
             closeBtn.addEventListener('click', () => {
                 modal.classList.add('hidden');
             });
             
-            // Recargar al cambiar filtros
             dateInput.addEventListener('change', fetchClosedTables);
             nameInput.addEventListener('input', fetchClosedTables);
             
-            // Botón Borrar Todo (Filtro)
             deleteAllBtn.addEventListener('click', handleDeleteAllFiltered);
         }
 
@@ -1576,23 +1767,70 @@
             const cancelBtn = document.getElementById('confirmation-cancel-btn');
             const okBtn = document.getElementById('confirmation-ok-btn');
 
-            // Botón de Cancelar
             cancelBtn.addEventListener('click', () => {
                 modal.classList.add('hidden');
-                onConfirmAction = null; // Limpiar la acción
+                onConfirmAction = null; 
             });
 
-            // Botón de Confirmar
             okBtn.addEventListener('click', () => {
                 if (typeof onConfirmAction === 'function') {
-                    onConfirmAction(); // Ejecutar la acción guardada
+                    onConfirmAction(); 
                 }
-                modal.classList.add('hidden'); // Ocultar modal
-                onConfirmAction = null; // Limpiar la acción
+                modal.classList.add('hidden'); 
+                onConfirmAction = null; 
             });
         }
         
-        // CAMBIO: Configura el modal de transferencia
+        // NUEVO: Configura el modal para editar nombre de ronda
+        function setupEditRoundNameModal() {
+            const modal = document.getElementById('edit-round-name-modal');
+            const cancelBtn = document.getElementById('edit-round-name-cancel-btn');
+            const saveBtn = document.getElementById('edit-round-name-save-btn');
+            const input = document.getElementById('round-name-input');
+            
+            cancelBtn.addEventListener('click', () => {
+                modal.classList.add('hidden');
+                currentEditContext = null;
+            });
+            
+            saveBtn.addEventListener('click', async () => {
+                if (!currentEditContext) return;
+                
+                const { tableId, roundId } = currentEditContext;
+                const newName = input.value.trim();
+                
+                // Deshabilitar botón para evitar doble clic
+                saveBtn.disabled = true;
+                saveBtn.textContent = 'Guardando...';
+                
+                try {
+                    await handleUpdateRoundName(tableId, roundId, newName);
+                    
+                    modal.classList.add('hidden');
+                    currentEditContext = null;
+                    
+                    // Refrescar el modal de historial (que sigue abierto)
+                    // CAMBIO: Asegurarse que la mesa activa sea la correcta
+                    const tableRefId = activeTableId;
+                    if (tableRefId) {
+                        const freshTableSnap = await getDoc(doc(tablesCollectionRef, tableRefId));
+                        if (freshTableSnap.exists()) {
+                            showHistory(freshTableSnap.data());
+                        }
+                    }
+                    
+                } catch (error) {
+                    console.error("Error al guardar nombre de ronda:", error);
+                    showStatusMessage("Error al guardar el nombre.", true);
+                } finally {
+                    // Rehabilitar botón
+                    saveBtn.disabled = false;
+                    saveBtn.textContent = 'Guardar';
+                }
+            });
+        }
+        
+        // Configura el modal de transferencia
         function setupTransferModal() {
             const modal = document.getElementById('transfer-modal');
             const closeBtn = document.getElementById('close-transfer-modal-btn');
@@ -1602,36 +1840,31 @@
             const otherContainer = document.getElementById('transfer-other-name-container');
             const otherInput = document.getElementById('transfer-other-name');
             
-            // Llenar el select
-            select.innerHTML = ''; // Limpiar
+            select.innerHTML = ''; 
             predefinedTables.forEach(name => {
                 const option = document.createElement('option');
                 option.value = name;
                 option.textContent = name;
                 select.appendChild(option);
             });
-            // Añadir la opción "Otra"
             const otherOption = document.createElement('option');
             otherOption.value = otherOptionValue;
             otherOption.textContent = otherOptionValue;
             select.appendChild(otherOption);
             
-            // Mostrar/ocultar el campo de texto "Otra"
             select.addEventListener('change', () => {
                 if (select.value === otherOptionValue) {
                     otherContainer.style.display = 'block';
                     otherInput.focus();
                 } else {
                     otherContainer.style.display = 'none';
-                    otherInput.value = ''; // Limpiar
+                    otherInput.value = ''; 
                 }
             });
             
-            // Botones de cerrar/cancelar
             closeBtn.addEventListener('click', () => modal.classList.add('hidden'));
             cancelBtn.addEventListener('click', () => modal.classList.add('hidden'));
             
-            // Botón de Confirmar Transferencia
             okBtn.addEventListener('click', () => {
                 handleTransferTable();
             });
@@ -1648,12 +1881,23 @@
             document.getElementById('confirmation-title').textContent = title;
             document.getElementById('confirmation-message').textContent = message;
             
-            onConfirmAction = onConfirm; // Guardar la acción a ejecutar
+            onConfirmAction = onConfirm; 
             
-            modal.classList.remove('hidden'); // Mostrar el modal
+            modal.classList.remove('hidden'); 
         }
         
-        // CAMBIO: Muestra el modal de transferencia
+        // NUEVO: Muestra el modal para editar el nombre de la ronda
+        function showEditRoundNameModal(tableId, roundId, currentName) {
+            currentEditContext = { tableId, roundId };
+            const modal = document.getElementById('edit-round-name-modal');
+            const input = document.getElementById('round-name-input');
+            
+            input.value = currentName || '';
+            modal.classList.remove('hidden');
+            input.focus(); // Poner el foco en el input
+        }
+        
+        // Muestra el modal de transferencia
         function showTransferModal() {
             const modal = document.getElementById('transfer-modal');
             const fromNameEl = document.getElementById('transfer-from-name');
@@ -1668,9 +1912,8 @@
                 return;
             }
             
-            // Resetear el modal
             fromNameEl.textContent = currentTable.name;
-            select.value = predefinedTables[0]; // Reset al primer item
+            select.value = predefinedTables[0]; 
             otherContainer.style.display = 'none';
             otherInput.value = '';
             errorEl.textContent = '';
@@ -1687,7 +1930,6 @@
             
             content.innerHTML = '<p class="text-gray-400 italic">Buscando...</p>';
             
-            // Limpiamos el array de IDs filtrados
             currentAuditFilteredIds = [];
             
             if (!dateStr) {
@@ -1696,8 +1938,6 @@
                 return;
             }
             
-            // CORRECCIÓN DE FECHA: Asegurarse que la fecha se interpreta en la zona local
-            // y no en UTC, que podría cambiar el día.
             const [year, month, day] = dateStr.split('-').map(Number);
             const startDate = new Date(year, month - 1, day, 0, 0, 0, 0);
             const endDate = new Date(year, month - 1, day, 23, 59, 59, 999);
@@ -1706,7 +1946,6 @@
             const endISO = endDate.toISOString();
 
             try {
-                // Construir la consulta a Firestore
                 const q = query(closedTablesCollectionRef, 
                     where("closedAt", ">=", startISO),
                     where("closedAt", "<=", endISO)
@@ -1720,18 +1959,15 @@
                 snapshot.forEach(doc => {
                     const table = doc.data();
                     
-                    // Filtro manual por nombre
                     if (nameQuery && !table.name.toLowerCase().includes(nameQuery)) {
-                        return; // Omitir esta mesa
+                        return; 
                     }
                     
-                    // Guardar ID para borrado
                     currentAuditFilteredIds.push(doc.id); 
                     
                     tablesFound++;
                     totalAudited += table.total;
                     
-                    // *** CAMBIO: groupItems ahora funciona aquí también ***
                     const groupedItems = groupItems(table.items);
                     let itemsDetailHtml = '';
                     for (const name in groupedItems) {
@@ -1766,16 +2002,13 @@
                             <ul class="pl-4 border-l border-gray-700 mb-3">
                                 ${itemsDetailHtml}
                             </ul>
-                            <!-- Botones de Acción para Auditoría -->
-                            <div class="flex gap-2 flex-wrap"> <!-- Añadido flex-wrap por si no caben -->
+                            <div class="flex gap-2 flex-wrap"> 
                                 <button data-table-id="${doc.id}" class="btn-view-closed-detail bg-blue-600 hover:bg-blue-700 text-white font-semibold py-1 px-3 rounded-lg text-sm transition-all">
                                     Ver Detalle
                                 </button>
-                                <!-- CAMBIO: Botón Reabrir -->
                                 <button data-table-id="${doc.id}" class="btn-reopen-table bg-yellow-600 hover:bg-yellow-700 text-white font-semibold py-1 px-3 rounded-lg text-sm transition-all">
                                     Reabrir
                                 </button>
-                                <!-- Botón Borrar (Individual) -->
                                 <button data-table-id="${doc.id}" data-table-name="${table.name}" class="btn-delete-closed-item bg-red-600 hover:bg-red-700 text-white font-semibold py-1 px-3 rounded-lg text-sm transition-all">
                                     Borrar
                                 </button>
@@ -1792,7 +2025,6 @@
                     content.innerHTML = tablesHtml;
                 }
                 
-                // Conectar botones de "Ver Detalle"
                 content.querySelectorAll('.btn-view-closed-detail').forEach(btn => {
                     btn.addEventListener('click', async () => {
                         const docId = btn.dataset.tableId;
@@ -1810,7 +2042,6 @@
                     });
                 });
 
-                // CAMBIO: Conectar botones "Reabrir"
                 content.querySelectorAll('.btn-reopen-table').forEach(btn => {
                     btn.addEventListener('click', () => {
                         const docId = btn.dataset.tableId;
@@ -1818,12 +2049,10 @@
                     });
                 });
                 
-                // Conectar botones "Borrar" (Individual)
                 content.querySelectorAll('.btn-delete-closed-item').forEach(btn => {
                     btn.addEventListener('click', () => {
                         const docId = btn.dataset.tableId;
                         const tableName = btn.dataset.tableName;
-                        // Usar el modal de confirmación
                         handleDeleteClosedTable(docId, tableName);
                     });
                 });
@@ -1839,22 +2068,18 @@
 
         // --- 7. ACCIONES (Eliminar, Cerrar, PDF) ---
 
-        // *** CAMBIO: Elimina una transacción completa (Ronda o Item) desde el historial ***
+        // Elimina una transacción completa (Ronda o Item) desde el historial
         async function handleDeleteItem(table, transactionToDelete) {
             try {
                 const tableDocRef = doc(tablesCollectionRef, table.id);
                 
-                // transactionToDelete.items = array de TODOS los items en esa transacción
-                // transactionToDelete.price = precio total de la transacción
-                
                 await updateDoc(tableDocRef, {
-                    items: arrayRemove(...transactionToDelete.items), // Borra todos los items de la ronda/tx
-                    total: increment(-transactionToDelete.price) // Resta el precio total de la ronda/tx
+                    items: arrayRemove(...transactionToDelete.items), 
+                    total: increment(-transactionToDelete.price) 
                 });
                 
                 showStatusMessage(`Item "${transactionToDelete.name}" eliminado.`, false);
                 
-                // Refrescar el historial si sigue abierto
                 const freshTable = allTablesData.get(table.id);
                 if (freshTable) {
                     if (!document.getElementById('history-modal').classList.contains('hidden')) {
@@ -1870,7 +2095,7 @@
             }
         }
         
-        // *** CAMBIO: El botón "x" de la tarjeta ahora SIEMPRE abre el historial ***
+        // El botón "x" de la tarjeta ahora SIEMPRE abre el historial
         async function handleDeleteGroup(table, itemName) {
             
             showConfirmationModal(
@@ -1893,19 +2118,15 @@
                 message = `La mesa "${table.name}" está vacía.\n¿Desea cerrarla de todas formas?`;
             }
 
-            // Usar el modal de confirmación en lugar de confirm()
             showConfirmationModal(title, message, async () => {
-                // Esta es la acción que se ejecuta al confirmar
                 try {
-                    // 1. Mover a "closedTables"
-                    const closedDocRef = doc(closedTablesCollectionRef, `${table.id}-${Date.now()}`); // ID único
+                    const closedDocRef = doc(closedTablesCollectionRef, `${table.id}-${Date.now()}`); 
                     await setDoc(closedDocRef, {
-                        ...table, // Copiamos todos los datos
+                        ...table, 
                         status: 'closed',
                         closedAt: new Date().toISOString()
                     });
                     
-                    // 2. Eliminar de "tables" (abiertas)
                     const tableDocRef = doc(tablesCollectionRef, table.id);
                     await deleteDoc(tableDocRef);
                     
@@ -1918,12 +2139,11 @@
             });
         }
         
-        // CAMBIO: Nueva función para Reabrir Mesas
+        // Nueva función para Reabrir Mesas
         async function handleReopenTable(closedDocId) {
             let tableData;
             let originalTableId;
 
-            // 1. Obtener los datos de la mesa cerrada y verificar si se puede reabrir
             try {
                 const closedDocRef = doc(closedTablesCollectionRef, closedDocId);
                 const closedDocSnap = await getDoc(closedDocRef);
@@ -1932,9 +2152,8 @@
                     return;
                 }
                 tableData = closedDocSnap.data();
-                originalTableId = tableData.id; // Este es el ID original (ej: "amarillo")
+                originalTableId = tableData.id; 
                 
-                // Verificar si ya existe una mesa abierta con ese ID
                 const openTableDocRef = doc(tablesCollectionRef, originalTableId);
                 const openTableDocSnap = await getDoc(openTableDocRef);
                 if (openTableDocSnap.exists()) {
@@ -1948,35 +2167,27 @@
                 return;
             }
 
-            // 2. Pedir confirmación
             const title = `Reabrir Mesa`;
             const message = `¿Está seguro que desea REABRIR la mesa "${tableData.name}"?`;
 
             showConfirmationModal(title, message, async () => {
-                // 3. Acción al confirmar
                 try {
-                    // Preparamos los datos para la mesa reabierta
                     const reOpenedTableData = { ...tableData };
-                    delete reOpenedTableData.closedAt; // Quitar el timestamp de cierre
-                    reOpenedTableData.status = 'open'; // Marcar como abierta
+                    delete reOpenedTableData.closedAt; 
+                    reOpenedTableData.status = 'open'; 
                     
-                    // Usamos un batch para asegurar que todo sea atómico
                     const batch = writeBatch(db);
 
-                    // a. Crear la mesa de nuevo en "tables" con su ID ORIGINAL
                     const openTableRef = doc(tablesCollectionRef, originalTableId);
                     batch.set(openTableRef, reOpenedTableData);
 
-                    // b. Borrar la mesa de "closedTables"
                     const closedTableRef = doc(closedTablesCollectionRef, closedDocId);
                     batch.delete(closedTableRef);
 
-                    // c. Ejecutar el batch
                     await batch.commit();
 
                     showStatusMessage(`Mesa "${tableData.name}" ha sido reabierta.`, false);
                     
-                    // Recargar la auditoría
                     fetchClosedTables();
 
                 } catch (error) {
@@ -1986,7 +2197,42 @@
             });
         }
         
-        // CAMBIO: Nueva función para Transferir Mesas
+        // NUEVO: Actualiza el nombre de una ronda en todos sus items
+        async function handleUpdateRoundName(tableId, roundId, newName) {
+            const tableDocRef = doc(tablesCollectionRef, tableId);
+            
+            try {
+                // 1. Leer los datos más frescos de la mesa
+                const tableSnap = await getDoc(tableDocRef);
+                if (!tableSnap.exists()) {
+                    throw new Error("La mesa no fue encontrada.");
+                }
+                const currentItems = tableSnap.data().items;
+                
+                // 2. Mapear los items, actualizando solo los de la ronda en cuestión
+                const newItems = currentItems.map(item => {
+                    if (item.roundId === roundId) {
+                        return { ...item, roundName: newName || null };
+                    }
+                    return item; // Devolver el item sin cambios
+                });
+                
+                // 3. Sobrescribir el array de items completo
+                await updateDoc(tableDocRef, {
+                    items: newItems
+                });
+                
+                showStatusMessage("Nombre de ronda actualizado.", false);
+                
+            } catch (error) {
+                console.error("Error en handleUpdateRoundName:", error);
+                showStatusMessage(`Error al actualizar nombre: ${error.message}`, true);
+                // Re-lanzar el error para que el modal 'finally' lo sepa
+                throw error;
+            }
+        }
+        
+        // Nueva función para Transferir Mesas
         async function handleTransferTable() {
             const select = document.getElementById('transfer-table-select');
             const otherInput = document.getElementById('transfer-other-name');
@@ -1999,7 +2245,6 @@
                 destinationName = select.value;
             }
             
-            // Validaciones
             if (!destinationName) {
                 errorEl.textContent = "Debe seleccionar o escribir un nombre de destino.";
                 return;
@@ -2010,47 +2255,37 @@
                 return;
             }
             
-            // Obtener datos de la mesa actual
             const currentTableData = allTablesData.get(activeTableId);
             if (!currentTableData) {
                 errorEl.textContent = "Error: No se encontró la mesa activa.";
                 return;
             }
             
-            // 1. Verificar si la mesa de destino YA EXISTE
             try {
                 const destinationDocRef = doc(tablesCollectionRef, destinationId);
                 const destinationDocSnap = await getDoc(destinationDocRef);
                 
                 if (destinationDocSnap.exists()) {
-                    // La mesa de destino existe, no se puede transferir
                     errorEl.textContent = `La mesa "${destinationName}" ya está abierta. No se puede transferir.`;
                     return;
                 }
                 
-                // 2. La mesa de destino NO existe, proceder con la transferencia (renombrar)
-                
-                // Preparamos los nuevos datos
                 const newTableData = { ...currentTableData };
                 newTableData.id = destinationId;
                 newTableData.name = destinationName;
                 
-                // Usar un batch para la operación atómica
                 const batch = writeBatch(db);
                 
-                // a. Crear la nueva mesa
                 batch.set(destinationDocRef, newTableData);
                 
-                // b. Borrar la mesa antigua
                 const oldTableRef = doc(tablesCollectionRef, activeTableId);
                 batch.delete(oldTableRef);
                 
-                // c. Ejecutar
                 await batch.commit();
                 
                 showStatusMessage(`Mesa "${currentTableData.name}" transferida a "${destinationName}".`, false);
                 document.getElementById('transfer-modal').classList.add('hidden');
-                setActiveTable(null); // Deseleccionar
+                setActiveTable(null); 
 
             } catch (error) {
                 console.error("Error al transferir mesa:", error);
@@ -2064,22 +2299,18 @@
             const title = `Borrar Registro`;
             const message = `¿Está seguro que desea BORRAR PERMANENTEMENTE el registro de la mesa "${tableName}"?\n\nEsta acción no se puede deshacer.`;
 
-            // Usar el modal de confirmación
             showConfirmationModal(title, message, async () => {
-                // Acción al confirmar
                 try {
                     const docRef = doc(closedTablesCollectionRef, docId);
                     await deleteDoc(docRef);
                     
                     showStatusMessage(`Mesa "${tableName}" borrada de la auditoría.`, false);
                     
-                    // Opcional: remover el elemento de la UI sin recargar
                     const itemEl = document.getElementById(`audit-item-${docId}`);
                     if (itemEl) {
                         itemEl.remove();
                     }
                     
-                    // Recargar la auditoría para que el total se actualice
                     fetchClosedTables();
 
                 } catch (error) {
@@ -2099,11 +2330,8 @@
             const title = `Borrar ${currentAuditFilteredIds.length} Registros`;
             const message = `¿Está seguro que desea BORRAR PERMANENTEMENTE los ${currentAuditFilteredIds.length} registros que coinciden con el filtro?\n\nEsta acción no se puede deshacer.`;
 
-            // Usar el modal de confirmación
             showConfirmationModal(title, message, async () => {
-                // Acción al confirmar
                 try {
-                    // Usamos un "batch write" para borrar todos los documentos en una sola operación
                     const batch = writeBatch(db);
                     
                     currentAuditFilteredIds.forEach(docId => {
@@ -2115,7 +2343,6 @@
                     
                     showStatusMessage(`${currentAuditFilteredIds.length} registros borrados.`, false);
                     
-                    // Recargamos la lista de auditoría
                     fetchClosedTables();
 
                 } catch (error) {
@@ -2125,10 +2352,9 @@
             });
         }
 
-        // CAMBIO: Nueva función para cargar scripts dinámicamente
+        // Carga scripts dinámicamente
         function loadScript(src) {
             return new Promise((resolve, reject) => {
-                // Evitar cargar el mismo script dos veces
                 if (document.querySelector(`script[src="${src}"]`)) {
                     resolve();
                     return;
@@ -2141,26 +2367,24 @@
             });
         }
         
-        // CAMBIO: Nueva función para asegurar que los scripts del PDF estén cargados
+        // Asegura que los scripts del PDF estén cargados
         async function ensurePdfScripts() {
             if (pdfScriptsLoaded) {
-                return true; // Ya están cargados
+                return true; 
             }
             
             if (isPdfLoading) {
                 showStatusMessage("Cargando librerías PDF...", false);
-                return false; // Ya está en proceso
+                return false; 
             }
             
             isPdfLoading = true;
             showStatusMessage("Cargando librerías PDF...", false);
             
             try {
-                // Cargar jspdf primero
                 await loadScript("https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js");
                 console.log("jsPDF cargado.");
                 
-                // Cargar autotable después
                 await loadScript("https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js");
                 console.log("jsPDF-AutoTable cargado.");
                 
@@ -2172,7 +2396,7 @@
             } catch (error) {
                 console.error(error);
                 showStatusMessage(error.message, true);
-                pdfScriptsLoaded = false; // Permitir reintentar
+                pdfScriptsLoaded = false; 
                 isPdfLoading = false;
                 return false;
             }
@@ -2180,78 +2404,66 @@
 
         // Genera el PDF
         function generatePDF(table) {
-            // Asegurarse que las librerías están cargadas en el objeto window
             if (typeof window.jspdf === 'undefined' || typeof window.jspdf.jsPDF === 'undefined') {
                 console.error("jsPDF no está cargado en window.");
                 showStatusMessage("Error: Librería PDF no cargada.", true);
-                return; // Salir si jsPDF no existe
+                return; 
             }
             
-            // CORRECCIÓN: Instanciar jsPDF y *luego* chequear por autotable.
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
 
-            // Comprobar si 'doc.autoTable' es una *función*.
             if (typeof doc.autoTable !== 'function') {
                 console.error("Error: El plugin jsPDF-AutoTable no se adjuntó a jsPDF.");
                 showStatusMessage("Error: El plugin de tablas PDF no cargó.", true);
-                return; // Salir si autotable no es una función
+                return; 
             }
             
-            // --- INICIO: Marca de Agua ---
             if (logoBase64) {
                 try {
-                    // Obtener dimensiones de la página
                     const pageWidth = doc.internal.pageSize.getWidth();
                     const pageHeight = doc.internal.pageSize.getHeight();
                     
-                    // Añadir la imagen como marca de agua (centrada y con opacidad)
-                    // (Asumimos que la imagen es más o menos cuadrada)
-                    const imgWidth = 100; // Ancho de la marca de agua
-                    const imgHeight = 100; // Alto de la marca de agua
+                    const imgWidth = 100; 
+                    const imgHeight = 100; 
                     const x = (pageWidth - imgWidth) / 2;
                     const y = (pageHeight - imgHeight) / 2;
 
-                    doc.saveGraphicsState(); // Guardar estado actual
-                    doc.setGState(new doc.GState({ opacity: 0.1 })); // Aplicar opacidad
+                    doc.saveGraphicsState(); 
+                    doc.setGState(new doc.GState({ opacity: 0.1 })); 
                     doc.addImage(logoBase64, 'PNG', x, y, imgWidth, imgHeight);
-                    doc.restoreGraphicsState(); // Restaurar estado (opacidad completa)
+                    doc.restoreGraphicsState(); 
                 
                 } catch (imgError) {
                     console.error("Error al añadir la marca de agua (Base64 inválido?):", imgError);
                 }
             }
-            // --- FIN: Marca de Agua ---
             
-            // *** CAMBIO: El groupItems ya hace todo el trabajo ***
             const groupedItems = groupItems(table.items);
             let subtotal = 0;
             let discounts = 0;
-            let others = 0; // Para 'Otros'
+            let others = 0; 
             const tableBody = [];
             
             for (const name in groupedItems) {
                 const item = groupedItems[name];
                 
                 if (item.price < 0) {
-                    discounts += item.totalPrice; // (ya es negativo)
+                    discounts += item.totalPrice; 
                 } else if (name === 'Otros') {
-                    others += item.totalPrice; // (es positivo)
+                    others += item.totalPrice; 
                 }
                 else {
-                    // Todos los demás productos (incluidos los de las rondas)
                     subtotal += item.totalPrice;
                     tableBody.push([
                         item.quantity.toString(),
                         name,
-                        formatCurrency(item.price), // Precio Unitario
-                        formatCurrency(item.totalPrice) // Precio Total
+                        formatCurrency(item.price), 
+                        formatCurrency(item.totalPrice) 
                     ]);
                 }
             }
-            // *** FIN DEL CAMBIO ***
             
-            // Añadir "Otros" a la tabla si existe
             if (others > 0) {
                  tableBody.push([
                     '1',
@@ -2261,7 +2473,6 @@
                 ]);
             }
             
-            // Añadir "Descuentos" a la tabla si existe
             if (discounts < 0) {
                 tableBody.push([
                     '1',
@@ -2271,7 +2482,6 @@
                 ]);
             }
 
-            // --- Contenido del PDF ---
             const today = new Date();
             const dateStr = today.toLocaleDateString('es-CO');
             const timeStr = today.toLocaleTimeString('es-CO');
@@ -2297,7 +2507,6 @@
                 headStyles: { fillColor: [30, 30, 30] }
             });
 
-            // --- Totales ---
             const finalY = doc.autoTable.previous.finalY;
             
             doc.setFontSize(12);
@@ -2305,7 +2514,6 @@
             
             let currentY = finalY + 10;
 
-            // Mostrar Subtotal solo si hay descuentos u otros cargos
             if (discounts < 0 || others > 0) {
                 doc.text("Subtotal Productos:", 150, currentY, { align: 'right' });
                 doc.text(formatCurrency(subtotal), 200, currentY, { align: 'right' });
@@ -2324,7 +2532,7 @@
                 currentY += 7;
             }
             
-            currentY += 2; // Espacio extra
+            currentY += 2; 
 
             doc.setFontSize(16);
             doc.text("TOTAL:", 150, currentY, { align: 'right' });
@@ -2340,33 +2548,27 @@
 
         // --- 8. FUNCIONES UTILITARIAS ---
 
-        // NUEVO: Filtra visualmente la cuadrícula de mesas
+        // Filtra visualmente la cuadrícula de mesas
         function applyTableGridFilter() {
             const tablesGrid = document.getElementById('tables-grid');
             if (!tablesGrid) return;
 
-            // Iterar sobre todas las tarjetas de mesa
             Array.from(tablesGrid.children).forEach(card => {
                 const cardId = card.dataset.tableId;
                 
-                // CAMBIO: Lógica de filtro actualizada
                 if (isGridFiltered && activeTableId) {
-                    // Filtro está ACTIVO y hay una mesa seleccionada
                     if (cardId === activeTableId) {
-                        // Es la mesa activa, mostrarla
                         card.classList.remove('hidden');
                     } else {
-                        // No es la mesa activa, ocultarla
                         card.classList.add('hidden');
                     }
                 } else {
-                    // Filtro está INACTIVO, mostrar todas
                     card.classList.remove('hidden');
                 }
             });
         }
 
-        // Formatea un número como moneda (Peso Colombiano)
+        // Formatea un número como moneda
         function formatCurrency(value) {
             return new Intl.NumberFormat('es-CO', {
                 style: 'currency',
@@ -2376,7 +2578,7 @@
             }).format(value);
         }
         
-        // Muestra un mensaje temporal en la UI
+        // Muestra un mensaje temporal
         function showStatusMessage(message, isError = false) {
             const el = document.getElementById('status-message');
             el.textContent = message;
@@ -2386,7 +2588,6 @@
                 el.className = 'mt-4 text-center text-green-400';
             }
             
-            // Borrar después de 4 segundos
             setTimeout(() => {
                 if (el.textContent === message) {
                     el.textContent = '';
@@ -2395,8 +2596,7 @@
             }, 4000);
         }
         
-        // Establece la mesa activa y actualiza el indicador
-        // CAMBIO: Añadido parámetro 'shouldApplyFilter'
+        // Establece la mesa activa
         function setActiveTable(tableId, shouldApplyFilter = false) {
             const oldActiveId = activeTableId;
             activeTableId = tableId;
@@ -2405,9 +2605,7 @@
             const indicatorName = document.getElementById('active-table-name');
             const activeTableSelect = document.getElementById('active-table-select');
             const transferBtn = document.getElementById('transfer-table-btn'); 
-            // NUEVO: toggleFilterBtn ya está definido globalmente
 
-            // Quitar clase 'active' de la mesa anterior
             if (oldActiveId && oldActiveId !== tableId) {
                 const oldCard = document.querySelector(`[data-table-id="${oldActiveId}"]`);
                 if (oldCard) {
@@ -2415,21 +2613,16 @@
                 }
             }
             
-            // Poner clase 'active' en la mesa nueva y mostrar indicador
             if (tableId) {
                  const newCard = document.querySelector(`[data-table-id="${tableId}"]`);
                  if (newCard) {
                     newCard.classList.add('active');
                     
-                    // *** CAMBIO: Mover físicamente la tarjeta al inicio ***
                     const tablesGrid = document.getElementById('tables-grid');
-                    // Solo lo movemos si no es ya el primer elemento
                     if (tablesGrid.firstChild !== newCard) {
                         tablesGrid.prepend(newCard);
                     }
-                    // Nos aseguramos de que esté a la vista
                     newCard.scrollIntoView({ behavior: 'auto', block: 'start' });
-                    // *** FIN DEL CAMBIO ***
 
                     const freshTable = allTablesData.get(tableId);
                     if (freshTable) {
@@ -2438,46 +2631,36 @@
                         transferBtn.classList.remove('hidden'); 
                     }
                  }
-                 // Sincronizar el atajo
                  activeTableSelect.value = tableId;
                  
-                 // NUEVO: Lógica del botón de filtro
-                 isGridFiltered = shouldApplyFilter; // Establecer el estado del filtro
+                 isGridFiltered = shouldApplyFilter; 
                  updateFilterButtonText();
-                 if (toggleFilterBtn) toggleFilterBtn.classList.remove('hidden'); // Mostrar el botón
+                 if (toggleFilterBtn) toggleFilterBtn.classList.remove('hidden'); 
 
             } else {
-                // Si no hay mesa activa, ocultar indicador
                 indicator.classList.add('hidden');
                 transferBtn.classList.add('hidden'); 
-                // Sincronizar el atajo
                 activeTableSelect.value = "";
                 
-                // NUEVO: Lógica del botón de filtro
-                isGridFiltered = false; // No hay filtro si no hay mesa activa
-                if (toggleFilterBtn) toggleFilterBtn.classList.add('hidden'); // Ocultar el botón
+                isGridFiltered = false; 
+                if (toggleFilterBtn) toggleFilterBtn.classList.add('hidden'); 
             }
             
-            // CAMBIO: Aplicar el filtro visual (movido desde el 'else' al final)
             applyTableGridFilter();
         }
 
-        // CAMBIO: Nueva función para repetir una ronda
+        // Carga una ronda anterior al panel "Ronda Actual"
         function handleRepeatRound(roundDetails) {
             if (!roundDetails || roundDetails.length === 0) {
                 return;
             }
             
-            // Recorrer los items de la ronda a repetir
             roundDetails.forEach(itemToRepeat => {
-                // Verificar si este producto ya está en la "Ronda Actual"
                 const existingItem = currentRound.find(item => item.name === itemToRepeat.name);
                 
                 if (existingItem) {
-                    // Si ya existe, sumar la cantidad
                     existingItem.quantity += itemToRepeat.quantity;
                 } else {
-                    // Si no existe, añadirlo como un nuevo item
                     currentRound.push({
                         name: itemToRepeat.name,
                         price: itemToRepeat.price,
@@ -2486,16 +2669,12 @@
                 }
             });
             
-            // Actualizar el panel de "Ronda Actual"
             renderCurrentRound();
             
-            // Cerrar el modal de historial
             document.getElementById('history-modal').classList.add('hidden');
             
-            // Mostrar mensaje
-            showStatusMessage("Ronda anterior añadida a la 'Ronda Actual'.", false);
+            showStatusMessage("Ronda anterior añadida a la 'Ronda Actual' para editar.", false);
             
-            // Opcional: hacer scroll hasta el panel de ronda
             document.getElementById('current-round-panel').scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
 
@@ -2506,5 +2685,3 @@
     </script>
 </body>
 </html>
-
-
