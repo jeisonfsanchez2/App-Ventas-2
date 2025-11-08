@@ -336,6 +336,7 @@
     </div>
     
     <!-- NUEVO: Modal para Editar Nombre de Ronda -->
+    <!-- CAMBIO: Añadido contenedor de sugerencias -->
     <div id="edit-round-name-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-50 hidden">
         <div class="bg-gray-800 rounded-lg shadow-2xl w-full max-w-sm">
             <!-- Cabecera del Modal -->
@@ -344,6 +345,12 @@
             </div>
             <!-- Contenido del Modal -->
             <div class="p-6">
+                <!-- NUEVO: Contenedor de Sugerencias -->
+                <label class="block text-sm font-medium text-gray-400 mb-2">Sugerencias:</label>
+                <div id="round-name-suggestions" class="flex flex-wrap gap-2 mb-4">
+                    <!-- Botones de sugerencia se inyectan aquí -->
+                </div>
+                
                 <label for="round-name-input" class="block text-sm font-medium text-gray-300 mb-2">Nombre (Ej: Juan, Pedro, Apuesta)</label>
                 <input type="text" id="round-name-input" class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg p-2 placeholder-gray-400">
             </div>
@@ -1518,7 +1525,8 @@
                     const roundId = btn.dataset.roundId;
                     const transaction = sortedTransactions.find(t => t.id === roundId);
                     if (transaction) {
-                        showEditRoundNameModal(table.id, roundId, transaction.roundName);
+                        // CAMBIO: Pasar el objeto 'table' completo
+                        showEditRoundNameModal(table, roundId, transaction.roundName);
                     }
                 });
             });
@@ -1810,8 +1818,8 @@
                     currentEditContext = null;
                     
                     // Refrescar el modal de historial (que sigue abierto)
-                    // CAMBIO: Asegurarse que la mesa activa sea la correcta
-                    const tableRefId = activeTableId;
+                    // CAMBIO: Usar el tableId del contexto, no el global
+                    const tableRefId = tableId; 
                     if (tableRefId) {
                         const freshTableSnap = await getDoc(doc(tablesCollectionRef, tableRefId));
                         if (freshTableSnap.exists()) {
@@ -1887,14 +1895,45 @@
         }
         
         // NUEVO: Muestra el modal para editar el nombre de la ronda
-        function showEditRoundNameModal(tableId, roundId, currentName) {
-            currentEditContext = { tableId, roundId };
+        // CAMBIO: Acepta 'table' completo para buscar sugerencias
+        function showEditRoundNameModal(table, roundId, currentName) {
+            currentEditContext = { tableId: table.id, roundId };
             const modal = document.getElementById('edit-round-name-modal');
             const input = document.getElementById('round-name-input');
-            
+            const suggestionsContainer = document.getElementById('round-name-suggestions');
+
             input.value = currentName || '';
+            
+            // --- NUEVO: Generar sugerencias ---
+            const transactions = groupHistoryByTransaction(table.items);
+            const allNames = transactions.map(tx => tx.roundName).filter(name => name); // Get all non-null names
+            const uniqueNames = [...new Set(allNames)]; // Get unique names
+
+            if (uniqueNames.length > 0) {
+                let suggestionsHtml = '';
+                uniqueNames.forEach(name => {
+                    suggestionsHtml += `
+                        <button class="btn-suggestion bg-gray-600 hover:bg-gray-500 text-white font-semibold py-1 px-3 rounded-lg text-sm" data-name="${name}">
+                            ${name}
+                        </button>
+                    `;
+                });
+                suggestionsContainer.innerHTML = suggestionsHtml;
+                
+                // Conectar botones de sugerencia
+                suggestionsContainer.querySelectorAll('.btn-suggestion').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        e.preventDefault(); 
+                        input.value = btn.dataset.name;
+                    });
+                });
+            } else {
+                suggestionsContainer.innerHTML = '<p class="text-sm text-gray-500 italic">No hay dueños anteriores en esta mesa.</p>';
+            }
+            // --- FIN DE LO NUEVO ---
+
             modal.classList.remove('hidden');
-            input.focus(); // Poner el foco en el input
+            input.focus(); 
         }
         
         // Muestra el modal de transferencia
@@ -2403,6 +2442,7 @@
         }
 
         // Genera el PDF
+        // CAMBIO: Añadida la tabla de resumen por dueño
         function generatePDF(table) {
             if (typeof window.jspdf === 'undefined' || typeof window.jspdf.jsPDF === 'undefined') {
                 console.error("jsPDF no está cargado en window.");
@@ -2439,6 +2479,7 @@
                 }
             }
             
+            // --- Tabla 1: Resumen por Producto ---
             const groupedItems = groupItems(table.items);
             let subtotal = 0;
             let discounts = 0;
@@ -2507,13 +2548,92 @@
                 headStyles: { fillColor: [30, 30, 30] }
             });
 
-            const finalY = doc.autoTable.previous.finalY;
+            let finalY = doc.autoTable.previous.finalY;
             
+            // --- NUEVO: Tabla 2: Resumen por Dueño (Condicional) ---
+            const sortedTransactions = groupHistoryByTransaction(table.items);
+            const ownerSummary = summarizeByOwner(sortedTransactions);
+            
+            // Comprobar si hay dueños asignados (diferentes de "Sin Asignar")
+            const hasAssignedOwners = ownerSummary.size > 1 || (ownerSummary.size === 1 && !ownerSummary.has("Sin Asignar"));
+
+            if (hasAssignedOwners) {
+                // --- CAMBIO: Lógica de la tabla de dueños para incluir detalles ---
+                const ownerTableBody = [];
+                ownerSummary.forEach((data, owner) => {
+                    // Omitir "Sin Asignar" si su total es 0
+                    if (owner === "Sin Asignar" && data.total === 0) {
+                        return; // Es como un 'continue' en forEach
+                    }
+                    
+                    let isFirstRowForOwner = true;
+                    
+                    // Añadir cada transacción
+                    data.transactions.forEach(tx => {
+                        let detailContent = tx.name; // Para "Descuento" u "Otros"
+                        if (tx.isRound) {
+                            // Formatear los detalles de la ronda
+                            detailContent = tx.details.map(d => `${d.quantity} ${d.name}`).join(', ');
+                        }
+                        
+                        ownerTableBody.push([
+                            isFirstRowForOwner ? owner : '', // Mostrar nombre solo en la primera fila del grupo
+                            detailContent, // Contenido de la ronda o item
+                            formatCurrency(tx.price) // Subtotal de esa ronda/item
+                        ]);
+                        isFirstRowForOwner = false;
+                    });
+                    
+                    // Añadir fila de Total para este dueño
+                    ownerTableBody.push([
+                        { 
+                            content: 'Total ' + owner, 
+                            colSpan: 2, 
+                            styles: { halign: 'right', fontStyle: 'bold', fillColor: '#2d3748' } // fondo gris oscuro
+                        },
+                        { 
+                            content: formatCurrency(data.total), 
+                            styles: { fontStyle: 'bold', fillColor: '#2d3748' } 
+                        }
+                    ]);
+                });
+                // --- FIN DEL CAMBIO ---
+
+                doc.setFontSize(12);
+                doc.setFont('helvetica', 'bold');
+                doc.text("Resumen por Dueño", 105, finalY + 10, { align: 'center' });
+
+                doc.autoTable({
+                    startY: finalY + 15,
+                    // --- CAMBIO: Nuevo encabezado ---
+                    head: [['Dueño', 'Detalle de Transacción', 'Subtotal']],
+                    body: ownerTableBody,
+                    theme: 'striped',
+                    headStyles: { fillColor: [23, 73, 91] }, // Un color cyan oscuro
+                    // Estilo para que el nombre del dueño solo aparezca una vez
+                    didParseCell: function (data) {
+                        if (data.cell.raw === '') {
+                             data.cell.styles.fillColor = '#ffffff'; // Ocultar fondo si la celda está vacía
+                        }
+                        // Alinear verticalmente la celda del nombre
+                        if (data.column.index === 0 && data.cell.raw !== '') {
+                            data.cell.styles.valign = 'middle';
+                        }
+                    }
+                });
+                
+                finalY = doc.autoTable.previous.finalY; // Actualizar la posición Y
+            }
+            // --- FIN DE LA NUEVA TABLA ---
+
+            
+            // --- Totales ---
             doc.setFontSize(12);
             doc.setFont('helvetica', 'bold');
             
             let currentY = finalY + 10;
 
+            // Mostrar Subtotal solo si hay descuentos u otros cargos
             if (discounts < 0 || others > 0) {
                 doc.text("Subtotal Productos:", 150, currentY, { align: 'right' });
                 doc.text(formatCurrency(subtotal), 200, currentY, { align: 'right' });
