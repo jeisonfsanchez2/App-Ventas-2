@@ -125,7 +125,6 @@
                     <span class="text-sm text-gray-400">Total Ronda:</span>
                     <span id="current-round-total" class="font-bold text-lg text-yellow-400">$0</span>
                 </div>
-                <!-- CAMBIO: Input para nombre de ronda ELIMINADO -->
             </div>
             
             <!-- Nuevo Botón "Registrar Ronda" -->
@@ -296,7 +295,7 @@
         </div>
     </div>
     
-    <!-- CAMBIO: Modal de Transferir Mesa -->
+    <!-- Modal de Transferir Mesa -->
     <div id="transfer-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-50 hidden">
         <div class="bg-gray-800 rounded-lg shadow-2xl w-full max-w-lg">
             <!-- Cabecera del Modal -->
@@ -335,8 +334,7 @@
         </div>
     </div>
     
-    <!-- NUEVO: Modal para Editar Nombre de Ronda -->
-    <!-- CAMBIO: Añadido contenedor de sugerencias -->
+    <!-- Modal para Editar Nombre de Ronda -->
     <div id="edit-round-name-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-50 hidden">
         <div class="bg-gray-800 rounded-lg shadow-2xl w-full max-w-sm">
             <!-- Cabecera del Modal -->
@@ -345,7 +343,7 @@
             </div>
             <!-- Contenido del Modal -->
             <div class="p-6">
-                <!-- NUEVO: Contenedor de Sugerencias -->
+                <!-- Contenedor de Sugerencias -->
                 <label class="block text-sm font-medium text-gray-400 mb-2">Sugerencias:</label>
                 <div id="round-name-suggestions" class="flex flex-wrap gap-2 mb-4">
                     <!-- Botones de sugerencia se inyectan aquí -->
@@ -400,7 +398,7 @@
 
         // --- 1. CONFIGURACIÓN Y LISTAS ---
 
-        // CAMBIO: Configuración de Firebase HARCODED para prueba externa
+        // Configuración de Firebase
         const firebaseConfig = {
           apiKey: "AIzaSyCUGWQJDywozNv20i4IACVXaeXyHVpYPqg",
           authDomain: "ventas-spb.firebaseapp.com",
@@ -411,13 +409,7 @@
           measurementId: "G-M9PC2L3XTP"
         };
         
-        // --- INSTRUCCIONES PARA LA MARCA DE AGUA (Base64) ---
-        // 1. Ve a: https://www.base64-image.de/
-        // 2. Sube tu logo (la imagen .png o .jpg)
-        // 3. Haz clic en "copy image"
-        // 4. Pega el texto larguísimo entre las comillas de abajo.
-        
-        // EJEMPLO: const logoBase64 = "data:image/png;base64,iVBORw0KGgo... (texto largo) ...";
+        // Logo en Base64 para el PDF
         const logoBase64 = ""; // <--- ¡PEGA TU TEXTO AQUÍ!
 
         // Lista de Productos
@@ -426,10 +418,8 @@
             { category: "Cervezas", name: "Aguila", price: 3200 },
             { category: "Cervezas", name: "Poker", price: 3200 },
             { category: "Cervezas", name: "Light", price: 3500 },
-            // <!-- CAMBIO: Nuevos productos añadidos -->
             { category: "Cervezas", name: "Poker B", price: 3500 },
             { category: "Cervezas", name: "Aguila B", price: 3500 },
-            // <!-- FIN DEL CAMBIO -->
             { category: "Cervezas", name: "Budwaiser", price: 3200 },
             { category: "Cervezas", name: "Club", price: 4000 },
             { category: "Cervezas", name: "Corona", price: 6000 },
@@ -478,7 +468,7 @@
             { category: "Otros", name: "Otros", price: 0 }, 
 
             // Descuento
-            { category: "Descuento", name: "Descuento", price: 0 } // Precio 0, se usa la cantidad
+            { category: "Descuento", name: "Descuento", price: 0 }
         ];
 
         // Lista de Mesas Predefinidas
@@ -490,50 +480,44 @@
 
         // --- 2. VARIABLES GLOBALES ---
         let db, auth;
-        let tablesCollectionRef; // Colección de mesas ABIERTAS
-        let closedTablesCollectionRef; // Colección de mesas CERRADAS
-        let activeTableId = null; // ID de la mesa seleccionada
+        let tablesCollectionRef; 
+        let closedTablesCollectionRef; 
+        let activeTableId = null; 
         
-        let currentRound = []; // CAMBIO: Carrito temporal para la ronda
+        let currentRound = []; 
         
-        // Almacén de datos en memoria para evitar "datos rancios"
         let allTablesData = new Map();
         
-        // Variables para el layout
+        // Variables de Layout
         let leftPanel, rightPanel, toggleTablesBtn;
-        let isTablesVisible = false; // El usuario quiere que inicien ocultas
+        let isTablesVisible = false; 
         
-        // Variables para el filtro de la cuadrícula
+        // Variables de Filtro de Cuadrícula
         let toggleFilterBtn;
         let isGridFiltered = false; 
         
-        // CAMBIO: Variables para el formulario de "Nueva Mesa"
+        // Variables de Formulario "Nueva Mesa"
         let toggleOpenTableFormBtn, openTableForm;
         let isOpenTableFormVisible = false;
         
-        // Almacén para los IDs de los documentos filtrados en auditoría
         let currentAuditFilteredIds = [];
         
-        // Variable para manejar la acción de confirmación
         let onConfirmAction = null;
         
-        // NUEVO: Variable para el contexto de edición de nombre de ronda
         let currentEditContext = null; 
         
-        // Variable para rastrear la carga de scripts PDF
+        // Variables de Carga de PDF
         let pdfScriptsLoaded = false;
-        let isPdfLoading = false; // Para evitar clics múltiples
+        let isPdfLoading = false; 
 
         // --- 3. INICIALIZACIÓN DE FIREBASE ---
         async function initializeFirebase() {
             try {
-                // Usamos la configuración proporcionada
                 const app = initializeApp(firebaseConfig);
                 db = getFirestore(app);
                 auth = getAuth(app);
-                // setLogLevel('Debug'); // CAMBIO: Comentado para mejorar rendimiento en móviles
+                // setLogLevel('Debug'); // Comentado para mejorar rendimiento en móviles
 
-                // Usaremos colecciones de primer nivel, que es lo más común.
                 tablesCollectionRef = collection(db, "tables");
                 closedTablesCollectionRef = collection(db, "closedTables");
 
@@ -544,11 +528,9 @@
                 onAuthStateChanged(auth, (user) => {
                     if (user) {
                         console.log("Usuario autenticado (anónimo):", user.uid);
-                        // El usuario está listo, ahora podemos cargar la UI y los listeners
                         loadAppUI();
                     } else {
                         console.log("Usuario no autenticado, intentando iniciar sesión...");
-                        // Intentar iniciar sesión (anónimo)
                         signInUser();
                     }
                 });
@@ -561,13 +543,10 @@
         
         async function signInUser() {
             try {
-                // CAMBIO: Para pruebas externas, solo usamos anónimo
                 console.log("Intentando signInAnonymously...");
                 await signInAnonymously(auth);
-                // onAuthStateChanged se disparará automáticamente después de esto
             } catch (error) {
                 console.error("Falló el inicio de sesión anónimo:", error);
-                // CAMBIO: Escribir directamente al body, ya que 'status-message' puede no existir aún
                 document.body.innerHTML = `<div class='p-8 text-red-400'>Error crítico de autenticación: ${error.message}</div>`;
             }
         }
@@ -575,36 +554,25 @@
         // --- 4. RENDERIZADO DE UI (Productos y Mesas) ---
         
         function loadAppUI() {
-            // Cargar la UI solo después de la autenticación exitosa
             renderProductList();
-            setupOpenTableForm(); // Configura el formulario (que ahora está a la izquierda)
+            setupOpenTableForm(); 
             setupTableListeners();
             setupRoundAndSpecialButtons();
             setupHistoryModal();
-            setupZoomModal(); // CAMBIO: modificado para pestañas
+            setupZoomModal(); 
             setupAuditModal(); 
             setupReadOnlyHistoryModal();
             setupConfirmationModal();
             setupTransferModal(); 
-            
-            // Configurar el layout
             setupLayoutToggle();
-            
-            // CAMBIO: Configurar el nuevo botón "Nueva Mesa"
             setupOpenTableFormToggle();
-            
-            // Configurar el botón de filtro de la cuadrícula
             setupGridFilterToggle();
-            
-            // NUEVO: Configurar el modal de editar nombre de ronda
             setupEditRoundNameModal();
             
-            // Configurar el listener para el nuevo atajo
             document.getElementById('active-table-select').addEventListener('change', (e) => {
                 setActiveTable(e.target.value, true); 
             });
             
-            // Conectar botón de transferir
             document.getElementById('transfer-table-btn').addEventListener('click', () => {
                 if (activeTableId) {
                     showTransferModal();
@@ -620,52 +588,45 @@
             
             if (toggleTablesBtn) {
                 toggleTablesBtn.addEventListener('click', () => {
-                    isTablesVisible = !isTablesVisible; // Invertir estado
+                    isTablesVisible = !isTablesVisible; 
                     updateLayout();
                 });
             }
-            
-            // Aplicar estado inicial (oculto)
             updateLayout(); 
         }
         
-        // CAMBIO: Nueva función para el botón "Nueva Mesa"
+        // Configura el botón "Nueva Mesa"
         function setupOpenTableFormToggle() {
             toggleOpenTableFormBtn = document.getElementById('toggle-open-table-form-btn');
             openTableForm = document.getElementById('open-table-form');
             
             if (toggleOpenTableFormBtn && openTableForm) {
                 toggleOpenTableFormBtn.addEventListener('click', () => {
-                    isOpenTableFormVisible = !isOpenTableFormVisible; // Invertir estado
+                    isOpenTableFormVisible = !isOpenTableFormVisible; 
                     updateOpenTableFormLayout();
                 });
             }
-            // Aplicar estado inicial (oculto)
             updateOpenTableFormLayout();
         }
         
-        // CAMBIO: Nueva función para actualizar la UI del formulario "Nueva Mesa"
+        // Actualiza la UI del formulario "Nueva Mesa"
         function updateOpenTableFormLayout() {
             if (!toggleOpenTableFormBtn || !openTableForm) return;
 
             if (isOpenTableFormVisible) {
-                // --- MOSTRAR FORMULARIO ---
                 openTableForm.classList.remove('hidden');
-                // Actualizar botón
                 toggleOpenTableFormBtn.textContent = 'Cancelar';
                 toggleOpenTableFormBtn.classList.remove('bg-green-600', 'hover:bg-green-700');
                 toggleOpenTableFormBtn.classList.add('bg-gray-600', 'hover:bg-gray-700');
             } else {
-                // --- OCULTAR FORMULARIO ---
                 openTableForm.classList.add('hidden');
-                // Actualizar botón
                 toggleOpenTableFormBtn.textContent = 'Nueva Mesa';
                 toggleOpenTableFormBtn.classList.add('bg-green-600', 'hover:bg-green-700');
                 toggleOpenTableFormBtn.classList.remove('bg-gray-600', 'hover:bg-gray-700');
             }
         }
         
-        // Función que actualiza las clases del layout
+        // Actualiza las clases del layout
         function updateLayout() {
             if (!leftPanel || !rightPanel || !toggleTablesBtn) {
                 console.warn("Elementos del layout no encontrados, saltando actualización.");
@@ -673,41 +634,35 @@
             }
 
             if (isTablesVisible) {
-                // --- MOSTRAR MESAS ---
                 rightPanel.classList.remove('hidden');
-                // Restaurar clases de ancho fraccional en el panel izquierdo
                 leftPanel.classList.remove('w-full');
                 leftPanel.classList.add('md:w-1/3', 'lg:w-1/4');
-                // Actualizar botón
                 toggleTablesBtn.textContent = 'Ocultar Mesas';
                 toggleTablesBtn.classList.remove('bg-gray-700', 'hover:bg-gray-600');
-                toggleTablesBtn.classList.add('bg-purple-600', 'hover:bg-purple-700'); // Un color diferente para "ocultar"
+                toggleTablesBtn.classList.add('bg-purple-600', 'hover:bg-purple-700'); 
             } else {
-                // --- OCULTAR MESAS ---
                 rightPanel.classList.add('hidden');
-                // Expandir panel izquierdo
                 leftPanel.classList.add('w-full');
                 leftPanel.classList.remove('md:w-1/3', 'lg:w-1/4');
-                // Actualizar botón
                 toggleTablesBtn.textContent = 'Mostrar Mesas';
                 toggleTablesBtn.classList.add('bg-gray-700', 'hover:bg-gray-600');
                 toggleTablesBtn.classList.remove('bg-purple-600', 'hover:bg-purple-700');
             }
         }
         
-        // Configura el botón para mostrar/ocultar el filtro de la cuadrícula
+        // Configura el botón de filtro de la cuadrícula
         function setupGridFilterToggle() {
             toggleFilterBtn = document.getElementById('toggle-filter-btn');
             if (toggleFilterBtn) {
                 toggleFilterBtn.addEventListener('click', () => {
-                    isGridFiltered = !isGridFiltered; // Invertir estado
+                    isGridFiltered = !isGridFiltered; 
                     updateFilterButtonText();
                     applyTableGridFilter();
                 });
             }
         }
         
-        // Función que actualiza el texto del botón de filtro
+        // Actualiza el texto del botón de filtro
         function updateFilterButtonText() {
             if (!toggleFilterBtn) return;
             if (isGridFiltered) {
@@ -724,7 +679,7 @@
         // Carga la lista de productos en el <select>
         function renderProductList() {
             const select = document.getElementById('product-select');
-            select.innerHTML = ''; // Limpiar opciones anteriores
+            select.innerHTML = ''; 
             
             const categories = {};
             products.forEach(p => {
@@ -756,38 +711,34 @@
             }
         }
         
-        // CAMBIO: Configura el formulario de "Abrir Mesa" (ahora en el panel izquierdo)
+        // Configura el formulario "Abrir Mesa"
         function setupOpenTableForm() {
             const select = document.getElementById('table-select');
             const otherContainer = document.getElementById('other-table-name-container');
             const otherInput = document.getElementById('other-table-name');
             const openButton = document.getElementById('open-table-btn');
 
-            // Llenar el select
             predefinedTables.forEach(name => {
                 const option = document.createElement('option');
                 option.value = name;
                 option.textContent = name;
                 select.appendChild(option);
             });
-            // Añadir la opción "Otra"
             const otherOption = document.createElement('option');
             otherOption.value = otherOptionValue;
             otherOption.textContent = otherOptionValue;
             select.appendChild(otherOption);
 
-            // Mostrar/ocultar el campo de texto
             select.addEventListener('change', () => {
                 if (select.value === otherOptionValue) {
                     otherContainer.style.display = 'block';
                     otherInput.focus();
                 } else {
                     otherContainer.style.display = 'none';
-                    otherInput.value = ''; // Limpiar por si acaso
+                    otherInput.value = ''; 
                 }
             });
 
-            // Acción del botón "Abrir Mesa"
             openButton.addEventListener('click', async () => {
                 let tableName;
                 if (select.value === otherOptionValue) {
@@ -801,9 +752,8 @@
                     return;
                 }
                 
-                const tableId = tableName.replace(/\s+/g, '-').toLowerCase(); // ID más robusto
+                const tableId = tableName.replace(/\s+/g, '-').toLowerCase(); 
 
-                // Intentar crear la mesa en Firestore
                 try {
                     const tableDocRef = doc(tablesCollectionRef, tableId);
                     
@@ -819,16 +769,13 @@
                     console.log(`Mesa "${tableName}" abierta.`);
                     showStatusMessage(`Mesa "${tableName}" abierta.`, false);
                     
-                    // Limpiar formulario
                     otherInput.value = '';
-                    select.value = predefinedTables[0]; // Reset al primer item
+                    select.value = predefinedTables[0]; 
                     otherContainer.style.display = 'none';
                     
-                    // CAMBIO: Ocultar el formulario después de crear la mesa
                     isOpenTableFormVisible = false;
                     updateOpenTableFormLayout();
                     
-                    // Activar la nueva mesa
                     setActiveTable(tableId, true); 
 
                 } catch (error) {
@@ -926,7 +873,6 @@
             card.className = `table-card bg-gray-800 p-4 rounded-lg shadow-lg border-2 border-gray-700 transition-all duration-200 cursor-pointer ${table.items.length > 0 ? 'has-items' : ''} ${table.id === activeTableId ? 'active' : ''}`;
             card.dataset.tableId = table.id;
 
-            // Evento de clic simple para seleccionar
             card.addEventListener('click', (e) => {
                 if (e.target.closest('button')) {
                     return;
@@ -934,7 +880,6 @@
                 setActiveTable(table.id, false);
             });
             
-            // Evento de doble clic para "Zoom"
             card.addEventListener('dblclick', (e) => {
                 if (e.target.closest('button')) {
                     return;
@@ -958,7 +903,7 @@
             renderTableCardContent(card, table);
         }
 
-        // Renderiza el contenido interno de la tarjeta (nombre, items, total, botones)
+        // Renderiza el contenido interno de la tarjeta
         function renderTableCardContent(cardElement, table) {
             
             const groupedItems = groupItems(table.items);
@@ -1079,7 +1024,7 @@
                 return grouped;
             }
             items.forEach(item => {
-                if (!item || typeof item.name === 'undefined') return; // Saltar items inválidos
+                if (!item || typeof item.name === 'undefined') return; 
                 if (!grouped[item.name]) {
                     grouped[item.name] = {
                         quantity: 0,
@@ -1121,7 +1066,6 @@
                 listHtml += `
                     <li class="flex justify-between items-center text-sm py-1 text-gray-300">
                         <span>${item.name} <span class="text-white">x ${item.quantity}</span></span>
-                        <!-- CAMBIO: Añadido botón de eliminar item de la ronda -->
                         <span class="flex items-center">
                             <span class="mr-2">${formatCurrency(item.price * item.quantity)}</span>
                             <button class="btn-delete-from-round text-red-500 hover:text-red-300 font-bold px-1" data-item-name="${item.name}" title="Quitar de la ronda">&times;</button>
@@ -1134,19 +1078,16 @@
             list.innerHTML = listHtml;
             totalEl.textContent = formatCurrency(total);
             
-            // CAMBIO: Conectar botones de eliminar de la ronda
             list.querySelectorAll('.btn-delete-from-round').forEach(btn => {
                 btn.addEventListener('click', () => {
                     const nameToDelete = btn.dataset.itemName;
-                    // Encontrar y eliminar el item de currentRound
                     currentRound = currentRound.filter(item => item.name !== nameToDelete);
-                    // Volver a renderizar
                     renderCurrentRound();
                 });
             });
         }
 
-        // Nueva función solo para "Descuento" y "Otros"
+        // Añade "Descuento" u "Otros" directamente a la mesa
         async function addSpecialProductToTable(productName, quantity) {
             if (!activeTableId) {
                 showStatusMessage("Por favor, seleccione una mesa primero.", true);
@@ -1203,9 +1144,7 @@
             
             const select = document.getElementById('product-select');
             const quantityInput = document.getElementById('product-quantity');
-            // CAMBIO: roundNameInput eliminado
 
-            // 1. Botón "Añadir a la Ronda"
             addBtn.addEventListener('click', () => {
                 const selectedOption = select.options[select.selectedIndex];
                 const productName = selectedOption.dataset.name;
@@ -1243,7 +1182,6 @@
                 quantityInput.value = "1"; 
             });
 
-            // 2. Botón "Registrar Ronda en la Mesa"
             registerBtn.addEventListener('click', async () => {
                 if (!activeTableId) {
                     showStatusMessage("Por favor, seleccione una mesa primero.", true);
@@ -1256,7 +1194,6 @@
                 
                 const roundId = `round-${Date.now()}`;
                 const timestamp = new Date().toISOString();
-                // CAMBIO: roundName se quita de aquí
                 let itemsToAdd = [];
                 let totalRoundPrice = 0;
                 
@@ -1268,7 +1205,7 @@
                             price: item.price,
                             timestamp: timestamp, 
                             roundId: roundId,
-                            roundName: null // CAMBIO: Se registra como null
+                            roundName: null 
                         });
                     }
                     totalRoundPrice += item.price * item.quantity;
@@ -1284,7 +1221,6 @@
                     showStatusMessage(`Ronda de ${formatCurrency(totalRoundPrice)} registrada.`, false);
                     
                     currentRound = [];
-                    // CAMBIO: ya no se limpia el input
                     renderCurrentRound();
 
                 } catch (error) {
@@ -1293,10 +1229,8 @@
                 }
             });
 
-            // 3. Botón "Cancelar Ronda"
             cancelBtn.addEventListener('click', () => {
                 currentRound = [];
-                // CAMBIO: ya no se limpia el input
                 renderCurrentRound();
             });
         }
@@ -1304,9 +1238,11 @@
         // --- 6. LÓGICA DE MODALES (Historial, Zoom, Auditoría) ---
         
         // Agrupa el historial por transacciones (Rondas)
+        // CAMBIO: Añade enumeración de rondas
         function groupHistoryByTransaction(items) {
             const groupedByTransaction = new Map();
             
+            // 1. Agrupar items por roundId o (si no tiene) por id
             items.forEach(item => {
                 const key = item.roundId || item.id; 
                 if (!groupedByTransaction.has(key)) {
@@ -1315,6 +1251,7 @@
                 groupedByTransaction.get(key).push(item);
             });
 
+            // 2. Convertir el Map en un array de "transacciones"
             const transactions = [];
             for (const [key, itemsInGroup] of groupedByTransaction.entries()) {
                 const firstItem = itemsInGroup[0];
@@ -1339,11 +1276,11 @@
 
                     transactions.push({
                         id: firstItem.roundId, 
-                        name: "Ronda",
+                        name: "Ronda", // Nombre base
                         price: roundTotal,
                         timestamp: firstItem.timestamp,
                         isRound: true,
-                        roundName: firstItem.roundName || null, // CAMBIO: Añadido
+                        roundName: firstItem.roundName || null, 
                         details: details, 
                         items: itemsInGroup 
                     });
@@ -1351,7 +1288,7 @@
                     // Es un item individual
                     transactions.push({
                         id: firstItem.id, 
-                        name: firstItem.name,
+                        name: firstItem.name, // Ej: "Descuento"
                         price: firstItem.price,
                         timestamp: firstItem.timestamp,
                         isRound: false,
@@ -1362,17 +1299,34 @@
                 }
             }
             
-            return transactions.sort((a, b) => {
+            // 3. Ordenar las transacciones por fecha (primero las más antiguas)
+            const sortedByDate = transactions.sort((a, b) => {
                 if (!a.timestamp || !b.timestamp) return 0;
-                return new Date(b.timestamp) - new Date(a.timestamp);
+                return new Date(a.timestamp) - new Date(b.timestamp);
             });
+            
+            // 4. Enumerar solo las RONDAS
+            let roundCounter = 1;
+            const enumeratedTransactions = sortedByDate.map(tx => {
+                if (tx.isRound) {
+                    tx.roundNumber = roundCounter; // Asignar número
+                    roundCounter++;
+                }
+                return tx;
+            });
+            
+            // 5. Invertir el orden para mostrar (primero las más nuevas)
+            return enumeratedTransactions.reverse();
         }
         
-        // NUEVO: Agrupa transacciones por dueño para el resumen
+        // Agrupa transacciones por dueño para el resumen
         function summarizeByOwner(transactions) {
             const summary = new Map();
-            for (const tx of transactions) {
-                const owner = tx.roundName || "Sin Asignar"; // Agrupa todo lo no asignado
+            // Invertir transacciones para procesar de más antigua a más nueva
+            const chronologicalTransactions = [...transactions].reverse(); 
+            
+            for (const tx of chronologicalTransactions) {
+                const owner = tx.roundName || "Sin Asignar"; 
                 
                 if (!summary.has(owner)) {
                     summary.set(owner, { total: 0, transactions: [] });
@@ -1380,7 +1334,7 @@
                 
                 const data = summary.get(owner);
                 data.total += tx.price;
-                data.transactions.push(tx);
+                data.transactions.push(tx); // Añadir la transacción (que ya tiene roundNumber)
             }
             return summary;
         }
@@ -1393,6 +1347,7 @@
         }
 
         // Muestra el modal de historial
+        // CAMBIO: Muestra el número de ronda
         function showHistory(table) {
             const modal = document.getElementById('history-modal');
             const content = document.getElementById('history-content');
@@ -1404,6 +1359,7 @@
                 return;
             }
 
+            // Ya vienen enumeradas y en orden descendente
             const sortedTransactions = groupHistoryByTransaction(table.items);
 
             let html = '<ul class="divide-y divide-gray-700">';
@@ -1421,7 +1377,6 @@
                     });
                     roundDetailsHtml += '</ul>';
                     
-                    // CAMBIO: Botón para asignar/editar nombre
                     let nameHtml = '';
                     if (transaction.roundName) {
                         nameHtml = `
@@ -1437,9 +1392,10 @@
                     html += `
                         <li class="flex justify-between items-start py-3"> 
                             <div>
-                                <div class="flex items-center"> <!-- Contenedor para Ronda y Nombre -->
-                                    <span class="font-semibold text-yellow-300">Ronda</span>
-                                    ${nameHtml} <!-- Aquí va el nombre o el botón -->
+                                <div class="flex items-center">
+                                    <!-- NUEVO: Número de ronda -->
+                                    <span class="font-semibold text-yellow-300">Ronda ${transaction.roundNumber}</span>
+                                    ${nameHtml} 
                                 </div>
                                 <span class="block text-sm text-gray-400">${itemTime}</span>
                                 ${roundDetailsHtml} 
@@ -1495,12 +1451,12 @@
                     const transactionToDelete = sortedTransactions.find(t => t.id === transactionId);
                     
                     if (transactionToDelete) {
-                        // CAMBIO: Pedir confirmación antes de borrar
                         const title = `Confirmar Borrado`;
-                        const message = `¿Está seguro que desea eliminar "${transactionToDelete.name}" (${formatCurrency(transactionToDelete.price)})? Esta acción no se puede deshacer.`;
+                        // CAMBIO: Mostrar número de ronda si existe
+                        const txName = transactionToDelete.isRound ? `Ronda ${transactionToDelete.roundNumber}` : transactionToDelete.name;
+                        const message = `¿Está seguro que desea eliminar "${txName}" (${formatCurrency(transactionToDelete.price)})? Esta acción no se puede deshacer.`;
                         
                         showConfirmationModal(title, message, () => {
-                            // Esta es la acción de confirmación
                             handleDeleteItem(table, transactionToDelete);
                         });
                     }
@@ -1519,13 +1475,12 @@
                 });
             });
             
-            // NUEVO: Conectar botones de "Asignar/Editar Nombre"
+            // Conectar botones de "Asignar/Editar Nombre"
             content.querySelectorAll('.btn-edit-round-name').forEach(btn => {
                 btn.addEventListener('click', () => {
                     const roundId = btn.dataset.roundId;
                     const transaction = sortedTransactions.find(t => t.id === roundId);
                     if (transaction) {
-                        // CAMBIO: Pasar el objeto 'table' completo
                         showEditRoundNameModal(table, roundId, transaction.roundName);
                     }
                 });
@@ -1542,6 +1497,7 @@
         }
 
         // Muestra el modal de historial (SOLO LECTURA)
+        // CAMBIO: Muestra el número de ronda
         function showReadOnlyHistory(table) {
             const modal = document.getElementById('read-only-history-modal');
             const content = document.getElementById('ro-history-content');
@@ -1571,9 +1527,9 @@
                     html += `
                         <li class="flex justify-between items-start py-3">
                             <div>
-                                <div class="flex items-center"> <!-- Contenedor para Ronda y Nombre -->
-                                    <span class="font-semibold text-yellow-300">Ronda</span>
-                                    <!-- CAMBIO: Mostrar nombre de ronda -->
+                                <div class="flex items-center"> 
+                                    <!-- NUEVO: Número de ronda -->
+                                    <span class="font-semibold text-yellow-300">Ronda ${transaction.roundNumber}</span>
                                     ${transaction.roundName ? `<span class="ml-2 pl-2 border-l border-gray-600 text-lg font-bold text-white">${transaction.roundName}</span>` : ''}
                                 </div>
                                 <span class="block text-sm text-gray-400">${itemTime}</span>
@@ -1612,13 +1568,11 @@
         }
 
         // Configura el modal de Zoom
-        // CAMBIO: Añadida lógica para pestañas
         function setupZoomModal() {
             document.getElementById('close-zoom-modal-btn').addEventListener('click', () => {
                 document.getElementById('zoom-modal').classList.add('hidden');
             });
             
-            // Lógica de pestañas
             const tabProduct = document.getElementById('zoom-tab-product');
             const tabOwner = document.getElementById('zoom-tab-owner');
             const contentProduct = document.getElementById('zoom-content');
@@ -1644,7 +1598,7 @@
         }
         
         // Muestra el modal de Zoom
-        // CAMBIO: Añadida lógica para poblar ambas pestañas
+        // CAMBIO: Muestra el número de ronda en la pestaña "Por Dueño"
         function showZoomModal(table) {
             const modal = document.getElementById('zoom-modal');
             document.getElementById('zoom-table-name').textContent = table.name;
@@ -1685,6 +1639,7 @@
             contentProduct.innerHTML = productHtml;
             
             // --- Pestaña 2: Resumen por Dueño ---
+            // 'groupHistoryByTransaction' ya enumera y 'summarizeByOwner' preserva las transacciones
             const sortedTransactions = groupHistoryByTransaction(table.items);
             const ownerSummary = summarizeByOwner(sortedTransactions);
             const contentOwner = document.getElementById('zoom-owner-content');
@@ -1706,12 +1661,15 @@
                             </div>
                             <ul class="pl-4 border-l border-gray-600 space-y-1">`;
                     
+                    // data.transactions ya está en orden cronológico (ascendente)
                     data.transactions.forEach(tx => {
                         const txTime = tx.timestamp ? new Date(tx.timestamp).toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' }) : '';
-                        let txName = tx.name;
-                        // Si es ronda, mostrar detalles breves
+                        let txName;
                         if (tx.isRound) {
-                            txName = `Ronda (${tx.details.map(d => `${d.quantity} ${d.name}`).join(', ')})`;
+                            // NUEVO: Añadir número de ronda
+                            txName = `Ronda ${tx.roundNumber} (${tx.details.map(d => `${d.quantity} ${d.name}`).join(', ')})`;
+                        } else {
+                            txName = tx.name;
                         }
                         
                         ownerHtml += `
@@ -1789,7 +1747,7 @@
             });
         }
         
-        // NUEVO: Configura el modal para editar nombre de ronda
+        // Configura el modal para editar nombre de ronda
         function setupEditRoundNameModal() {
             const modal = document.getElementById('edit-round-name-modal');
             const cancelBtn = document.getElementById('edit-round-name-cancel-btn');
@@ -1807,7 +1765,6 @@
                 const { tableId, roundId } = currentEditContext;
                 const newName = input.value.trim();
                 
-                // Deshabilitar botón para evitar doble clic
                 saveBtn.disabled = true;
                 saveBtn.textContent = 'Guardando...';
                 
@@ -1817,8 +1774,6 @@
                     modal.classList.add('hidden');
                     currentEditContext = null;
                     
-                    // Refrescar el modal de historial (que sigue abierto)
-                    // CAMBIO: Usar el tableId del contexto, no el global
                     const tableRefId = tableId; 
                     if (tableRefId) {
                         const freshTableSnap = await getDoc(doc(tablesCollectionRef, tableRefId));
@@ -1831,7 +1786,6 @@
                     console.error("Error al guardar nombre de ronda:", error);
                     showStatusMessage("Error al guardar el nombre.", true);
                 } finally {
-                    // Rehabilitar botón
                     saveBtn.disabled = false;
                     saveBtn.textContent = 'Guardar';
                 }
@@ -1894,8 +1848,7 @@
             modal.classList.remove('hidden'); 
         }
         
-        // NUEVO: Muestra el modal para editar el nombre de la ronda
-        // CAMBIO: Acepta 'table' completo para buscar sugerencias
+        // Muestra el modal para editar el nombre de la ronda
         function showEditRoundNameModal(table, roundId, currentName) {
             currentEditContext = { tableId: table.id, roundId };
             const modal = document.getElementById('edit-round-name-modal');
@@ -1904,10 +1857,9 @@
 
             input.value = currentName || '';
             
-            // --- NUEVO: Generar sugerencias ---
             const transactions = groupHistoryByTransaction(table.items);
-            const allNames = transactions.map(tx => tx.roundName).filter(name => name); // Get all non-null names
-            const uniqueNames = [...new Set(allNames)]; // Get unique names
+            const allNames = transactions.map(tx => tx.roundName).filter(name => name); 
+            const uniqueNames = [...new Set(allNames)]; 
 
             if (uniqueNames.length > 0) {
                 let suggestionsHtml = '';
@@ -1920,7 +1872,6 @@
                 });
                 suggestionsContainer.innerHTML = suggestionsHtml;
                 
-                // Conectar botones de sugerencia
                 suggestionsContainer.querySelectorAll('.btn-suggestion').forEach(btn => {
                     btn.addEventListener('click', (e) => {
                         e.preventDefault(); 
@@ -1930,7 +1881,6 @@
             } else {
                 suggestionsContainer.innerHTML = '<p class="text-sm text-gray-500 italic">No hay dueños anteriores en esta mesa.</p>';
             }
-            // --- FIN DE LO NUEVO ---
 
             modal.classList.remove('hidden');
             input.focus(); 
@@ -2117,7 +2067,7 @@
                     total: increment(-transactionToDelete.price) 
                 });
                 
-                showStatusMessage(`Item "${transactionToDelete.name}" eliminado.`, false);
+                showStatusMessage(`Item eliminado.`, false);
                 
                 const freshTable = allTablesData.get(table.id);
                 if (freshTable) {
@@ -2134,7 +2084,7 @@
             }
         }
         
-        // El botón "x" de la tarjeta ahora SIEMPRE abre el historial
+        // El botón "x" de la tarjeta ahora abre el historial
         async function handleDeleteGroup(table, itemName) {
             
             showConfirmationModal(
@@ -2147,7 +2097,7 @@
             return;
         }
         
-        // Cierra la mesa (SIN PDF) y la mueve a "closedTables"
+        // Cierra la mesa y la mueve a "closedTables"
         function handleCloseTable(table) {
             
             let title = `Cerrar Mesa "${table.name}"`;
@@ -2178,7 +2128,7 @@
             });
         }
         
-        // Nueva función para Reabrir Mesas
+        // Reabre una mesa desde la auditoría
         async function handleReopenTable(closedDocId) {
             let tableData;
             let originalTableId;
@@ -2236,27 +2186,24 @@
             });
         }
         
-        // NUEVO: Actualiza el nombre de una ronda en todos sus items
+        // Actualiza el nombre de una ronda en todos sus items
         async function handleUpdateRoundName(tableId, roundId, newName) {
             const tableDocRef = doc(tablesCollectionRef, tableId);
             
             try {
-                // 1. Leer los datos más frescos de la mesa
                 const tableSnap = await getDoc(tableDocRef);
                 if (!tableSnap.exists()) {
                     throw new Error("La mesa no fue encontrada.");
                 }
                 const currentItems = tableSnap.data().items;
                 
-                // 2. Mapear los items, actualizando solo los de la ronda en cuestión
                 const newItems = currentItems.map(item => {
                     if (item.roundId === roundId) {
                         return { ...item, roundName: newName || null };
                     }
-                    return item; // Devolver el item sin cambios
+                    return item; 
                 });
                 
-                // 3. Sobrescribir el array de items completo
                 await updateDoc(tableDocRef, {
                     items: newItems
                 });
@@ -2266,12 +2213,11 @@
             } catch (error) {
                 console.error("Error en handleUpdateRoundName:", error);
                 showStatusMessage(`Error al actualizar nombre: ${error.message}`, true);
-                // Re-lanzar el error para que el modal 'finally' lo sepa
                 throw error;
             }
         }
         
-        // Nueva función para Transferir Mesas
+        // Transfiere una mesa a un nuevo nombre/ID
         async function handleTransferTable() {
             const select = document.getElementById('transfer-table-select');
             const otherInput = document.getElementById('transfer-other-name');
@@ -2442,7 +2388,7 @@
         }
 
         // Genera el PDF
-        // CAMBIO: Añadida la tabla de resumen por dueño
+        // CAMBIO: Añadido detalle de rondas a la tabla de dueños
         function generatePDF(table) {
             if (typeof window.jspdf === 'undefined' || typeof window.jspdf.jsPDF === 'undefined') {
                 console.error("jsPDF no está cargado en window.");
@@ -2550,36 +2496,35 @@
 
             let finalY = doc.autoTable.previous.finalY;
             
-            // --- NUEVO: Tabla 2: Resumen por Dueño (Condicional) ---
+            // --- Tabla 2: Resumen por Dueño (Condicional) ---
             const sortedTransactions = groupHistoryByTransaction(table.items);
             const ownerSummary = summarizeByOwner(sortedTransactions);
             
-            // Comprobar si hay dueños asignados (diferentes de "Sin Asignar")
             const hasAssignedOwners = ownerSummary.size > 1 || (ownerSummary.size === 1 && !ownerSummary.has("Sin Asignar"));
 
             if (hasAssignedOwners) {
-                // --- CAMBIO: Lógica de la tabla de dueños para incluir detalles ---
                 const ownerTableBody = [];
+                // data.transactions está en orden cronológico (ascendente)
                 ownerSummary.forEach((data, owner) => {
-                    // Omitir "Sin Asignar" si su total es 0
                     if (owner === "Sin Asignar" && data.total === 0) {
-                        return; // Es como un 'continue' en forEach
+                        return; 
                     }
                     
                     let isFirstRowForOwner = true;
                     
-                    // Añadir cada transacción
                     data.transactions.forEach(tx => {
-                        let detailContent = tx.name; // Para "Descuento" u "Otros"
+                        let detailContent = tx.name; 
                         if (tx.isRound) {
-                            // Formatear los detalles de la ronda
-                            detailContent = tx.details.map(d => `${d.quantity} ${d.name}`).join(', ');
+                            // CAMBIO: Añadir número de ronda al detalle
+                            const roundTitle = `Ronda ${tx.roundNumber}: `;
+                            const productsDetail = tx.details.map(d => `${d.quantity} ${d.name}`).join(', ');
+                            detailContent = roundTitle + productsDetail;
                         }
                         
                         ownerTableBody.push([
-                            isFirstRowForOwner ? owner : '', // Mostrar nombre solo en la primera fila del grupo
-                            detailContent, // Contenido de la ronda o item
-                            formatCurrency(tx.price) // Subtotal de esa ronda/item
+                            isFirstRowForOwner ? owner : '', 
+                            detailContent, 
+                            formatCurrency(tx.price) 
                         ]);
                         isFirstRowForOwner = false;
                     });
@@ -2589,7 +2534,7 @@
                         { 
                             content: 'Total ' + owner, 
                             colSpan: 2, 
-                            styles: { halign: 'right', fontStyle: 'bold', fillColor: '#2d3748' } // fondo gris oscuro
+                            styles: { halign: 'right', fontStyle: 'bold', fillColor: '#2d3748' } 
                         },
                         { 
                             content: formatCurrency(data.total), 
@@ -2597,7 +2542,6 @@
                         }
                     ]);
                 });
-                // --- FIN DEL CAMBIO ---
 
                 doc.setFontSize(12);
                 doc.setFont('helvetica', 'bold');
@@ -2605,35 +2549,31 @@
 
                 doc.autoTable({
                     startY: finalY + 15,
-                    // --- CAMBIO: Nuevo encabezado ---
                     head: [['Dueño', 'Detalle de Transacción', 'Subtotal']],
                     body: ownerTableBody,
                     theme: 'striped',
-                    headStyles: { fillColor: [23, 73, 91] }, // Un color cyan oscuro
-                    // Estilo para que el nombre del dueño solo aparezca una vez
+                    headStyles: { fillColor: [23, 73, 91] }, 
                     didParseCell: function (data) {
-                        if (data.cell.raw === '') {
-                             data.cell.styles.fillColor = '#ffffff'; // Ocultar fondo si la celda está vacía
+                        // Ocultar fondo si la celda de Dueño está vacía (para agrupar)
+                        if (data.column.index === 0 && data.cell.raw === '') {
+                             data.cell.styles.fillColor = '#ffffff'; 
                         }
-                        // Alinear verticalmente la celda del nombre
+                        // Alinear verticalmente la celda del nombre del dueño
                         if (data.column.index === 0 && data.cell.raw !== '') {
                             data.cell.styles.valign = 'middle';
                         }
                     }
                 });
                 
-                finalY = doc.autoTable.previous.finalY; // Actualizar la posición Y
+                finalY = doc.autoTable.previous.finalY; 
             }
-            // --- FIN DE LA NUEVA TABLA ---
-
             
-            // --- Totales ---
+            // --- Totales Finales ---
             doc.setFontSize(12);
             doc.setFont('helvetica', 'bold');
             
             let currentY = finalY + 10;
 
-            // Mostrar Subtotal solo si hay descuentos u otros cargos
             if (discounts < 0 || others > 0) {
                 doc.text("Subtotal Productos:", 150, currentY, { align: 'right' });
                 doc.text(formatCurrency(subtotal), 200, currentY, { align: 'right' });
