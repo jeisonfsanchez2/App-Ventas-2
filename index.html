@@ -6,7 +6,6 @@
     <title>Sanchez's Sport Bar - Cuentas</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- CAMBIO: Quitar los scripts del PDF de aquí. Se cargarán dinámicamente. -->
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -40,16 +39,13 @@
 <body class="flex flex-col md:flex-row min-h-screen">
 
     <!-- Columna Izquierda: Añadir Productos -->
-    <!-- ID AÑADIDO: left-panel -->
     <div id="left-panel" class="w-full md:w-1/3 lg:w-1/4 bg-gray-900 p-6 flex flex-col md:h-screen md:overflow-y-auto">
         <h2 class="text-3xl font-bold mb-6 text-white border-b border-gray-700 pb-2">Sanchez's Sport Bar</h2>
         
-        <!-- CAMBIO: Botón para mostrar formulario de "Nueva Mesa" -->
         <button id="toggle-open-table-form-btn" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg transition duration-200 shadow-lg mb-4">
             Nueva Mesa
         </button>
 
-        <!-- CAMBIO: Formulario de "Abrir Mesa" movido aquí y oculto -->
         <div id="open-table-form" class="hidden mb-6 p-4 bg-gray-800 rounded-lg shadow-md border border-gray-700">
             <h3 class="text-xl font-semibold text-green-400 mb-3">Abrir Mesa</h3>
             <div class="flex flex-col gap-4">
@@ -71,7 +67,6 @@
             </div>
         </div>
         
-        <!-- Botón para mostrar/ocultar mesas -->
         <button id="toggle-tables-btn" class="w-full bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg transition duration-200 shadow-lg mb-4">
             Mostrar Mesas
         </button>
@@ -150,15 +145,11 @@
     </div>
 
     <!-- Columna Derecha: Mesas y Zonas -->
-    <!-- ID AÑADIDO: right-panel -->
     <div id="right-panel" class="w-full md:w-2/3 lg:w-3/4 p-6 flex-1 flex flex-col md:h-screen">
         
-        <!-- CAMBIO: Formulario de "Abrir Mesa" movido al panel izquierdo -->
-
         <!-- Contenedor de Mesas Abiertas -->
         <div class="flex justify-between items-center mb-4">
             <h2 class="text-2xl font-bold text-white">Mesas Abiertas</h2>
-            <!-- Botón para alternar el filtro de la cuadrícula -->
             <button id="toggle-filter-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-1 px-3 rounded-lg text-sm transition-all hidden">
                 Mostrar Solo Activa
             </button>
@@ -171,12 +162,10 @@
     <!-- Modal de Historial -->
     <div id="history-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-50 hidden">
         <div class="bg-gray-800 rounded-lg shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col">
-            <!-- Cabecera del Modal -->
             <div class="flex justify-between items-center p-4 border-b border-gray-700">
                 <h3 class="text-xl font-semibold text-white">Historial de la Mesa: <span id="history-table-name"></span></h3>
                 <button id="close-history-modal-btn" class="text-gray-400 hover:text-white">&times;</button>
             </div>
-            <!-- Contenido del Modal (Historial) -->
             <div id="history-content" class="p-6 overflow-y-auto">
                 <!-- El historial se genera aquí -->
             </div>
@@ -184,16 +173,13 @@
     </div>
     
     <!-- Modal de Zoom (Solo Lectura) -->
-    <!-- CAMBIO: Estructura interna modificada para PESTAÑAS -->
     <div id="zoom-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-50 hidden">
         <div class="bg-gray-800 rounded-lg shadow-2xl w-full max-w-lg max-h-[90vh] flex flex-col">
-            <!-- Cabecera del Modal -->
             <div class="flex justify-between items-center p-4 border-b border-gray-700">
                 <h3 class="text-xl font-semibold text-white">Detalle Mesa: <span id="zoom-table-name"></span></h3>
                 <button id="close-zoom-modal-btn" class="text-gray-400 hover:text-white">&times;</button>
             </div>
             
-            <!-- NUEVO: Pestañas -->
             <div class="flex border-b border-gray-700 px-6">
                 <button id="zoom-tab-product" class="py-2 px-4 font-semibold bg-cyan-600 rounded-t-lg focus:outline-none">
                     Por Producto
@@ -203,7 +189,6 @@
                 </button>
             </div>
 
-            <!-- Contenedor de contenido (este se desplaza) -->
             <div class="flex-1 overflow-y-auto">
                 <div id="zoom-content" class="p-6">
                     <!-- El resumen (por producto) se genera aquí -->
@@ -213,9 +198,11 @@
                 </div>
             </div>
 
-            <!-- Pie del Modal (Total) -->
             <div class="p-4 border-t border-gray-700 bg-gray-900 rounded-b-lg">
-                <h4 class="text-2xl font-bold text-right text-green-400" id="zoom-total"></h4>
+                <div class="flex justify-between items-center">
+                    <span class="text-lg text-gray-400">Total Consumido</span>
+                    <h4 class="text-2xl font-bold text-right text-green-400" id="zoom-total"></h4>
+                </div>
             </div>
         </div>
     </div>
@@ -223,12 +210,10 @@
     <!-- Modal de Historial (Solo Lectura - para Auditoría) -->
     <div id="read-only-history-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-50 hidden">
         <div class="bg-gray-800 rounded-lg shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col">
-            <!-- Cabecera del Modal -->
             <div class="flex justify-between items-center p-4 border-b border-gray-700">
                 <h3 class="text-xl font-semibold text-white">Detalle de Venta: <span id="ro-history-table-name"></span></h3>
                 <button id="close-ro-history-modal-btn" class="text-gray-400 hover:text-white">&times;</button>
             </div>
-            <!-- Contenido del Modal (Historial) -->
             <div id="ro-history-content" class="p-6 overflow-y-auto">
                 <!-- El historial de solo lectura se genera aquí -->
             </div>
@@ -237,13 +222,11 @@
 
     <!-- Modal de Auditoría -->
     <div id="audit-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-40 hidden">
-        <div class="bg-gray-800 rounded-lg shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col"> <!-- Aumentado a max-w-4xl -->
-            <!-- Cabecera del Modal -->
+        <div class="bg-gray-800 rounded-lg shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col">
             <div class="flex justify-between items-center p-4 border-b border-gray-700">
                 <h3 class="text-xl font-semibold text-white">Auditoría de Mesas Cerradas</h3>
                 <button id="close-audit-modal-btn" class="text-gray-400 hover:text-white">&times;</button>
             </div>
-            <!-- Controles de Auditoría -->
             <div class="p-4 bg-gray-900 flex flex-col sm:flex-row gap-4 items-start">
                 <div class="flex-1 w-full sm:w-auto">
                     <label for="audit-date" class="block text-sm font-medium text-gray-300 mb-1">Fecha</label>
@@ -253,19 +236,16 @@
                     <label for="audit-table-name" class="block text-sm font-medium text-gray-300 mb-1">Buscar por Nombre</label>
                     <input type="text" id="audit-table-name" placeholder="Nombre de la mesa..." class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg p-2">
                 </div>
-                <!-- Contenedor para Total y Botón Borrar Todo -->
                 <div class="flex-shrink-0 mt-4 sm:mt-0 space-y-2">
                     <div class="text-right">
                         <span class="block text-lg font-bold text-green-400">Total Auditado:</span>
                         <span id="audit-total" class="block text-2xl font-bold text-green-400">$0</span>
                     </div>
-                    <!-- Botón Borrar Todo (Filtro) -->
                     <button id="delete-all-filtered-btn" class="w-full bg-red-700 hover:bg-red-800 text-white font-bold py-2 px-4 rounded-lg transition duration-200 shadow-lg text-sm">
                         Borrar Todo (Filtro)
                     </button>
                 </div>
             </div>
-            <!-- Contenido del Modal (Auditoría) -->
             <div id="audit-content" class="p-6 overflow-y-auto">
                 <!-- El historial de mesas cerradas se genera aquí -->
             </div>
@@ -273,17 +253,14 @@
     </div>
 
     <!-- Modal de Confirmación -->
-    <div id="confirmation-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-50 hidden"> <!-- z-50 para estar sobre otros modales si es necesario -->
+    <div id="confirmation-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-50 hidden">
         <div class="bg-gray-800 rounded-lg shadow-2xl w-full max-w-sm">
-            <!-- Cabecera del Modal -->
             <div class="p-4 border-b border-gray-700">
                 <h3 id="confirmation-title" class="text-xl font-semibold text-white">Confirmar Acción</h3>
             </div>
-            <!-- Mensaje de Confirmación -->
             <div class="p-6">
                 <p id="confirmation-message" class="text-gray-300">¿Está seguro?</p>
             </div>
-            <!-- Pie del Modal (Botones) -->
             <div class="p-4 bg-gray-900 rounded-b-lg flex justify-end gap-4">
                 <button id="confirmation-cancel-btn" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-lg transition duration-200">
                     Cancelar
@@ -298,12 +275,10 @@
     <!-- Modal de Transferir Mesa -->
     <div id="transfer-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-50 hidden">
         <div class="bg-gray-800 rounded-lg shadow-2xl w-full max-w-lg">
-            <!-- Cabecera del Modal -->
             <div class="flex justify-between items-center p-4 border-b border-gray-700">
                 <h3 class="text-xl font-semibold text-white">Transferir Mesa</h3>
                 <button id="close-transfer-modal-btn" class="text-gray-400 hover:text-white">&times;</button>
             </div>
-            <!-- Contenido del Modal -->
             <div class="p-6 space-y-4">
                 <p class="text-gray-300">Mover cuenta de: <strong id="transfer-from-name" class="text-cyan-400"></strong></p>
                 
@@ -322,7 +297,6 @@
                 <div id="transfer-error-message" class="text-red-400 text-sm"></div>
 
             </div>
-            <!-- Pie del Modal (Botones) -->
             <div class="p-4 bg-gray-900 rounded-b-lg flex justify-end gap-4">
                 <button id="transfer-cancel-btn" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-lg transition duration-200">
                     Cancelar
@@ -334,30 +308,26 @@
         </div>
     </div>
     
-    <!-- Modal para Editar Nombre de Ronda -->
-    <div id="edit-round-name-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-50 hidden">
+    <!-- CAMBIO: Modal renombrado de "Ronda" a "Dueño" -->
+    <div id="edit-owner-name-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-50 hidden">
         <div class="bg-gray-800 rounded-lg shadow-2xl w-full max-w-sm">
-            <!-- Cabecera del Modal -->
             <div class="p-4 border-b border-gray-700">
-                <h3 class="text-xl font-semibold text-white">Asignar Dueño de Ronda</h3>
+                <h3 class="text-xl font-semibold text-white">Asignar Dueño</h3>
             </div>
-            <!-- Contenido del Modal -->
             <div class="p-6">
-                <!-- Contenedor de Sugerencias -->
                 <label class="block text-sm font-medium text-gray-400 mb-2">Sugerencias:</label>
-                <div id="round-name-suggestions" class="flex flex-wrap gap-2 mb-4">
+                <div id="owner-name-suggestions" class="flex flex-wrap gap-2 mb-4">
                     <!-- Botones de sugerencia se inyectan aquí -->
                 </div>
                 
-                <label for="round-name-input" class="block text-sm font-medium text-gray-300 mb-2">Nombre (Ej: Juan, Pedro, Apuesta)</label>
-                <input type="text" id="round-name-input" class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg p-2 placeholder-gray-400">
+                <label for="owner-name-input" class="block text-sm font-medium text-gray-300 mb-2">Nombre (Ej: Juan, Pedro, Abono)</label>
+                <input type="text" id="owner-name-input" class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg p-2 placeholder-gray-400">
             </div>
-            <!-- Pie del Modal (Botones) -->
             <div class="p-4 bg-gray-900 rounded-b-lg flex justify-end gap-4">
-                <button id="edit-round-name-cancel-btn" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-lg transition duration-200">
+                <button id="edit-owner-name-cancel-btn" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-lg transition duration-200">
                     Cancelar
                 </button>
-                <button id="edit-round-name-save-btn" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg transition duration-200">
+                <button id="edit-owner-name-save-btn" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg transition duration-200">
                     Guardar
                 </button>
             </div>
@@ -367,17 +337,12 @@
 
     <!-- Firebase SDKs -->
     <script type="module">
-        // IMPORTANTE: Se importa setLogLevel desde 'app'
         import { initializeApp, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        
-        // Módulos de Autenticación
         import { 
             getAuth, 
             signInAnonymously, 
             onAuthStateChanged 
         } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        
-        // Módulos de Firestore
         import { 
             getFirestore, 
             doc, 
@@ -398,7 +363,6 @@
 
         // --- 1. CONFIGURACIÓN Y LISTAS ---
 
-        // Configuración de Firebase
         const firebaseConfig = {
           apiKey: "AIzaSyCUGWQJDywozNv20i4IACVXaeXyHVpYPqg",
           authDomain: "ventas-spb.firebaseapp.com",
@@ -409,12 +373,10 @@
           measurementId: "G-M9PC2L3XTP"
         };
         
-        // Logo en Base64 para el PDF
-        const logoBase64 = ""; // <--- ¡PEGA TU TEXTO AQUÍ!
+        const logoBase64 = ""; // <--- Pega tu logo en Base64 aquí
 
-        // Lista de Productos
         const products = [
-            // Cervezas (Ordenadas)
+            // Cervezas
             { category: "Cervezas", name: "Aguila", price: 3200 },
             { category: "Cervezas", name: "Poker", price: 3200 },
             { category: "Cervezas", name: "Light", price: 3500 },
@@ -426,13 +388,11 @@
             { category: "Cervezas", name: "Coronita", price: 4000 },
             { category: "Cervezas", name: "Costeña Negra", price: 3200 },
             { category: "Cervezas", name: "Costeña Verde", price: 3200 },
-            
-            // RTD (Listos)
+            // RTD
             { category: "RTD (Listos)", name: "Cuates", price: 6000 },
             { category:"RTD (Listos)", name: "Like", price: 4500 },
             { category: "RTD (Listos)", name: "Smirnoff Ice", price: 10000 },
             { category: "RTD (Listos)", name: "Reds", price: 4500 },
-
             // Licores
             { category: "Licores", name: "Whiskey Botella", price: 70000 },
             { category: "Licores", name: "Whiskey 1/2", price: 40000 },
@@ -447,31 +407,26 @@
             { category: "Licores", name: "Amarillo Botella", price: 70000 },
             { category: "Licores", name: "Amarillo 1/2", price: 40000 },
             { category: "Licores", name: "Tequila 1/2", price: 70000 },
-            
-            // Bebidas sin alcohol
+            // Sin Alcohol
             { category: "Sin Alcohol", name: "Pony Malta", price: 3200 },
             { category: "Sin Alcohol", name: "Hit", price: 3200 },
             { category: "Sin Alcohol", name: "Sporade", price: 3200 },
             { category: "Sin Alcohol", name: "Agua", price: 2000 },
             { category: "Sin Alcohol", name: "Cocacola", price: 3200 },
             { category: "Sin Alcohol", name: "Latas", price: 3500 },
-            
             // Snacks
             { category: "Snacks", name: "Doritos", price: 3200 },
             { category: "Snacks", name: "Papas", price: 3200 },
             { category: "Snacks", name: "Detodtito", price: 3500 },
             { category: "Snacks", name: "Todorico", price: 3500 },
-
             // Otros
             { category: "Otros", name: "Mustang", price: 1100 },
             { category: "Otros", name: "Lucky", price: 1300 }, 
             { category: "Otros", name: "Otros", price: 0 }, 
-
-            // Descuento
+            // Descuento (Abono)
             { category: "Descuento", name: "Descuento", price: 0 }
         ];
 
-        // Lista de Mesas Predefinidas
         const predefinedTables = [
             'Amarillo', 'Verde', 'Azul', 'Roja', 'Barra', 'Ladrillo', 
             'Sofa', 'Ventana', 'Escalera', 'Reja', 'Entrada', 'TV'
@@ -483,30 +438,22 @@
         let tablesCollectionRef; 
         let closedTablesCollectionRef; 
         let activeTableId = null; 
-        
         let currentRound = []; 
-        
         let allTablesData = new Map();
         
-        // Variables de Layout
         let leftPanel, rightPanel, toggleTablesBtn;
         let isTablesVisible = false; 
         
-        // Variables de Filtro de Cuadrícula
         let toggleFilterBtn;
         let isGridFiltered = false; 
         
-        // Variables de Formulario "Nueva Mesa"
         let toggleOpenTableFormBtn, openTableForm;
         let isOpenTableFormVisible = false;
         
         let currentAuditFilteredIds = [];
-        
         let onConfirmAction = null;
-        
         let currentEditContext = null; 
         
-        // Variables de Carga de PDF
         let pdfScriptsLoaded = false;
         let isPdfLoading = false; 
 
@@ -516,14 +463,13 @@
                 const app = initializeApp(firebaseConfig);
                 db = getFirestore(app);
                 auth = getAuth(app);
-                // setLogLevel('Debug'); // Comentado para mejorar rendimiento en móviles
+                // setLogLevel('Debug'); 
 
                 tablesCollectionRef = collection(db, "tables");
                 closedTablesCollectionRef = collection(db, "closedTables");
 
                 console.log("Ruta de colección ABIERTAS:", tablesCollectionRef.path);
                 console.log("Ruta de colección CERRADAS:", closedTablesCollectionRef.path);
-
 
                 onAuthStateChanged(auth, (user) => {
                     if (user) {
@@ -567,7 +513,7 @@
             setupLayoutToggle();
             setupOpenTableFormToggle();
             setupGridFilterToggle();
-            setupEditRoundNameModal();
+            setupEditOwnerNameModal(); // CAMBIO: Renombrada
             
             document.getElementById('active-table-select').addEventListener('change', (e) => {
                 setActiveTable(e.target.value, true); 
@@ -580,7 +526,6 @@
             });
         }
         
-        // Configura el botón para mostrar/ocultar el panel de mesas
         function setupLayoutToggle() {
             leftPanel = document.getElementById('left-panel');
             rightPanel = document.getElementById('right-panel');
@@ -595,7 +540,6 @@
             updateLayout(); 
         }
         
-        // Configura el botón "Nueva Mesa"
         function setupOpenTableFormToggle() {
             toggleOpenTableFormBtn = document.getElementById('toggle-open-table-form-btn');
             openTableForm = document.getElementById('open-table-form');
@@ -609,7 +553,6 @@
             updateOpenTableFormLayout();
         }
         
-        // Actualiza la UI del formulario "Nueva Mesa"
         function updateOpenTableFormLayout() {
             if (!toggleOpenTableFormBtn || !openTableForm) return;
 
@@ -626,7 +569,6 @@
             }
         }
         
-        // Actualiza las clases del layout
         function updateLayout() {
             if (!leftPanel || !rightPanel || !toggleTablesBtn) {
                 console.warn("Elementos del layout no encontrados, saltando actualización.");
@@ -650,7 +592,6 @@
             }
         }
         
-        // Configura el botón de filtro de la cuadrícula
         function setupGridFilterToggle() {
             toggleFilterBtn = document.getElementById('toggle-filter-btn');
             if (toggleFilterBtn) {
@@ -662,7 +603,6 @@
             }
         }
         
-        // Actualiza el texto del botón de filtro
         function updateFilterButtonText() {
             if (!toggleFilterBtn) return;
             if (isGridFiltered) {
@@ -676,7 +616,6 @@
             }
         }
 
-        // Carga la lista de productos en el <select>
         function renderProductList() {
             const select = document.getElementById('product-select');
             select.innerHTML = ''; 
@@ -711,7 +650,6 @@
             }
         }
         
-        // Configura el formulario "Abrir Mesa"
         function setupOpenTableForm() {
             const select = document.getElementById('table-select');
             const otherContainer = document.getElementById('other-table-name-container');
@@ -787,7 +725,6 @@
 
         // --- 5. LÓGICA PRINCIPAL (Listeners y Acciones) ---
 
-        // Escucha los cambios en la colección de mesas
         function setupTableListeners() {
             if (!tablesCollectionRef) {
                 console.error("setupTableListeners llamado antes de que tablesCollectionRef esté definido.");
@@ -847,7 +784,6 @@
             });
         }
         
-        // Actualiza el menú desplegable del atajo
         function updateActiveTableSelect(currentActiveId) {
             const select = document.getElementById('active-table-select');
             
@@ -867,7 +803,6 @@
             select.value = currentActiveId || "";
         }
         
-        // Crea el HTML de una tarjeta de mesa
         function createTableCard(table) {
             const card = document.createElement('div');
             card.className = `table-card bg-gray-800 p-4 rounded-lg shadow-lg border-2 border-gray-700 transition-all duration-200 cursor-pointer ${table.items.length > 0 ? 'has-items' : ''} ${table.id === activeTableId ? 'active' : ''}`;
@@ -895,7 +830,6 @@
             return card;
         }
 
-        // Actualiza el HTML de una tarjeta existente
         function updateTableCard(card, table) {
             card.classList.toggle('active', table.id === activeTableId);
             card.classList.toggle('has-items', table.items.length > 0);
@@ -903,7 +837,6 @@
             renderTableCardContent(card, table);
         }
 
-        // Renderiza el contenido interno de la tarjeta
         function renderTableCardContent(cardElement, table) {
             
             const groupedItems = groupItems(table.items);
@@ -939,6 +872,9 @@
             } else {
                 itemsHtml = '<li class="text-sm text-gray-500 italic">Mesa vacía</li>';
             }
+            
+            const totalConsumed = table.items.reduce((sum, item) => sum + item.price, 0);
+            const totalPaid = totalConsumed - table.total;
 
             cardElement.innerHTML = `
                 <h3 class="text-xl font-bold mb-2 truncate ${table.items.length > 0 ? 'text-cyan-400' : 'text-gray-400'}">${table.name}</h3>
@@ -946,9 +882,19 @@
                     ${itemsHtml}
                 </ul>
                 <div class="border-t border-gray-700 pt-3">
-                    <div class="flex justify-between items-center mb-3">
-                        <span class="text-gray-400 font-medium">TOTAL</span>
-                        <span class="text-2xl font-bold text-green-400">${formatCurrency(table.total)}</span>
+                    <div class="space-y-1 mb-3">
+                        <div class="flex justify-between items-center text-sm">
+                            <span class="text-gray-400">Total Consumido:</span>
+                            <span class="font-semibold text-white">${formatCurrency(totalConsumed)}</span>
+                        </div>
+                        <div class="flex justify-between items-center text-sm">
+                            <span class="text-gray-400">Total Pagado:</span>
+                            <span class="font-semibold text-green-400">${formatCurrency(totalPaid)}</span>
+                        </div>
+                        <div class="flex justify-between items-center text-lg">
+                            <span class="text-gray-200 font-bold">TOTAL PENDIENTE:</span>
+                            <span class="text-2xl font-bold text-green-400">${formatCurrency(table.total)}</span>
+                        </div>
                     </div>
                     <div class="grid grid-cols-3 gap-2">
                         <button class="btn-history bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-3 rounded-lg text-sm transition-all">
@@ -964,8 +910,6 @@
                 </div>
             `;
             
-            // --- RECONECTAR EVENTOS ---
-            
             cardElement.querySelector('.btn-history').addEventListener('click', () => {
                 const freshTable = allTablesData.get(table.id);
                 if (freshTable) showHistory(freshTable);
@@ -978,11 +922,7 @@
                         showStatusMessage("No se puede facturar una mesa vacía.", true);
                         return;
                     }
-                    
-                    if (isPdfLoading) {
-                        showStatusMessage("Cargando PDF, un momento...", false);
-                        return;
-                    }
+                    if (isPdfLoading) return;
                     
                     try {
                         const scriptsReady = await ensurePdfScripts(); 
@@ -990,10 +930,8 @@
                             showStatusMessage("Error al cargar librerías PDF. Intente de nuevo.", true);
                             return;
                         }
-                        
                         generatePDF(freshTable); 
                         showStatusMessage("Factura PDF generada.", false);
-                        
                     } catch (pdfError) {
                         console.error("Error al generar PDF:", pdfError);
                         showStatusMessage(`Error al crear PDF: ${pdfError.message}`, true);
@@ -1017,7 +955,6 @@
             });
         }
         
-        // Agrupa items por nombre para el resumen
         function groupItems(items) {
             const grouped = {};
             if (!items || !Array.isArray(items)) {
@@ -1045,7 +982,6 @@
             return grouped;
         }
 
-        // Muestra el panel de la ronda actual
         function renderCurrentRound() {
             const panel = document.getElementById('current-round-panel');
             const list = document.getElementById('current-round-list');
@@ -1087,7 +1023,6 @@
             });
         }
 
-        // Añade "Descuento" u "Otros" directamente a la mesa
         async function addSpecialProductToTable(productName, quantity) {
             if (!activeTableId) {
                 showStatusMessage("Por favor, seleccione una mesa primero.", true);
@@ -1105,10 +1040,12 @@
                     }
                     const newItem = {
                         id: `item-${Date.now()}`, name: 'Descuento',
-                        price: -discountAmount, timestamp: new Date().toISOString()
+                        price: -discountAmount, timestamp: new Date().toISOString(),
+                        isPaid: false, 
+                        ownerName: null // CAMBIO: Añadido ownerName
                     };
                     await updateDoc(tableDocRef, {
-                        items: arrayUnion(newItem), total: increment(-discountAmount)
+                        items: arrayUnion(newItem), total: increment(-discountAmount) 
                     });
                     showStatusMessage(`Descuento de ${formatCurrency(discountAmount)} aplicado.`, false);
                 
@@ -1120,10 +1057,12 @@
                     }
                     const newItem = {
                         id: `item-${Date.now()}`, name: 'Otros',
-                        price: additionalAmount, timestamp: new Date().toISOString()
+                        price: additionalAmount, timestamp: new Date().toISOString(),
+                        isPaid: false, 
+                        ownerName: null // CAMBIO: Añadido ownerName
                     };
                     await updateDoc(tableDocRef, {
-                        items: arrayUnion(newItem), total: increment(additionalAmount)
+                        items: arrayUnion(newItem), total: increment(additionalAmount) 
                     });
                     showStatusMessage(`Cargo "Otros" de ${formatCurrency(additionalAmount)} aplicado.`, false);
                 }
@@ -1136,7 +1075,6 @@
             }
         }
         
-        // Configura botones de ronda y especiales
         function setupRoundAndSpecialButtons() {
             const addBtn = document.getElementById('add-to-round-btn'); 
             const registerBtn = document.getElementById('register-round-btn'); 
@@ -1159,7 +1097,7 @@
                 if (productName === 'Descuento' || productName === 'Otros') {
                     showConfirmationModal(
                         `Confirmar Acción: ${productName}`,
-                        `"${productName}" se aplica DIRECTAMENTE a la mesa, no a la ronda.\n\n¿Desea continuar?`,
+                        `"${productName}" se aplica DIRECTAMENTE a la mesa.\n\n¿Desea continuar?`,
                         () => {
                             addSpecialProductToTable(productName, quantity);
                         }
@@ -1205,7 +1143,8 @@
                             price: item.price,
                             timestamp: timestamp, 
                             roundId: roundId,
-                            roundName: null 
+                            ownerName: null, // CAMBIO: Renombrado
+                            isPaid: false 
                         });
                     }
                     totalRoundPrice += item.price * item.quantity;
@@ -1215,7 +1154,7 @@
                     const tableDocRef = doc(tablesCollectionRef, activeTableId);
                     await updateDoc(tableDocRef, {
                         items: arrayUnion(...itemsToAdd), 
-                        total: increment(totalRoundPrice)
+                        total: increment(totalRoundPrice) 
                     });
                     
                     showStatusMessage(`Ronda de ${formatCurrency(totalRoundPrice)} registrada.`, false);
@@ -1237,12 +1176,10 @@
         
         // --- 6. LÓGICA DE MODALES (Historial, Zoom, Auditoría) ---
         
-        // Agrupa el historial por transacciones (Rondas)
-        // CAMBIO: Añade enumeración de rondas
+        // CAMBIO: Lógica de agrupación ahora usa ownerName
         function groupHistoryByTransaction(items) {
             const groupedByTransaction = new Map();
             
-            // 1. Agrupar items por roundId o (si no tiene) por id
             items.forEach(item => {
                 const key = item.roundId || item.id; 
                 if (!groupedByTransaction.has(key)) {
@@ -1251,13 +1188,11 @@
                 groupedByTransaction.get(key).push(item);
             });
 
-            // 2. Convertir el Map en un array de "transacciones"
             const transactions = [];
             for (const [key, itemsInGroup] of groupedByTransaction.entries()) {
                 const firstItem = itemsInGroup[0];
                 
                 if (firstItem.roundId) {
-                    // Es una RONDA
                     const roundTotal = itemsInGroup.reduce((sum, i) => sum + i.price, 0);
                     
                     const detailsMap = new Map();
@@ -1276,78 +1211,82 @@
 
                     transactions.push({
                         id: firstItem.roundId, 
-                        name: "Ronda", // Nombre base
+                        name: "Ronda",
                         price: roundTotal,
                         timestamp: firstItem.timestamp,
                         isRound: true,
-                        roundName: firstItem.roundName || null, 
+                        ownerName: firstItem.ownerName || null, // CAMBIO: Renombrado
+                        isPaid: firstItem.isPaid || false, 
                         details: details, 
                         items: itemsInGroup 
                     });
                 } else {
-                    // Es un item individual
+                    // Item individual
                     transactions.push({
                         id: firstItem.id, 
-                        name: firstItem.name, // Ej: "Descuento"
+                        name: firstItem.name,
                         price: firstItem.price,
                         timestamp: firstItem.timestamp,
                         isRound: false,
-                        roundName: null, 
+                        ownerName: firstItem.ownerName || null, // CAMBIO: Renombrado
+                        isPaid: firstItem.isPaid || false, 
                         details: [], 
                         items: itemsInGroup 
                     });
                 }
             }
             
-            // 3. Ordenar las transacciones por fecha (primero las más antiguas)
             const sortedByDate = transactions.sort((a, b) => {
                 if (!a.timestamp || !b.timestamp) return 0;
                 return new Date(a.timestamp) - new Date(b.timestamp);
             });
             
-            // 4. Enumerar solo las RONDAS
             let roundCounter = 1;
             const enumeratedTransactions = sortedByDate.map(tx => {
                 if (tx.isRound) {
-                    tx.roundNumber = roundCounter; // Asignar número
+                    tx.roundNumber = roundCounter; 
                     roundCounter++;
                 }
                 return tx;
             });
             
-            // 5. Invertir el orden para mostrar (primero las más nuevas)
             return enumeratedTransactions.reverse();
         }
         
-        // Agrupa transacciones por dueño para el resumen
+        // CAMBIO: Lógica de resumen ahora agrupa por ownerName y calcula PENDIENTE
         function summarizeByOwner(transactions) {
             const summary = new Map();
-            // Invertir transacciones para procesar de más antigua a más nueva
             const chronologicalTransactions = [...transactions].reverse(); 
             
             for (const tx of chronologicalTransactions) {
-                const owner = tx.roundName || "Sin Asignar"; 
+                // CAMBIO: Usar ownerName
+                const owner = tx.ownerName || "Sin Asignar"; 
                 
                 if (!summary.has(owner)) {
-                    summary.set(owner, { total: 0, transactions: [] });
+                    summary.set(owner, { totalConsumed: 0, totalPending: 0, transactions: [] });
                 }
                 
                 const data = summary.get(owner);
-                data.total += tx.price;
-                data.transactions.push(tx); // Añadir la transacción (que ya tiene roundNumber)
+                data.totalConsumed += tx.price; // Suma todo lo consumido
+                
+                // Solo suma al PENDIENTE si no está pagada (y no es un descuento)
+                if (!tx.isPaid) {
+                     data.totalPending += tx.price;
+                }
+                
+                data.transactions.push(tx); 
             }
             return summary;
         }
 
-        // Configura el modal de historial
+
         function setupHistoryModal() {
             document.getElementById('close-history-modal-btn').addEventListener('click', () => {
                 document.getElementById('history-modal').classList.add('hidden');
             });
         }
 
-        // Muestra el modal de historial
-        // CAMBIO: Muestra el número de ronda
+        // CAMBIO: Muestra botón [Asignar Dueño] para Rondas y Descuentos
         function showHistory(table) {
             const modal = document.getElementById('history-modal');
             const content = document.getElementById('history-content');
@@ -1359,7 +1298,6 @@
                 return;
             }
 
-            // Ya vienen enumeradas y en orden descendente
             const sortedTransactions = groupHistoryByTransaction(table.items);
 
             let html = '<ul class="divide-y divide-gray-700">';
@@ -1369,73 +1307,112 @@
                     ? new Date(transaction.timestamp).toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
                     : 'Hora desconocida';
                 
+                let nameHtml = '';
+                let actionsHtml = '';
+                let transactionTitle = '';
+                let titleColor = '';
+
                 if (transaction.isRound) {
-                    // Es una RONDA
+                    // --- LÓGICA PARA RONDAS ---
+                    transactionTitle = `Ronda ${transaction.roundNumber}`;
+                    titleColor = 'text-yellow-300';
+                    
                     let roundDetailsHtml = '<ul class="pl-4 mt-1 border-l border-gray-600">';
                     transaction.details.forEach(detail => {
                         roundDetailsHtml += `<li class="text-sm text-gray-400">${detail.name} x ${detail.quantity} (${formatCurrency(detail.price * detail.quantity)})</li>`;
                     });
                     roundDetailsHtml += '</ul>';
-                    
-                    let nameHtml = '';
-                    if (transaction.roundName) {
-                        nameHtml = `
-                            <span class="ml-2 pl-2 border-l border-gray-600 text-lg font-bold text-white">${transaction.roundName}</span>
-                            <button class="btn-edit-round-name text-xs text-blue-400 hover:text-blue-300 ml-2" data-round-id="${transaction.id}">[Editar]</button>
-                        `;
+
+                    if (transaction.isPaid) {
+                        // Ronda PAGADA
+                        nameHtml = transaction.ownerName ? `<span class="ml-2 pl-2 border-l border-gray-600 text-lg font-bold text-white">${transaction.ownerName}</span>` : '';
+                        actionsHtml = '<span class="font-bold text-green-400">[PAGADA]</span>';
                     } else {
-                        nameHtml = `
-                            <button class="btn-edit-round-name text-xs bg-blue-600 hover:bg-blue-700 text-white font-semibold py-1 px-2 rounded-lg ml-2" data-round-id="${transaction.id}">[Asignar Dueño]</button>
+                        // Ronda PENDIENTE
+                        if (transaction.ownerName) {
+                            nameHtml = `
+                                <span class="ml-2 pl-2 border-l border-gray-600 text-lg font-bold text-white">${transaction.ownerName}</span>
+                                <button class="btn-edit-owner-name text-xs text-blue-400 hover:text-blue-300 ml-2" data-tx-id="${transaction.id}" data-is-round="true">[Editar]</button>
+                            `;
+                        } else {
+                            nameHtml = `
+                                <button class="btn-edit-owner-name text-xs bg-blue-600 hover:bg-blue-700 text-white font-semibold py-1 px-2 rounded-lg ml-2" data-tx-id="${transaction.id}" data-is-round="true">[Asignar Dueño]</button>
+                            `;
+                        }
+                        
+                        actionsHtml = `
+                            <button data-tx-id="${transaction.id}" data-tx-price="${transaction.price}"
+                                    class="btn-pay-round bg-green-600 hover:bg-green-700 text-white font-semibold py-1 px-2 rounded-lg text-xs" title="Marcar Ronda como Pagada">
+                                Pagar
+                            </button>
+                            <button data-item-id="${transaction.id}" 
+                                    class="btn-repeat-round bg-yellow-600 hover:bg-yellow-700 text-white font-semibold py-1 px-2 rounded-lg text-xs ml-1" title="Repetir Ronda">
+                                Repetir
+                            </button>
+                            <button data-item-id="${transaction.id}" 
+                                    class="btn-delete-item text-red-500 hover:text-red-300 font-bold text-2xl px-2 ml-1 rounded-full" title="Eliminar Ronda">
+                                &times;
+                            </button>
                         `;
                     }
-
+                    
                     html += `
                         <li class="flex justify-between items-start py-3"> 
                             <div>
                                 <div class="flex items-center">
-                                    <!-- NUEVO: Número de ronda -->
-                                    <span class="font-semibold text-yellow-300">Ronda ${transaction.roundNumber}</span>
+                                    <span class="font-semibold ${titleColor}">${transactionTitle}</span>
                                     ${nameHtml} 
                                 </div>
                                 <span class="block text-sm text-gray-400">${itemTime}</span>
                                 ${roundDetailsHtml} 
                             </div>
                             <div class="flex items-center flex-shrink-0"> 
-                                <span class="font-semibold text-lg mr-2 text-yellow-300">${formatCurrency(transaction.price)}</span>
-                                
-                                <button data-item-id="${transaction.id}" 
-                                        class="btn-repeat-round bg-yellow-600 hover:bg-yellow-700 text-white font-semibold py-1 px-2 rounded-lg text-xs" title="Repetir Ronda">
-                                    Repetir
-                                </button>
-
-                                <button data-item-id="${transaction.id}" 
-                                        class="btn-delete-item text-red-500 hover:text-red-300 font-bold text-2xl px-2 ml-1 rounded-full" title="Eliminar Ronda">
-                                    &times;
-                                </button>
+                                <span class="font-semibold text-lg mr-2 ${titleColor}">${formatCurrency(transaction.price)}</span>
+                                ${actionsHtml}
                             </div>
                         </li>
                     `;
-                } else {
-                    // Es un item normal
-                    const isDiscount = transaction.price < 0;
-                    const isOther = transaction.price > 0 && (transaction.name === 'Otros');
-                    
-                    let textColor = 'text-white';
-                    if (isDiscount) textColor = 'text-red-300';
-                    if (isOther) textColor = 'text-yellow-300';
 
+                } else {
+                    // --- LÓGICA PARA ITEMS INDIVIDUALES (Descuento, Otros) ---
+                    transactionTitle = transaction.name;
+                    titleColor = transaction.price < 0 ? 'text-red-300' : 'text-yellow-300'; // Descuento o Otros
+                    
+                    if (transaction.name === 'Descuento') {
+                        // Es un Descuento (Abono), puede tener dueño
+                        if (transaction.ownerName) {
+                            nameHtml = `
+                                <span class="ml-2 pl-2 border-l border-gray-600 text-lg font-bold text-white">${transaction.ownerName}</span>
+                                <button class="btn-edit-owner-name text-xs text-blue-400 hover:text-blue-300 ml-2" data-tx-id="${transaction.id}" data-is-round="false">[Editar]</button>
+                            `;
+                        } else {
+                            nameHtml = `
+                                <button class="btn-edit-owner-name text-xs bg-blue-600 hover:bg-blue-700 text-white font-semibold py-1 px-2 rounded-lg ml-2" data-tx-id="${transaction.id}" data-is-round="false">[Asignar Dueño]</button>
+                            `;
+                        }
+                    }
+                    // Para "Otros", nameHtml queda vacío (sin dueño)
+
+                    // Acciones (solo eliminar)
+                    actionsHtml = `
+                        <button data-item-id="${transaction.id}" 
+                                class="btn-delete-item text-red-500 hover:text-red-300 font-bold text-2xl px-2 rounded-full">
+                            &times;
+                        </button>
+                    `;
+                    
                     html += `
-                        <li class="flex justify-between items-center py-3">
+                        <li class="flex justify-between items-start py-3"> <!-- items-start -->
                             <div>
-                                <span class="font-semibold ${textColor}">${transaction.name}</span>
+                                <div class="flex items-center">
+                                    <span class="font-semibold ${titleColor}">${transactionTitle}</span>
+                                    ${nameHtml} <!-- Aquí va el dueño del descuento -->
+                                </div>
                                 <span class="block text-sm text-gray-400">${itemTime}</span>
                             </div>
                             <div class="flex items-center">
-                                <span class="font-semibold text-lg mr-4 ${textColor}">${formatCurrency(transaction.price)}</span>
-                                <button data-item-id="${transaction.id}" 
-                                        class="btn-delete-item text-red-500 hover:text-red-300 font-bold text-2xl px-2 rounded-full">
-                                    &times;
-                                </button>
+                                <span class="font-semibold text-lg mr-4 ${titleColor}">${formatCurrency(transaction.price)}</span>
+                                ${actionsHtml}
                             </div>
                         </li>
                     `;
@@ -1452,7 +1429,6 @@
                     
                     if (transactionToDelete) {
                         const title = `Confirmar Borrado`;
-                        // CAMBIO: Mostrar número de ronda si existe
                         const txName = transactionToDelete.isRound ? `Ronda ${transactionToDelete.roundNumber}` : transactionToDelete.name;
                         const message = `¿Está seguro que desea eliminar "${txName}" (${formatCurrency(transactionToDelete.price)})? Esta acción no se puede deshacer.`;
                         
@@ -1475,13 +1451,33 @@
                 });
             });
             
-            // Conectar botones de "Asignar/Editar Nombre"
-            content.querySelectorAll('.btn-edit-round-name').forEach(btn => {
+            // CAMBIO: Conectar botones de "Asignar/Editar Dueño" (ahora universal)
+            content.querySelectorAll('.btn-edit-owner-name').forEach(btn => {
                 btn.addEventListener('click', () => {
-                    const roundId = btn.dataset.roundId;
-                    const transaction = sortedTransactions.find(t => t.id === roundId);
+                    const txId = btn.dataset.txId; 
+                    const isRound = btn.dataset.isRound === 'true'; 
+                    
+                    const transaction = sortedTransactions.find(t => t.id === txId);
                     if (transaction) {
-                        showEditRoundNameModal(table, roundId, transaction.roundName);
+                        showEditOwnerNameModal(table, txId, isRound, transaction.ownerName);
+                    }
+                });
+            });
+            
+            // Conectar botones de "Pagar Ronda"
+            content.querySelectorAll('.btn-pay-round').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const roundId = btn.dataset.txId; // CAMBIO: data-tx-id
+                    const roundPrice = parseFloat(btn.dataset.txPrice); // CAMBIO: data-tx-price
+                    const transaction = sortedTransactions.find(t => t.id === roundId);
+                    
+                    if(transaction) {
+                        const title = "Confirmar Pago de Ronda";
+                        const message = `¿Marcar la Ronda ${transaction.roundNumber} (${formatCurrency(roundPrice)}) como PAGADA? El total pendiente se reducirá.`;
+                        
+                        showConfirmationModal(title, message, () => {
+                            handleMarkRoundAsPaid(table.id, roundId, roundPrice);
+                        });
                     }
                 });
             });
@@ -1489,15 +1485,13 @@
             modal.classList.remove('hidden');
         }
         
-        // Configura el modal de historial de solo lectura
         function setupReadOnlyHistoryModal() {
             document.getElementById('close-ro-history-modal-btn').addEventListener('click', () => {
                 document.getElementById('read-only-history-modal').classList.add('hidden');
             });
         }
 
-        // Muestra el modal de historial (SOLO LECTURA)
-        // CAMBIO: Muestra el número de ronda
+        // CAMBIO: Muestra dueño de Rondas y Descuentos
         function showReadOnlyHistory(table) {
             const modal = document.getElementById('read-only-history-modal');
             const content = document.getElementById('ro-history-content');
@@ -1517,49 +1511,48 @@
                     ? new Date(transaction.timestamp).toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
                     : 'Hora desconocida';
                 
+                let title = '';
+                let titleColor = '';
+                let ownerHtml = '';
+                let detailsHtml = '';
+                
                 if (transaction.isRound) {
+                    title = `Ronda ${transaction.roundNumber}`;
+                    titleColor = 'text-yellow-300';
+                    const paidMarker = transaction.isPaid ? '<span class="font-bold text-green-400 ml-2">[PAGADA]</span>' : '';
+                    ownerHtml = transaction.ownerName ? `<span class="ml-2 pl-2 border-l border-gray-600 text-lg font-bold text-white">${transaction.ownerName}</span>${paidMarker}` : paidMarker;
+
                     let roundDetailsHtml = '<ul class="pl-4 mt-1 border-l border-gray-600">';
                     transaction.details.forEach(detail => {
                         roundDetailsHtml += `<li class="text-sm text-gray-400">${detail.name} x ${detail.quantity} (${formatCurrency(detail.price * detail.quantity)})</li>`;
                     });
                     roundDetailsHtml += '</ul>';
-
-                    html += `
-                        <li class="flex justify-between items-start py-3">
-                            <div>
-                                <div class="flex items-center"> 
-                                    <!-- NUEVO: Número de ronda -->
-                                    <span class="font-semibold text-yellow-300">Ronda ${transaction.roundNumber}</span>
-                                    ${transaction.roundName ? `<span class="ml-2 pl-2 border-l border-gray-600 text-lg font-bold text-white">${transaction.roundName}</span>` : ''}
-                                </div>
-                                <span class="block text-sm text-gray-400">${itemTime}</span>
-                                ${roundDetailsHtml}
-                            </div>
-                            <div class="flex items-center flex-shrink-0">
-                                <span class="font-semibold text-lg mr-4 text-yellow-300">${formatCurrency(transaction.price)}</span>
-                            </div>
-                        </li>
-                    `;
+                    detailsHtml = roundDetailsHtml;
+                    
                 } else {
-                    const isDiscount = transaction.price < 0;
-                    const isOther = transaction.price > 0 && (transaction.name === 'Otros');
-                    
-                    let textColor = 'text-white';
-                    if (isDiscount) textColor = 'text-red-300';
-                    if (isOther) textColor = 'text-yellow-300';
-                    
-                    html += `
-                        <li class="flex justify-between items-center py-3">
-                            <div>
-                                <span class="font-semibold ${textColor}">${transaction.name}</span>
-                                <span class="block text-sm text-gray-400">${itemTime}</span>
-                            </div>
-                            <div class="flex items-center">
-                                <span class="font-semibold text-lg mr-4 ${textColor}">${formatCurrency(transaction.price)}</span>
-                            </div>
-                        </li>
-                    `;
+                    // Item individual
+                    title = transaction.name;
+                    titleColor = transaction.price < 0 ? 'text-red-300' : 'text-yellow-300';
+                    if (transaction.name === 'Descuento' && transaction.ownerName) {
+                        ownerHtml = `<span class="ml-2 pl-2 border-l border-gray-600 text-lg font-bold text-white">${transaction.ownerName}</span>`;
+                    }
                 }
+
+                html += `
+                    <li class="flex justify-between items-start py-3">
+                        <div>
+                            <div class="flex items-center"> 
+                                <span class="font-semibold ${titleColor}">${title}</span>
+                                ${ownerHtml}
+                            </div>
+                            <span class="block text-sm text-gray-400">${itemTime}</span>
+                            ${detailsHtml}
+                        </div>
+                        <div class="flex items-center flex-shrink-0">
+                            <span class="font-semibold text-lg mr-4 ${titleColor}">${formatCurrency(transaction.price)}</span>
+                        </div>
+                    </li>
+                `;
             });
             html += '</ul>';
             content.innerHTML = html;
@@ -1567,7 +1560,6 @@
             modal.classList.remove('hidden');
         }
 
-        // Configura el modal de Zoom
         function setupZoomModal() {
             document.getElementById('close-zoom-modal-btn').addEventListener('click', () => {
                 document.getElementById('zoom-modal').classList.add('hidden');
@@ -1597,14 +1589,15 @@
             });
         }
         
-        // Muestra el modal de Zoom
-        // CAMBIO: Muestra el número de ronda en la pestaña "Por Dueño"
+        // CAMBIO: Resumen por Dueño ahora muestra total PENDIENTE
         function showZoomModal(table) {
             const modal = document.getElementById('zoom-modal');
             document.getElementById('zoom-table-name').textContent = table.name;
-            document.getElementById('zoom-total').textContent = formatCurrency(table.total);
             
-            // --- Pestaña 1: Resumen por Producto ---
+            const totalConsumed = table.items.reduce((sum, item) => sum + item.price, 0);
+            document.getElementById('zoom-total').textContent = formatCurrency(totalConsumed);
+            
+            // --- Pestaña 1: Resumen por Producto (Consumido) ---
             const groupedItems = groupItems(table.items);
             const contentProduct = document.getElementById('zoom-content');
             
@@ -1620,7 +1613,7 @@
                     
                     let textColor = 'text-white';
                     if (isDiscount) textColor = 'text-red-300';
-                    if (isOther) textColor = 'text-yellow-300';
+                    if (isOther) textColor = 'text-yellow-400';
 
                     productHtml += `
                         <li class="flex justify-between items-center py-3">
@@ -1638,8 +1631,7 @@
             }
             contentProduct.innerHTML = productHtml;
             
-            // --- Pestaña 2: Resumen por Dueño ---
-            // 'groupHistoryByTransaction' ya enumera y 'summarizeByOwner' preserva las transacciones
+            // --- Pestaña 2: Resumen por Dueño (Pendiente) ---
             const sortedTransactions = groupHistoryByTransaction(table.items);
             const ownerSummary = summarizeByOwner(sortedTransactions);
             const contentOwner = document.getElementById('zoom-owner-content');
@@ -1651,25 +1643,27 @@
                 ownerHtml = '<ul class="divide-y divide-gray-700">';
                 ownerSummary.forEach((data, owner) => {
                     const ownerColor = (owner === 'Sin Asignar') ? 'text-gray-400' : 'text-cyan-400';
-                    const totalColor = (data.total < 0) ? 'text-red-400' : 'text-green-400';
+                    // CAMBIO: Mostrar total PENDIENTE
+                    const totalPending = data.totalPending;
+                    const totalColor = (totalPending < 0) ? 'text-red-400' : (totalPending > 0 ? 'text-green-400' : 'text-gray-400');
                     
                     ownerHtml += `
                         <li class="py-3">
                             <div class="flex justify-between items-center mb-2">
-                                <span class="text-xl font-semibold ${ownerColor}">${owner}</span>
-                                <span class="text-xl font-bold ${totalColor}">${formatCurrency(data.total)}</span>
+                                <span class="text-xl font-semibold ${ownerColor}">${owner} (Pendiente)</span>
+                                <span class="text-xl font-bold ${totalColor}">${formatCurrency(totalPending)}</span>
                             </div>
                             <ul class="pl-4 border-l border-gray-600 space-y-1">`;
                     
-                    // data.transactions ya está en orden cronológico (ascendente)
                     data.transactions.forEach(tx => {
                         const txTime = tx.timestamp ? new Date(tx.timestamp).toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' }) : '';
                         let txName;
+                        const paidMarker = tx.isPaid ? ' (PAGADA)' : ''; 
+                        
                         if (tx.isRound) {
-                            // NUEVO: Añadir número de ronda
-                            txName = `Ronda ${tx.roundNumber} (${tx.details.map(d => `${d.quantity} ${d.name}`).join(', ')})`;
+                            txName = `Ronda ${tx.roundNumber}${paidMarker} (${tx.details.map(d => `${d.quantity} ${d.name}`).join(', ')})`;
                         } else {
-                            txName = tx.name;
+                            txName = tx.name; // Descuentos, Otros
                         }
                         
                         ownerHtml += `
@@ -1699,7 +1693,6 @@
             modal.classList.remove('hidden');
         }
         
-        // Configura el modal de Auditoría
         function setupAuditModal() {
             const modal = document.getElementById('audit-modal');
             const showBtn = document.getElementById('show-audit-btn');
@@ -1727,7 +1720,6 @@
             deleteAllBtn.addEventListener('click', handleDeleteAllFiltered);
         }
 
-        // Configura el modal de confirmación
         function setupConfirmationModal() {
             const modal = document.getElementById('confirmation-modal');
             const cancelBtn = document.getElementById('confirmation-cancel-btn');
@@ -1747,12 +1739,12 @@
             });
         }
         
-        // Configura el modal para editar nombre de ronda
-        function setupEditRoundNameModal() {
-            const modal = document.getElementById('edit-round-name-modal');
-            const cancelBtn = document.getElementById('edit-round-name-cancel-btn');
-            const saveBtn = document.getElementById('edit-round-name-save-btn');
-            const input = document.getElementById('round-name-input');
+        // CAMBIO: Renombrada de "Round" a "Owner"
+        function setupEditOwnerNameModal() {
+            const modal = document.getElementById('edit-owner-name-modal');
+            const cancelBtn = document.getElementById('edit-owner-name-cancel-btn');
+            const saveBtn = document.getElementById('edit-owner-name-save-btn');
+            const input = document.getElementById('owner-name-input');
             
             cancelBtn.addEventListener('click', () => {
                 modal.classList.add('hidden');
@@ -1762,14 +1754,16 @@
             saveBtn.addEventListener('click', async () => {
                 if (!currentEditContext) return;
                 
-                const { tableId, roundId } = currentEditContext;
+                // CAMBIO: Contexto ahora incluye transactionId y isRound
+                const { tableId, transactionId, isRound } = currentEditContext;
                 const newName = input.value.trim();
                 
                 saveBtn.disabled = true;
                 saveBtn.textContent = 'Guardando...';
                 
                 try {
-                    await handleUpdateRoundName(tableId, roundId, newName);
+                    // CAMBIO: Llamar a la nueva función universal
+                    await handleUpdateOwnerName(tableId, transactionId, isRound, newName);
                     
                     modal.classList.add('hidden');
                     currentEditContext = null;
@@ -1783,7 +1777,7 @@
                     }
                     
                 } catch (error) {
-                    console.error("Error al guardar nombre de ronda:", error);
+                    console.error("Error al guardar nombre de dueño:", error);
                     showStatusMessage("Error al guardar el nombre.", true);
                 } finally {
                     saveBtn.disabled = false;
@@ -1792,7 +1786,6 @@
             });
         }
         
-        // Configura el modal de transferencia
         function setupTransferModal() {
             const modal = document.getElementById('transfer-modal');
             const closeBtn = document.getElementById('close-transfer-modal-btn');
@@ -1832,33 +1825,26 @@
             });
         }
 
-        /**
-         * Muestra el modal de confirmación
-         * @param {string} title - El título del modal
-         * @param {string} message - El mensaje de confirmación
-         * @param {function} onConfirm - La función a ejecutar si se confirma
-         */
         function showConfirmationModal(title, message, onConfirm) {
             const modal = document.getElementById('confirmation-modal');
             document.getElementById('confirmation-title').textContent = title;
             document.getElementById('confirmation-message').textContent = message;
-            
             onConfirmAction = onConfirm; 
-            
             modal.classList.remove('hidden'); 
         }
         
-        // Muestra el modal para editar el nombre de la ronda
-        function showEditRoundNameModal(table, roundId, currentName) {
-            currentEditContext = { tableId: table.id, roundId };
-            const modal = document.getElementById('edit-round-name-modal');
-            const input = document.getElementById('round-name-input');
-            const suggestionsContainer = document.getElementById('round-name-suggestions');
+        // CAMBIO: Renombrada de "Round" a "Owner", contexto actualizado
+        function showEditOwnerNameModal(table, transactionId, isRound, currentName) {
+            currentEditContext = { tableId: table.id, transactionId, isRound };
+            const modal = document.getElementById('edit-owner-name-modal');
+            const input = document.getElementById('owner-name-input');
+            const suggestionsContainer = document.getElementById('owner-name-suggestions');
 
             input.value = currentName || '';
             
+            // --- Sugerencias (ahora incluye dueños de Rondas y Descuentos) ---
             const transactions = groupHistoryByTransaction(table.items);
-            const allNames = transactions.map(tx => tx.roundName).filter(name => name); 
+            const allNames = transactions.map(tx => tx.ownerName).filter(name => name); 
             const uniqueNames = [...new Set(allNames)]; 
 
             if (uniqueNames.length > 0) {
@@ -1886,7 +1872,6 @@
             input.focus(); 
         }
         
-        // Muestra el modal de transferencia
         function showTransferModal() {
             const modal = document.getElementById('transfer-modal');
             const fromNameEl = document.getElementById('transfer-from-name');
@@ -1910,7 +1895,6 @@
             modal.classList.remove('hidden');
         }
         
-        // Busca y muestra las mesas cerradas
         async function fetchClosedTables() {
             const content = document.getElementById('audit-content');
             const totalEl = document.getElementById('audit-total');
@@ -1918,7 +1902,6 @@
             const nameQuery = document.getElementById('audit-table-name').value.trim().toLowerCase();
             
             content.innerHTML = '<p class="text-gray-400 italic">Buscando...</p>';
-            
             currentAuditFilteredIds = [];
             
             if (!dateStr) {
@@ -1955,7 +1938,8 @@
                     currentAuditFilteredIds.push(doc.id); 
                     
                     tablesFound++;
-                    totalAudited += table.total;
+                    const totalConsumed = table.items.reduce((sum, item) => sum + item.price, 0);
+                    totalAudited += totalConsumed;
                     
                     const groupedItems = groupItems(table.items);
                     let itemsDetailHtml = '';
@@ -1986,7 +1970,7 @@
                                     <span class="text-lg font-semibold text-cyan-400">${table.name}</span>
                                     <span class="block text-sm text-gray-500">Cerrada a las: ${closedTime}</span>
                                 </div>
-                                <span class="text-xl font-bold text-green-400">${formatCurrency(table.total)}</span>
+                                <span class="text-xl font-bold text-green-400">${formatCurrency(totalConsumed)}</span>
                             </div>
                             <ul class="pl-4 border-l border-gray-700 mb-3">
                                 ${itemsDetailHtml}
@@ -2057,22 +2041,25 @@
 
         // --- 7. ACCIONES (Eliminar, Cerrar, PDF) ---
 
-        // Elimina una transacción completa (Ronda o Item) desde el historial
         async function handleDeleteItem(table, transactionToDelete) {
             try {
                 const tableDocRef = doc(tablesCollectionRef, table.id);
                 
+                // Si la tx NO estaba pagada, se resta del total pendiente
+                // Si era un descuento (negativo), se *suma* al total pendiente
+                const priceAdjustment = transactionToDelete.isPaid ? 0 : -transactionToDelete.price;
+                
                 await updateDoc(tableDocRef, {
                     items: arrayRemove(...transactionToDelete.items), 
-                    total: increment(-transactionToDelete.price) 
+                    total: increment(priceAdjustment) 
                 });
                 
                 showStatusMessage(`Item eliminado.`, false);
                 
-                const freshTable = allTablesData.get(table.id);
-                if (freshTable) {
+                const freshTableSnap = await getDoc(tableDocRef);
+                if (freshTableSnap.exists()) {
                     if (!document.getElementById('history-modal').classList.contains('hidden')) {
-                        showHistory(freshTable);
+                        showHistory(freshTableSnap.data());
                     }
                 } else {
                     document.getElementById('history-modal').classList.add('hidden');
@@ -2084,9 +2071,7 @@
             }
         }
         
-        // El botón "x" de la tarjeta ahora abre el historial
         async function handleDeleteGroup(table, itemName) {
-            
             showConfirmationModal(
                 `Borrar "${itemName}"`,
                 `Para borrar items, debe hacerlo desde el "Historial" para mantener la integridad de las rondas.\n\n¿Desea abrir el historial ahora?`,
@@ -2097,12 +2082,13 @@
             return;
         }
         
-        // Cierra la mesa y la mueve a "closedTables"
         function handleCloseTable(table) {
-            
             let title = `Cerrar Mesa "${table.name}"`;
-            let message = `¿Desea CERRAR la mesa "${table.name}"?\nTotal: ${formatCurrency(table.total)}`;
+            let message = `¿Desea CERRAR la mesa "${table.name}"?\nTotal Pendiente: ${formatCurrency(table.total)}`;
             
+            if (table.total > 0) {
+                 message += `\n\n¡ATENCIÓN! La mesa todavía tiene un saldo pendiente.`;
+            }
             if (table.items.length === 0) {
                 message = `La mesa "${table.name}" está vacía.\n¿Desea cerrarla de todas formas?`;
             }
@@ -2128,7 +2114,6 @@
             });
         }
         
-        // Reabre una mesa desde la auditoría
         async function handleReopenTable(closedDocId) {
             let tableData;
             let originalTableId;
@@ -2174,9 +2159,7 @@
                     batch.delete(closedTableRef);
 
                     await batch.commit();
-
                     showStatusMessage(`Mesa "${tableData.name}" ha sido reabierta.`, false);
-                    
                     fetchClosedTables();
 
                 } catch (error) {
@@ -2186,10 +2169,8 @@
             });
         }
         
-        // Actualiza el nombre de una ronda en todos sus items
-        async function handleUpdateRoundName(tableId, roundId, newName) {
+        async function handleMarkRoundAsPaid(tableId, roundId, roundPrice) {
             const tableDocRef = doc(tablesCollectionRef, tableId);
-            
             try {
                 const tableSnap = await getDoc(tableDocRef);
                 if (!tableSnap.exists()) {
@@ -2199,25 +2180,65 @@
                 
                 const newItems = currentItems.map(item => {
                     if (item.roundId === roundId) {
-                        return { ...item, roundName: newName || null };
+                        return { ...item, isPaid: true }; 
                     }
                     return item; 
+                });
+                
+                await updateDoc(tableDocRef, {
+                    items: newItems,
+                    total: increment(-roundPrice) 
+                });
+                
+                showStatusMessage("Ronda marcada como pagada.", false);
+                
+                const freshTableSnap = await getDoc(tableDocRef);
+                if (freshTableSnap.exists()) {
+                    if (!document.getElementById('history-modal').classList.contains('hidden')) {
+                        showHistory(freshTableSnap.data());
+                    }
+                }
+
+            } catch (error) {
+                console.error("Error en handleMarkRoundAsPaid:", error);
+                showStatusMessage(`Error al marcar pago: ${error.message}`, true);
+            }
+        }
+        
+        // CAMBIO: Renombrada y actualizada para manejar Rondas e Items
+        async function handleUpdateOwnerName(tableId, transactionId, isRound, newName) {
+            const tableDocRef = doc(tablesCollectionRef, tableId);
+            try {
+                const tableSnap = await getDoc(tableDocRef);
+                if (!tableSnap.exists()) { throw new Error("La mesa no fue encontrada."); }
+                const currentItems = tableSnap.data().items;
+                
+                const newItems = currentItems.map(item => {
+                    // Si es una ronda, actualiza todos los items con el mismo roundId
+                    if (isRound && item.roundId === transactionId) {
+                        return { ...item, ownerName: newName || null };
+                    }
+                    // Si es un item individual (Descuento), actualiza solo ese item
+                    if (!isRound && item.id === transactionId) {
+                        return { ...item, ownerName: newName || null };
+                    }
+                    return item; // Devolver el item sin cambios
                 });
                 
                 await updateDoc(tableDocRef, {
                     items: newItems
                 });
                 
-                showStatusMessage("Nombre de ronda actualizado.", false);
+                showStatusMessage("Dueño actualizado.", false);
                 
             } catch (error) {
-                console.error("Error en handleUpdateRoundName:", error);
-                showStatusMessage(`Error al actualizar nombre: ${error.message}`, true);
+                console.error("Error en handleUpdateOwnerName:", error);
+                showStatusMessage(`Error al actualizar dueño: ${error.message}`, true);
                 throw error;
             }
         }
+
         
-        // Transfiere una mesa a un nuevo nombre/ID
         async function handleTransferTable() {
             const select = document.getElementById('transfer-table-select');
             const otherInput = document.getElementById('transfer-other-name');
@@ -2278,7 +2299,6 @@
             }
         }
 
-        // Borra una mesa individual de la auditoría
         function handleDeleteClosedTable(docId, tableName) {
             
             const title = `Borrar Registro`;
@@ -2305,7 +2325,6 @@
             });
         }
         
-        // Borra todas las mesas que coinciden con el filtro
         function handleDeleteAllFiltered() {
             if (currentAuditFilteredIds.length === 0) {
                 showStatusMessage("No hay mesas en el filtro actual para borrar.", true);
@@ -2337,7 +2356,6 @@
             });
         }
 
-        // Carga scripts dinámicamente
         function loadScript(src) {
             return new Promise((resolve, reject) => {
                 if (document.querySelector(`script[src="${src}"]`)) {
@@ -2352,12 +2370,8 @@
             });
         }
         
-        // Asegura que los scripts del PDF estén cargados
         async function ensurePdfScripts() {
-            if (pdfScriptsLoaded) {
-                return true; 
-            }
-            
+            if (pdfScriptsLoaded) return true; 
             if (isPdfLoading) {
                 showStatusMessage("Cargando librerías PDF...", false);
                 return false; 
@@ -2369,7 +2383,6 @@
             try {
                 await loadScript("https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js");
                 console.log("jsPDF cargado.");
-                
                 await loadScript("https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js");
                 console.log("jsPDF-AutoTable cargado.");
                 
@@ -2377,7 +2390,6 @@
                 isPdfLoading = false;
                 showStatusMessage("Librerías PDF listas.", false);
                 return true;
-                
             } catch (error) {
                 console.error(error);
                 showStatusMessage(error.message, true);
@@ -2387,8 +2399,7 @@
             }
         }
 
-        // Genera el PDF
-        // CAMBIO: Añadido detalle de rondas a la tabla de dueños
+        // CAMBIO: PDF ahora muestra "Pendiente" en el resumen por dueño
         function generatePDF(table) {
             if (typeof window.jspdf === 'undefined' || typeof window.jspdf.jsPDF === 'undefined') {
                 console.error("jsPDF no está cargado en window.");
@@ -2409,26 +2420,23 @@
                 try {
                     const pageWidth = doc.internal.pageSize.getWidth();
                     const pageHeight = doc.internal.pageSize.getHeight();
-                    
                     const imgWidth = 100; 
                     const imgHeight = 100; 
                     const x = (pageWidth - imgWidth) / 2;
                     const y = (pageHeight - imgHeight) / 2;
-
                     doc.saveGraphicsState(); 
                     doc.setGState(new doc.GState({ opacity: 0.1 })); 
                     doc.addImage(logoBase64, 'PNG', x, y, imgWidth, imgHeight);
                     doc.restoreGraphicsState(); 
-                
                 } catch (imgError) {
                     console.error("Error al añadir la marca de agua (Base64 inválido?):", imgError);
                 }
             }
             
-            // --- Tabla 1: Resumen por Producto ---
+            // --- Tabla 1: Resumen por Producto (CONSUMIDO) ---
             const groupedItems = groupItems(table.items);
-            let subtotal = 0;
-            let discounts = 0;
+            let subtotal = 0; 
+            let discounts = 0; 
             let others = 0; 
             const tableBody = [];
             
@@ -2452,21 +2460,10 @@
             }
             
             if (others > 0) {
-                 tableBody.push([
-                    '1',
-                    'Otros Cargos',
-                    formatCurrency(others),
-                    formatCurrency(others)
-                ]);
+                 tableBody.push(['1', 'Otros Cargos', formatCurrency(others), formatCurrency(others)]);
             }
-            
             if (discounts < 0) {
-                tableBody.push([
-                    '1',
-                    'Descuentos Aplicados',
-                    formatCurrency(discounts),
-                    formatCurrency(discounts)
-                ]);
+                tableBody.push(['1', 'Descuentos Aplicados', formatCurrency(discounts), formatCurrency(discounts)]);
             }
 
             const today = new Date();
@@ -2476,11 +2473,9 @@
             doc.setFontSize(20);
             doc.setFont('helvetica', 'bold');
             doc.text("Sanchez's Sport Bar", 105, 20, { align: 'center' });
-            
             doc.setFontSize(12);
             doc.setFont('helvetica', 'normal');
             doc.text("Factura de Venta", 105, 30, { align: 'center' });
-
             doc.setFontSize(10);
             doc.text(`Mesa: ${table.name}`, 20, 40);
             doc.text(`Fecha: ${dateStr}`, 20, 45);
@@ -2488,7 +2483,7 @@
 
             doc.autoTable({
                 startY: 60,
-                head: [['Cant.', 'Producto', 'P. Unitario', 'Total']],
+                head: [['Cant.', 'Producto', 'P. Unitario', 'Total Consumido']],
                 body: tableBody,
                 theme: 'striped',
                 headStyles: { fillColor: [30, 30, 30] }
@@ -2499,26 +2494,27 @@
             // --- Tabla 2: Resumen por Dueño (Condicional) ---
             const sortedTransactions = groupHistoryByTransaction(table.items);
             const ownerSummary = summarizeByOwner(sortedTransactions);
-            
             const hasAssignedOwners = ownerSummary.size > 1 || (ownerSummary.size === 1 && !ownerSummary.has("Sin Asignar"));
 
             if (hasAssignedOwners) {
                 const ownerTableBody = [];
-                // data.transactions está en orden cronológico (ascendente)
                 ownerSummary.forEach((data, owner) => {
-                    if (owner === "Sin Asignar" && data.total === 0) {
-                        return; 
-                    }
+                    // No mostrar dueños que no consumieron nada y deben 0
+                    if (data.totalConsumed === 0 && data.totalPending === 0) return;
                     
                     let isFirstRowForOwner = true;
                     
                     data.transactions.forEach(tx => {
-                        let detailContent = tx.name; 
+                        let detailContent = '';
+                        const paidMarker = tx.isPaid ? ' (PAGADA)' : ''; 
+                        
                         if (tx.isRound) {
-                            // CAMBIO: Añadir número de ronda al detalle
-                            const roundTitle = `Ronda ${tx.roundNumber}: `;
+                            const roundTitle = `Ronda ${tx.roundNumber}${paidMarker}: `;
                             const productsDetail = tx.details.map(d => `${d.quantity} ${d.name}`).join(', ');
                             detailContent = roundTitle + productsDetail;
+                        } else {
+                            // Es un item individual (Descuento)
+                            detailContent = tx.name;
                         }
                         
                         ownerTableBody.push([
@@ -2529,23 +2525,16 @@
                         isFirstRowForOwner = false;
                     });
                     
-                    // Añadir fila de Total para este dueño
+                    // Fila de Total PENDIENTE por dueño
                     ownerTableBody.push([
-                        { 
-                            content: 'Total ' + owner, 
-                            colSpan: 2, 
-                            styles: { halign: 'right', fontStyle: 'bold', fillColor: '#2d3748' } 
-                        },
-                        { 
-                            content: formatCurrency(data.total), 
-                            styles: { fontStyle: 'bold', fillColor: '#2d3748' } 
-                        }
+                        { content: 'Total Pendiente ' + owner, colSpan: 2, styles: { halign: 'right', fontStyle: 'bold', fillColor: '#2d3748' } },
+                        { content: formatCurrency(data.totalPending), styles: { fontStyle: 'bold', fillColor: '#2d3748' } }
                     ]);
                 });
 
                 doc.setFontSize(12);
                 doc.setFont('helvetica', 'bold');
-                doc.text("Resumen por Dueño", 105, finalY + 10, { align: 'center' });
+                doc.text("Resumen por Dueño (Total Pendiente)", 105, finalY + 10, { align: 'center' });
 
                 doc.autoTable({
                     startY: finalY + 15,
@@ -2554,11 +2543,9 @@
                     theme: 'striped',
                     headStyles: { fillColor: [23, 73, 91] }, 
                     didParseCell: function (data) {
-                        // Ocultar fondo si la celda de Dueño está vacía (para agrupar)
                         if (data.column.index === 0 && data.cell.raw === '') {
                              data.cell.styles.fillColor = '#ffffff'; 
                         }
-                        // Alinear verticalmente la celda del nombre del dueño
                         if (data.column.index === 0 && data.cell.raw !== '') {
                             data.cell.styles.valign = 'middle';
                         }
@@ -2568,34 +2555,27 @@
                 finalY = doc.autoTable.previous.finalY; 
             }
             
-            // --- Totales Finales ---
+            // --- Totales Finales (Consumido, Pagado, Pendiente) ---
             doc.setFontSize(12);
             doc.setFont('helvetica', 'bold');
             
             let currentY = finalY + 10;
+            
+            const totalConsumed = subtotal + others + discounts; 
+            const totalPaid = totalConsumed - table.total; 
 
-            if (discounts < 0 || others > 0) {
-                doc.text("Subtotal Productos:", 150, currentY, { align: 'right' });
-                doc.text(formatCurrency(subtotal), 200, currentY, { align: 'right' });
-                currentY += 7;
-            }
-            
-            if (others > 0) {
-                doc.text("Otros Cargos:", 150, currentY, { align: 'right' });
-                doc.text(formatCurrency(others), 200, currentY, { align: 'right' });
-                currentY += 7;
-            }
-            
-            if (discounts < 0) {
-                doc.text("Descuentos:", 150, currentY, { align: 'right' });
-                doc.text(formatCurrency(discounts), 200, currentY, { align: 'right' });
-                currentY += 7;
-            }
+            doc.text("Total Consumido:", 150, currentY, { align: 'right' });
+            doc.text(formatCurrency(totalConsumed), 200, currentY, { align: 'right' });
+            currentY += 7;
+
+            doc.text("Total Pagado:", 150, currentY, { align: 'right' });
+            doc.text(formatCurrency(totalPaid), 200, currentY, { align: 'right' });
+            currentY += 7;
             
             currentY += 2; 
 
             doc.setFontSize(16);
-            doc.text("TOTAL:", 150, currentY, { align: 'right' });
+            doc.text("TOTAL PENDIENTE:", 150, currentY, { align: 'right' });
             doc.text(formatCurrency(table.total), 200, currentY, { align: 'right' });
             
             doc.setFontSize(10);
@@ -2608,7 +2588,6 @@
 
         // --- 8. FUNCIONES UTILITARIAS ---
 
-        // Filtra visualmente la cuadrícula de mesas
         function applyTableGridFilter() {
             const tablesGrid = document.getElementById('tables-grid');
             if (!tablesGrid) return;
@@ -2628,7 +2607,6 @@
             });
         }
 
-        // Formatea un número como moneda
         function formatCurrency(value) {
             return new Intl.NumberFormat('es-CO', {
                 style: 'currency',
@@ -2638,7 +2616,6 @@
             }).format(value);
         }
         
-        // Muestra un mensaje temporal
         function showStatusMessage(message, isError = false) {
             const el = document.getElementById('status-message');
             el.textContent = message;
@@ -2656,7 +2633,6 @@
             }, 4000);
         }
         
-        // Establece la mesa activa
         function setActiveTable(tableId, shouldApplyFilter = false) {
             const oldActiveId = activeTableId;
             activeTableId = tableId;
@@ -2709,7 +2685,6 @@
             applyTableGridFilter();
         }
 
-        // Carga una ronda anterior al panel "Ronda Actual"
         function handleRepeatRound(roundDetails) {
             if (!roundDetails || roundDetails.length === 0) {
                 return;
