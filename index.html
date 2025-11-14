@@ -308,7 +308,7 @@
         </div>
     </div>
     
-    <!-- CAMBIO: Modal renombrado de "Ronda" a "Dueño" -->
+    <!-- Modal para Asignar Dueño -->
     <div id="edit-owner-name-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-50 hidden">
         <div class="bg-gray-800 rounded-lg shadow-2xl w-full max-w-sm">
             <div class="p-4 border-b border-gray-700">
@@ -375,19 +375,20 @@
         
         const logoBase64 = ""; // <--- Pega tu logo en Base64 aquí
 
+        // CAMBIO: Precios actualizados
         const products = [
             // Cervezas
-            { category: "Cervezas", name: "Aguila", price: 3200 },
-            { category: "Cervezas", name: "Poker", price: 3200 },
+            { category: "Cervezas", name: "Aguila", price: 3300 },
+            { category: "Cervezas", name: "Poker", price: 3300 },
             { category: "Cervezas", name: "Light", price: 3500 },
             { category: "Cervezas", name: "Poker B", price: 3500 },
             { category: "Cervezas", name: "Aguila B", price: 3500 },
-            { category: "Cervezas", name: "Budwaiser", price: 3200 },
+            { category: "Cervezas", name: "Budwaiser", price: 3300 },
             { category: "Cervezas", name: "Club", price: 4000 },
             { category: "Cervezas", name: "Corona", price: 6000 },
             { category: "Cervezas", name: "Coronita", price: 4000 },
-            { category: "Cervezas", name: "Costeña Negra", price: 3200 },
-            { category: "Cervezas", name: "Costeña Verde", price: 3200 },
+            { category: "Cervezas", name: "Costeña Negra", price: 3000 },
+            { category: "Cervezas", name: "Costeña Verde", price: 3000 },
             // RTD
             { category: "RTD (Listos)", name: "Cuates", price: 6000 },
             { category:"RTD (Listos)", name: "Like", price: 4500 },
@@ -426,6 +427,7 @@
             // Descuento (Abono)
             { category: "Descuento", name: "Descuento", price: 0 }
         ];
+        // FIN CAMBIO Precios
 
         const predefinedTables = [
             'Amarillo', 'Verde', 'Azul', 'Roja', 'Barra', 'Ladrillo', 
@@ -513,7 +515,7 @@
             setupLayoutToggle();
             setupOpenTableFormToggle();
             setupGridFilterToggle();
-            setupEditOwnerNameModal(); // CAMBIO: Renombrada
+            setupEditOwnerNameModal(); 
             
             document.getElementById('active-table-select').addEventListener('change', (e) => {
                 setActiveTable(e.target.value, true); 
@@ -1042,7 +1044,7 @@
                         id: `item-${Date.now()}`, name: 'Descuento',
                         price: -discountAmount, timestamp: new Date().toISOString(),
                         isPaid: false, 
-                        ownerName: null // CAMBIO: Añadido ownerName
+                        ownerName: null 
                     };
                     await updateDoc(tableDocRef, {
                         items: arrayUnion(newItem), total: increment(-discountAmount) 
@@ -1059,7 +1061,7 @@
                         id: `item-${Date.now()}`, name: 'Otros',
                         price: additionalAmount, timestamp: new Date().toISOString(),
                         isPaid: false, 
-                        ownerName: null // CAMBIO: Añadido ownerName
+                        ownerName: null 
                     };
                     await updateDoc(tableDocRef, {
                         items: arrayUnion(newItem), total: increment(additionalAmount) 
@@ -1143,7 +1145,7 @@
                             price: item.price,
                             timestamp: timestamp, 
                             roundId: roundId,
-                            ownerName: null, // CAMBIO: Renombrado
+                            ownerName: null, 
                             isPaid: false 
                         });
                     }
@@ -1176,7 +1178,6 @@
         
         // --- 6. LÓGICA DE MODALES (Historial, Zoom, Auditoría) ---
         
-        // CAMBIO: Lógica de agrupación ahora usa ownerName
         function groupHistoryByTransaction(items) {
             const groupedByTransaction = new Map();
             
@@ -1215,7 +1216,7 @@
                         price: roundTotal,
                         timestamp: firstItem.timestamp,
                         isRound: true,
-                        ownerName: firstItem.ownerName || null, // CAMBIO: Renombrado
+                        ownerName: firstItem.ownerName || null, 
                         isPaid: firstItem.isPaid || false, 
                         details: details, 
                         items: itemsInGroup 
@@ -1228,7 +1229,7 @@
                         price: firstItem.price,
                         timestamp: firstItem.timestamp,
                         isRound: false,
-                        ownerName: firstItem.ownerName || null, // CAMBIO: Renombrado
+                        ownerName: firstItem.ownerName || null, 
                         isPaid: firstItem.isPaid || false, 
                         details: [], 
                         items: itemsInGroup 
@@ -1253,13 +1254,11 @@
             return enumeratedTransactions.reverse();
         }
         
-        // CAMBIO: Lógica de resumen ahora agrupa por ownerName y calcula PENDIENTE
         function summarizeByOwner(transactions) {
             const summary = new Map();
             const chronologicalTransactions = [...transactions].reverse(); 
             
             for (const tx of chronologicalTransactions) {
-                // CAMBIO: Usar ownerName
                 const owner = tx.ownerName || "Sin Asignar"; 
                 
                 if (!summary.has(owner)) {
@@ -1267,9 +1266,8 @@
                 }
                 
                 const data = summary.get(owner);
-                data.totalConsumed += tx.price; // Suma todo lo consumido
+                data.totalConsumed += tx.price; 
                 
-                // Solo suma al PENDIENTE si no está pagada (y no es un descuento)
                 if (!tx.isPaid) {
                      data.totalPending += tx.price;
                 }
@@ -1286,7 +1284,7 @@
             });
         }
 
-        // CAMBIO: Muestra botón [Asignar Dueño] para Rondas y Descuentos
+        // CAMBIO: Botones Pagar/Repetir apilados
         function showHistory(table) {
             const modal = document.getElementById('history-modal');
             const content = document.getElementById('history-content');
@@ -1340,17 +1338,20 @@
                             `;
                         }
                         
+                        // CAMBIO: Botones apilados verticalmente
                         actionsHtml = `
-                            <button data-tx-id="${transaction.id}" data-tx-price="${transaction.price}"
-                                    class="btn-pay-round bg-green-600 hover:bg-green-700 text-white font-semibold py-1 px-2 rounded-lg text-xs" title="Marcar Ronda como Pagada">
-                                Pagar
-                            </button>
+                            <div class="flex flex-col items-end space-y-2">
+                                <button data-tx-id="${transaction.id}" data-tx-price="${transaction.price}"
+                                        class="btn-pay-round w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-1 px-2 rounded-lg text-xs" title="Marcar Ronda como Pagada">
+                                    Pagar
+                                </button>
+                                <button data-item-id="${transaction.id}" 
+                                        class="btn-repeat-round w-full bg-yellow-600 hover:bg-yellow-700 text-white font-semibold py-1 px-2 rounded-lg text-xs" title="Repetir Ronda">
+                                    Repetir
+                                </button>
+                            </div>
                             <button data-item-id="${transaction.id}" 
-                                    class="btn-repeat-round bg-yellow-600 hover:bg-yellow-700 text-white font-semibold py-1 px-2 rounded-lg text-xs ml-1" title="Repetir Ronda">
-                                Repetir
-                            </button>
-                            <button data-item-id="${transaction.id}" 
-                                    class="btn-delete-item text-red-500 hover:text-red-300 font-bold text-2xl px-2 ml-1 rounded-full" title="Eliminar Ronda">
+                                    class="btn-delete-item text-red-500 hover:text-red-300 font-bold text-2xl px-2 ml-1 self-center" title="Eliminar Ronda">
                                 &times;
                             </button>
                         `;
@@ -1451,7 +1452,7 @@
                 });
             });
             
-            // CAMBIO: Conectar botones de "Asignar/Editar Dueño" (ahora universal)
+            // Conectar botones de "Asignar/Editar Dueño"
             content.querySelectorAll('.btn-edit-owner-name').forEach(btn => {
                 btn.addEventListener('click', () => {
                     const txId = btn.dataset.txId; 
@@ -1467,8 +1468,8 @@
             // Conectar botones de "Pagar Ronda"
             content.querySelectorAll('.btn-pay-round').forEach(btn => {
                 btn.addEventListener('click', () => {
-                    const roundId = btn.dataset.txId; // CAMBIO: data-tx-id
-                    const roundPrice = parseFloat(btn.dataset.txPrice); // CAMBIO: data-tx-price
+                    const roundId = btn.dataset.txId; 
+                    const roundPrice = parseFloat(btn.dataset.txPrice); 
                     const transaction = sortedTransactions.find(t => t.id === roundId);
                     
                     if(transaction) {
@@ -1491,7 +1492,6 @@
             });
         }
 
-        // CAMBIO: Muestra dueño de Rondas y Descuentos
         function showReadOnlyHistory(table) {
             const modal = document.getElementById('read-only-history-modal');
             const content = document.getElementById('ro-history-content');
@@ -1589,7 +1589,6 @@
             });
         }
         
-        // CAMBIO: Resumen por Dueño ahora muestra total PENDIENTE
         function showZoomModal(table) {
             const modal = document.getElementById('zoom-modal');
             document.getElementById('zoom-table-name').textContent = table.name;
@@ -1643,7 +1642,6 @@
                 ownerHtml = '<ul class="divide-y divide-gray-700">';
                 ownerSummary.forEach((data, owner) => {
                     const ownerColor = (owner === 'Sin Asignar') ? 'text-gray-400' : 'text-cyan-400';
-                    // CAMBIO: Mostrar total PENDIENTE
                     const totalPending = data.totalPending;
                     const totalColor = (totalPending < 0) ? 'text-red-400' : (totalPending > 0 ? 'text-green-400' : 'text-gray-400');
                     
@@ -1739,7 +1737,6 @@
             });
         }
         
-        // CAMBIO: Renombrada de "Round" a "Owner"
         function setupEditOwnerNameModal() {
             const modal = document.getElementById('edit-owner-name-modal');
             const cancelBtn = document.getElementById('edit-owner-name-cancel-btn');
@@ -1754,7 +1751,6 @@
             saveBtn.addEventListener('click', async () => {
                 if (!currentEditContext) return;
                 
-                // CAMBIO: Contexto ahora incluye transactionId y isRound
                 const { tableId, transactionId, isRound } = currentEditContext;
                 const newName = input.value.trim();
                 
@@ -1762,7 +1758,6 @@
                 saveBtn.textContent = 'Guardando...';
                 
                 try {
-                    // CAMBIO: Llamar a la nueva función universal
                     await handleUpdateOwnerName(tableId, transactionId, isRound, newName);
                     
                     modal.classList.add('hidden');
@@ -1833,7 +1828,6 @@
             modal.classList.remove('hidden'); 
         }
         
-        // CAMBIO: Renombrada de "Round" a "Owner", contexto actualizado
         function showEditOwnerNameModal(table, transactionId, isRound, currentName) {
             currentEditContext = { tableId: table.id, transactionId, isRound };
             const modal = document.getElementById('edit-owner-name-modal');
@@ -1842,7 +1836,6 @@
 
             input.value = currentName || '';
             
-            // --- Sugerencias (ahora incluye dueños de Rondas y Descuentos) ---
             const transactions = groupHistoryByTransaction(table.items);
             const allNames = transactions.map(tx => tx.ownerName).filter(name => name); 
             const uniqueNames = [...new Set(allNames)]; 
@@ -2045,8 +2038,6 @@
             try {
                 const tableDocRef = doc(tablesCollectionRef, table.id);
                 
-                // Si la tx NO estaba pagada, se resta del total pendiente
-                // Si era un descuento (negativo), se *suma* al total pendiente
                 const priceAdjustment = transactionToDelete.isPaid ? 0 : -transactionToDelete.price;
                 
                 await updateDoc(tableDocRef, {
@@ -2205,7 +2196,6 @@
             }
         }
         
-        // CAMBIO: Renombrada y actualizada para manejar Rondas e Items
         async function handleUpdateOwnerName(tableId, transactionId, isRound, newName) {
             const tableDocRef = doc(tablesCollectionRef, tableId);
             try {
@@ -2214,15 +2204,13 @@
                 const currentItems = tableSnap.data().items;
                 
                 const newItems = currentItems.map(item => {
-                    // Si es una ronda, actualiza todos los items con el mismo roundId
                     if (isRound && item.roundId === transactionId) {
                         return { ...item, ownerName: newName || null };
                     }
-                    // Si es un item individual (Descuento), actualiza solo ese item
                     if (!isRound && item.id === transactionId) {
                         return { ...item, ownerName: newName || null };
                     }
-                    return item; // Devolver el item sin cambios
+                    return item; 
                 });
                 
                 await updateDoc(tableDocRef, {
@@ -2399,7 +2387,6 @@
             }
         }
 
-        // CAMBIO: PDF ahora muestra "Pendiente" en el resumen por dueño
         function generatePDF(table) {
             if (typeof window.jspdf === 'undefined' || typeof window.jspdf.jsPDF === 'undefined') {
                 console.error("jsPDF no está cargado en window.");
@@ -2499,7 +2486,6 @@
             if (hasAssignedOwners) {
                 const ownerTableBody = [];
                 ownerSummary.forEach((data, owner) => {
-                    // No mostrar dueños que no consumieron nada y deben 0
                     if (data.totalConsumed === 0 && data.totalPending === 0) return;
                     
                     let isFirstRowForOwner = true;
@@ -2513,7 +2499,6 @@
                             const productsDetail = tx.details.map(d => `${d.quantity} ${d.name}`).join(', ');
                             detailContent = roundTitle + productsDetail;
                         } else {
-                            // Es un item individual (Descuento)
                             detailContent = tx.name;
                         }
                         
@@ -2525,7 +2510,6 @@
                         isFirstRowForOwner = false;
                     });
                     
-                    // Fila de Total PENDIENTE por dueño
                     ownerTableBody.push([
                         { content: 'Total Pendiente ' + owner, colSpan: 2, styles: { halign: 'right', fontStyle: 'bold', fillColor: '#2d3748' } },
                         { content: formatCurrency(data.totalPending), styles: { fontStyle: 'bold', fillColor: '#2d3748' } }
