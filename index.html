@@ -1,0 +1,2957 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sanchez's Sport Bar - Cuentas</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- CAMBIO: Iconos para el micrófono -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #111827; /* Gris oscuro */
+            color: #f3f4f6;
+        }
+        /* Estilo para el scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1f2937; /* Fondo del scroll */
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #4b5563; /* Color del scroll */
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #6b7280; /* Color al pasar el mouse */
+        }
+        /* Estilo para la mesa activa */
+        .table-card.active {
+            border-color: #06b6d4; /* Cian brillante */
+            box-shadow: 0 0 15px rgba(6, 182, 212, 0.5);
+            border-width: 2px;
+        }
+        /* Animación de pulso para el micrófono */
+        @keyframes pulse-red {
+            0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+        .mic-listening {
+            animation: pulse-red 1.5s infinite;
+            background-color: #ef4444 !important; /* Rojo */
+            color: white !important;
+        }
+    </style>
+</head>
+<body class="flex flex-col md:flex-row min-h-screen">
+
+    <!-- Columna Izquierda: Añadir Productos -->
+    <div id="left-panel" class="w-full md:w-1/3 lg:w-1/4 bg-gray-900 p-6 flex flex-col md:h-screen md:overflow-y-auto">
+        <h2 class="text-3xl font-bold mb-6 text-white border-b border-gray-700 pb-2">Sanchez's Sport Bar</h2>
+        
+        <button id="toggle-open-table-form-btn" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg transition duration-200 shadow-lg mb-4">
+            Nueva Mesa
+        </button>
+
+        <div id="open-table-form" class="hidden mb-6 p-4 bg-gray-800 rounded-lg shadow-md border border-gray-700">
+            <h3 class="text-xl font-semibold text-green-400 mb-3">Abrir Mesa</h3>
+            <div class="flex flex-col gap-4">
+                <div class="flex-1">
+                    <label for="table-select" class="block text-sm font-medium text-gray-300 mb-1">Mesa Predefinida</label>
+                    <select id="table-select" class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg p-2 text-base focus:ring-green-500 focus:border-green-500">
+                        <!-- Opciones de mesas predefinidas -->
+                    </select>
+                </div>
+                
+                <div id="other-table-name-container" class="flex-1" style="display: none;">
+                    <label for="other-table-name" class="block text-sm font-medium text-gray-300 mb-1">Nombre Mesa Eventual</label>
+                    <input type="text" id="other-table-name" placeholder="Ej: Esquina VIP" class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg p-2 placeholder-gray-400">
+                </div>
+                
+                <button id="open-table-btn" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded-lg transition duration-200 shadow-lg">
+                    Abrir Mesa
+                </button>
+            </div>
+        </div>
+        
+        <button id="toggle-tables-btn" class="w-full bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg transition duration-200 shadow-lg mb-4">
+            Mostrar Mesas
+        </button>
+        
+        <!-- Formulario de Productos -->
+        <div class="flex flex-col space-y-4">
+            <h3 class="text-xl font-semibold text-cyan-400">Añadir Producto</h3>
+            
+            <div>
+                <label for="product-select" class="block text-sm font-medium text-gray-300 mb-1">Producto</label>
+                <select id="product-select" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg p-2 text-base focus:ring-cyan-500 focus:border-cyan-500">
+                    <!-- Opciones se generan dinámicamente -->
+                </select>
+            </div>
+
+            <div>
+                <label for="product-quantity" class="block text-sm font-medium text-gray-300 mb-1">Cantidad</label>
+                <input type="number" id="product-quantity" value="1" min="1" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg p-2 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none">
+            </div>
+
+            <!-- Atajo para seleccionar mesa activa -->
+            <div>
+                <label for="active-table-select" class="block text-sm font-medium text-gray-300 mb-1">Atajo (Mesa Activa)</label>
+                <select id="active-table-select" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg p-2 text-base focus:ring-cyan-500 focus:border-cyan-500">
+                    <option value="">-- Seleccione una mesa --</option>
+                    <!-- Opciones se generan dinámicamente -->
+                </select>
+            </div>
+
+            <!-- Indicador de Mesa Activa -->
+            <div id="active-table-indicator" class="hidden p-3 bg-cyan-900 border border-cyan-700 rounded-lg text-center">
+                <span class="text-sm text-cyan-300">Añadiendo a:</span>
+                <span id="active-table-name" class="font-bold text-lg text-white block"></span>
+            </div>
+
+            <!-- NUEVO: Botón de Micrófono -->
+            <button id="voice-command-btn" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200 shadow-lg flex items-center justify-center gap-2">
+                <i class="fas fa-microphone"></i> <span>Pedir por Voz</span>
+            </button>
+
+            <!-- Botón "Añadir a la RONDA" -->
+            <button id="add-to-round-btn" class="w-full bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200 shadow-lg">
+                Añadir a la Ronda
+            </button>
+            
+            <!-- Panel de Ronda Actual -->
+            <div id="current-round-panel" class="mt-2 p-3 bg-gray-800 rounded-lg border border-gray-700 hidden">
+                <div class="flex justify-between items-center mb-2">
+                    <h4 class="text-lg font-semibold text-yellow-400">Ronda Actual</h4>
+                    <button id="cancel-round-btn" class="text-xs text-red-400 hover:text-red-300">&times; Limpiar</d>
+                </div>
+                <ul id="current-round-list" class="max-h-32 overflow-y-auto divide-y divide-gray-700">
+                    <!-- Items de la ronda se añaden aquí -->
+                </ul>
+                <div class="flex justify-between items-center mt-3 pt-2 border-t border-gray-700">
+                    <span class="text-sm text-gray-400">Total Ronda:</span>
+                    <span id="current-round-total" class="font-bold text-lg text-yellow-400">$0</span>
+                </div>
+            </div>
+            
+            <!-- Nuevo Botón "Registrar Ronda" -->
+            <button id="register-round-btn" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200 shadow-lg mt-2">
+                Registrar Ronda en la Mesa
+            </button>
+            
+            <!-- Botón Transferir Mesa -->
+            <button id="transfer-table-btn" class="hidden w-full bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200 shadow-lg mt-2">
+                Transferir Mesa
+            </button>
+        </div>
+        
+        <!-- Mensaje de Error/Estado -->
+        <div id="status-message" class="mt-4 text-center"></div>
+
+        <!-- Botón de Auditoría -->
+        <div class="mt-auto pt-6">
+            <button id="show-audit-btn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200 shadow-lg">
+                Auditoría / Mesas Cerradas
+            </button>
+        </div>
+    </div>
+
+    <!-- Columna Derecha: Mesas y Zonas -->
+    <div id="right-panel" class="w-full md:w-2/3 lg:w-3/4 p-6 flex-1 flex flex-col md:h-screen">
+        
+        <!-- Contenedor de Mesas Abiertas -->
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-2xl font-bold text-white">Mesas Abiertas</h2>
+            <button id="toggle-filter-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-1 px-3 rounded-lg text-sm transition-all hidden">
+                Mostrar Solo Activa
+            </button>
+        </div>
+        <div id="tables-grid" class="flex-1 overflow-y-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 pr-2">
+            <!-- Las mesas se generan dinámicamente aquí -->
+        </div>
+    </div>
+
+    <!-- Modal de Historial -->
+    <div id="history-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-gray-800 rounded-lg shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col">
+            <div class="flex justify-between items-center p-4 border-b border-gray-700">
+                <h3 class="text-xl font-semibold text-white">Historial de la Mesa: <span id="history-table-name"></span></h3>
+                <button id="close-history-modal-btn" class="text-gray-400 hover:text-white">&times;</button>
+            </div>
+            <div id="history-content" class="p-6 overflow-y-auto">
+                <!-- El historial se genera aquí -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal de Zoom (Solo Lectura) -->
+    <div id="zoom-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-gray-800 rounded-lg shadow-2xl w-full max-w-lg max-h-[90vh] flex flex-col">
+            <div class="flex justify-between items-center p-4 border-b border-gray-700">
+                <h3 class="text-xl font-semibold text-white">Detalle Mesa: <span id="zoom-table-name"></span></h3>
+                <button id="close-zoom-modal-btn" class="text-gray-400 hover:text-white">&times;</button>
+            </div>
+            
+            <div class="flex border-b border-gray-700 px-6">
+                <button id="zoom-tab-product" class="py-2 px-4 font-semibold bg-cyan-600 rounded-t-lg focus:outline-none">
+                    Por Producto
+                </button>
+                <button id="zoom-tab-owner" class="py-2 px-4 font-semibold bg-gray-700 rounded-t-lg focus:outline-none">
+                    Por Dueño
+                </button>
+            </div>
+
+            <div class="flex-1 overflow-y-auto">
+                <div id="zoom-content" class="p-6">
+                    <!-- El resumen (por producto) se genera aquí -->
+                </div>
+                <div id="zoom-owner-content" class="p-6 hidden">
+                    <!-- El resumen (por dueño) se genera aquí -->
+                </div>
+            </div>
+
+            <div class="p-4 border-t border-gray-700 bg-gray-900 rounded-b-lg">
+                <div class="flex justify-between items-center">
+                    <span class="text-lg text-gray-400">Total Consumido</span>
+                    <h4 class="text-2xl font-bold text-right text-green-400" id="zoom-total"></h4>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Historial (Solo Lectura - para Auditoría) -->
+    <div id="read-only-history-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-gray-800 rounded-lg shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col">
+            <div class="flex justify-between items-center p-4 border-b border-gray-700">
+                <h3 class="text-xl font-semibold text-white">Detalle de Venta: <span id="ro-history-table-name"></span></h3>
+                <button id="close-ro-history-modal-btn" class="text-gray-400 hover:text-white">&times;</button>
+            </div>
+            <div id="ro-history-content" class="p-6 overflow-y-auto">
+                <!-- El historial de solo lectura se genera aquí -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Auditoría -->
+    <div id="audit-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-40 hidden">
+        <div class="bg-gray-800 rounded-lg shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col">
+            <div class="flex justify-between items-center p-4 border-b border-gray-700">
+                <h3 class="text-xl font-semibold text-white">Auditoría de Mesas Cerradas</h3>
+                <button id="close-audit-modal-btn" class="text-gray-400 hover:text-white">&times;</button>
+            </div>
+            <div class="p-4 bg-gray-900 flex flex-col sm:flex-row gap-4 items-start">
+                <div class="flex-1 w-full sm:w-auto">
+                    <label for="audit-date" class="block text-sm font-medium text-gray-300 mb-1">Fecha</label>
+                    <input type="date" id="audit-date" class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg p-2">
+                </div>
+                <div class="flex-1 w-full sm:w-auto">
+                    <label for="audit-table-name" class="block text-sm font-medium text-gray-300 mb-1">Buscar por Nombre</label>
+                    <input type="text" id="audit-table-name" placeholder="Nombre de la mesa..." class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg p-2">
+                </div>
+                <div class="flex-shrink-0 mt-4 sm:mt-0 space-y-2">
+                    <div class="text-right">
+                        <span class="block text-lg font-bold text-green-400">Total Auditado:</span>
+                        <span id="audit-total" class="block text-2xl font-bold text-green-400">$0</span>
+                    </div>
+                    <button id="delete-all-filtered-btn" class="w-full bg-red-700 hover:bg-red-800 text-white font-bold py-2 px-4 rounded-lg transition duration-200 shadow-lg text-sm">
+                        Borrar Todo (Filtro)
+                    </button>
+                </div>
+            </div>
+            <div id="audit-content" class="p-6 overflow-y-auto">
+                <!-- El historial de mesas cerradas se genera aquí -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Confirmación -->
+    <div id="confirmation-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-gray-800 rounded-lg shadow-2xl w-full max-w-sm">
+            <div class="p-4 border-b border-gray-700">
+                <h3 id="confirmation-title" class="text-xl font-semibold text-white">Confirmar Acción</h3>
+            </div>
+            <div class="p-6">
+                <p id="confirmation-message" class="text-gray-300">¿Está seguro?</p>
+            </div>
+            <div class="p-4 bg-gray-900 rounded-b-lg flex justify-end gap-4">
+                <button id="confirmation-cancel-btn" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-lg transition duration-200">
+                    Cancelar
+                </button>
+                <button id="confirmation-ok-btn" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg transition duration-200">
+                    Confirmar
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal de Transferir Mesa -->
+    <div id="transfer-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-gray-800 rounded-lg shadow-2xl w-full max-w-lg">
+            <div class="flex justify-between items-center p-4 border-b border-gray-700">
+                <h3 class="text-xl font-semibold text-white">Transferir Mesa</h3>
+                <button id="close-transfer-modal-btn" class="text-gray-400 hover:text-white">&times;</button>
+            </div>
+            <div class="p-6 space-y-4">
+                <p class="text-gray-300">Mover cuenta de: <strong id="transfer-from-name" class="text-cyan-400"></strong></p>
+                
+                <div>
+                    <label for="transfer-table-select" class="block text-sm font-medium text-gray-300 mb-1">Hacia (Mesa Predefinida)</label>
+                    <select id="transfer-table-select" class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg p-2 text-base focus:ring-yellow-500 focus:border-yellow-500">
+                        <!-- Opciones de mesas predefinidas -->
+                    </select>
+                </div>
+                
+                <div id="transfer-other-name-container" class="" style="display: none;">
+                    <label for="transfer-other-name" class="block text-sm font-medium text-gray-300 mb-1">Hacia (Nombre Mesa Eventual)</label>
+                    <input type="text" id="transfer-other-name" placeholder="Ej: Esquina VIP" class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg p-2 placeholder-gray-400">
+                </div>
+                
+                <div id="transfer-error-message" class="text-red-400 text-sm"></div>
+
+            </div>
+            <div class="p-4 bg-gray-900 rounded-b-lg flex justify-end gap-4">
+                <button id="transfer-cancel-btn" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-lg transition duration-200">
+                    Cancelar
+                </button>
+                <button id="transfer-ok-btn" class="bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded-lg transition duration-200">
+                    Confirmar Transferencia
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal para Asignar Dueño -->
+    <div id="edit-owner-name-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-gray-800 rounded-lg shadow-2xl w-full max-w-sm">
+            <div class="p-4 border-b border-gray-700">
+                <h3 class="text-xl font-semibold text-white">Asignar Dueño</h3>
+            </div>
+            <div class="p-6">
+                <label class="block text-sm font-medium text-gray-400 mb-2">Sugerencias:</label>
+                <div id="owner-name-suggestions" class="flex flex-wrap gap-2 mb-4">
+                    <!-- Botones de sugerencia se inyectan aquí -->
+                </div>
+                
+                <label for="owner-name-input" class="block text-sm font-medium text-gray-300 mb-2">Nombre (Ej: Juan, Pedro, Abono)</label>
+                <input type="text" id="owner-name-input" class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg p-2 placeholder-gray-400">
+            </div>
+            <div class="p-4 bg-gray-900 rounded-b-lg flex justify-end gap-4">
+                <button id="edit-owner-name-cancel-btn" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-lg transition duration-200">
+                    Cancelar
+                </button>
+                <button id="edit-owner-name-save-btn" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg transition duration-200">
+                    Guardar
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Firebase SDKs -->
+    <script type="module">
+        import { initializeApp, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { 
+            getAuth, 
+            signInAnonymously, 
+            onAuthStateChanged 
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { 
+            getFirestore, 
+            doc, 
+            getDoc,
+            setDoc, 
+            deleteDoc, 
+            onSnapshot, 
+            collection,
+            updateDoc,
+            increment,
+            arrayUnion,
+            arrayRemove,
+            query,
+            where,
+            getDocs,
+            writeBatch 
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // --- 1. CONFIGURACIÓN Y LISTAS ---
+
+        const firebaseConfig = {
+          apiKey: "AIzaSyCUGWQJDywozNv20i4IACVXaeXyHVpYPqg",
+          authDomain: "ventas-spb.firebaseapp.com",
+          projectId: "ventas-spb",
+          storageBucket: "ventas-spb.firebasestorage.app",
+          messagingSenderId: "929220552051",
+          appId: "1:929220552051:web:07f97a44d75ddb79e41106",
+          measurementId: "G-M9PC2L3XTP"
+        };
+        
+        const logoBase64 = ""; // <--- Pega tu logo en Base64 aquí
+
+        // CAMBIO: Precios actualizados
+        const products = [
+            // Cervezas
+            { category: "Cervezas", name: "Aguila", price: 3300 },
+            { category: "Cervezas", name: "Poker", price: 3300 },
+            { category: "Cervezas", name: "Light", price: 3500 },
+            { category: "Cervezas", name: "Poker B", price: 3500 },
+            { category: "Cervezas", name: "Aguila B", price: 3500 },
+            { category: "Cervezas", name: "Budwaiser", price: 3300 },
+            { category: "Cervezas", name: "Club", price: 4000 },
+            { category: "Cervezas", name: "Corona", price: 6000 },
+            { category: "Cervezas", name: "Coronita", price: 4000 },
+            { category: "Cervezas", name: "Costeña Negra", price: 3000 },
+            { category: "Cervezas", name: "Costeña Verde", price: 3000 },
+            { category: "Cervezas", name: "Cerveza Lata", price: 4000 }, // Actualizado a 4.000
+
+            // RTD
+            { category: "RTD (Listos)", name: "Cuates", price: 6000 },
+            { category:"RTD (Listos)", name: "Like", price: 5000 },
+            { category: "RTD (Listos)", name: "Smirnoff Ice", price: 10000 },
+            { category: "RTD (Listos)", name: "Reds", price: 4500 },
+
+            // Licores
+            { category: "Licores", name: "Whiskey Botella", price: 75000 },
+            { category: "Licores", name: "Whiskey 1/2", price: 40000 },
+            { category: "Licores", name: "Whiskey 1/4", price: 55000 },
+            { category: "Licores", name: "Smirnoff Botella", price: 70000 },
+            { category: "Licores", name: "Smirnoff 1/2", price: 40000 },
+            { category: "Licores", name: "Ron 1/2", price: 42000 },
+            { category: "Licores", name: "Nectar Botella", price: 62000 },
+            { category: "Licores", name: "Nectar 1/2", price: 34000 },
+            { category: "Licores", name: "Antioqueño Azul 1/2", price: 40000 },
+            { category: "Licores", name: "Antioqueño Verde 1/2", price: 36000 },
+            { category: "Licores", name: "Amarillo Botella", price: 73000 },
+            { category: "Licores", name: "Amarillo 1/2", price: 42000 },
+            { category: "Licores", name: "Tequila 1/2", price: 75000 },
+            
+            // Shots (ACTUALIZADO)
+            { category: "Shots", name: "Shot Tequila", price: 7500 }, 
+            { category: "Shots", name: "Shot Whisky", price: 4500 }, 
+            { category: "Shots", name: "Shot Aguardiente", price: 3700 },
+
+            // Sin Alcohol
+            { category: "Sin Alcohol", name: "Pony Malta", price: 3300 },
+            { category: "Sin Alcohol", name: "Hit", price: 3300 },
+            { category: "Sin Alcohol", name: "Sporade", price: 3300 },
+            { category: "Sin Alcohol", name: "Agua", price: 2000 },
+            { category: "Sin Alcohol", name: "Cocacola", price: 3300 },
+
+            // Snacks
+            { category: "Snacks", name: "Doritos", price: 3300 }, 
+            { category: "Snacks", name: "Papas", price: 3300 }, 
+            { category: "Snacks", name: "Detodtito", price: 3700 }, 
+            { category: "Snacks", name: "Todorico", price: 3700 }, 
+
+            // Otros
+            { category: "Otros", name: "Mustang", price: 1200 }, 
+            { category: "Otros", name: "Lucky", price: 1400 }, 
+            { category: "Otros", name: "Otros", price: 0 }, 
+            
+            // Descuento
+            { category: "Descuento", name: "Descuento", price: 0 }
+        ];
+
+        const predefinedTables = [
+            'Amarillo', 'Verde', 'Azul', 'Roja', 'Barra', 'Ladrillo', 
+            'Sofa', 'Ventana', 'Escalera', 'Reja', 'Entrada', 'TV'
+        ];
+        const otherOptionValue = '--- Otra ---';
+
+        // --- 2. VARIABLES GLOBALES ---
+        let db, auth;
+        let tablesCollectionRef; 
+        let closedTablesCollectionRef; 
+        let activeTableId = null; 
+        let currentRound = []; 
+        let allTablesData = new Map();
+        
+        let leftPanel, rightPanel, toggleTablesBtn;
+        let isTablesVisible = false; 
+        
+        let toggleFilterBtn;
+        let isGridFiltered = false; 
+        
+        let toggleOpenTableFormBtn, openTableForm;
+        let isOpenTableFormVisible = false;
+        
+        let currentAuditFilteredIds = [];
+        let onConfirmAction = null;
+        let currentEditContext = null; 
+        
+        let pdfScriptsLoaded = false;
+        let isPdfLoading = false; 
+        
+        // Variables para voz
+        let recognition = null;
+        let isListening = false;
+
+        // --- 3. INICIALIZACIÓN DE FIREBASE ---
+        async function initializeFirebase() {
+            try {
+                const app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+                // setLogLevel('Debug'); 
+
+                tablesCollectionRef = collection(db, "tables");
+                closedTablesCollectionRef = collection(db, "closedTables");
+
+                console.log("Ruta de colección ABIERTAS:", tablesCollectionRef.path);
+                console.log("Ruta de colección CERRADAS:", closedTablesCollectionRef.path);
+
+                onAuthStateChanged(auth, (user) => {
+                    if (user) {
+                        console.log("Usuario autenticado (anónimo):", user.uid);
+                        loadAppUI();
+                    } else {
+                        console.log("Usuario no autenticado, intentando iniciar sesión...");
+                        signInUser();
+                    }
+                });
+
+            } catch (error) {
+                console.error("Error fatal al inicializar Firebase:", error);
+                document.body.innerHTML = `<div class='p-8 text-red-400'>Error al conectar con Firebase. Revise la consola (F12). ${error.message}</div>`;
+            }
+        }
+        
+        async function signInUser() {
+            try {
+                console.log("Intentando signInAnonymously...");
+                await signInAnonymously(auth);
+            } catch (error) {
+                console.error("Falló el inicio de sesión anónimo:", error);
+                document.body.innerHTML = `<div class='p-8 text-red-400'>Error crítico de autenticación: ${error.message}</div>`;
+            }
+        }
+        
+        // --- 4. RENDERIZADO DE UI (Productos y Mesas) ---
+        
+        function loadAppUI() {
+            renderProductList();
+            setupOpenTableForm(); 
+            setupTableListeners();
+            setupRoundAndSpecialButtons();
+            setupHistoryModal();
+            setupZoomModal(); 
+            setupAuditModal(); 
+            setupReadOnlyHistoryModal();
+            setupConfirmationModal();
+            setupTransferModal(); 
+            setupLayoutToggle();
+            setupOpenTableFormToggle();
+            setupGridFilterToggle();
+            setupEditOwnerNameModal(); 
+            setupVoiceRecognition(); // NUEVO: Configurar voz
+            
+            document.getElementById('active-table-select').addEventListener('change', (e) => {
+                setActiveTable(e.target.value, true); 
+            });
+            
+            document.getElementById('transfer-table-btn').addEventListener('click', () => {
+                if (activeTableId) {
+                    showTransferModal();
+                }
+            });
+        }
+        
+        // --- NUEVO: LÓGICA DE VOZ ---
+        function setupVoiceRecognition() {
+            const voiceBtn = document.getElementById('voice-command-btn');
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+            if (!SpeechRecognition) {
+                console.warn("Web Speech API no soportada.");
+                voiceBtn.classList.add('hidden'); // Ocultar si no es compatible
+                return;
+            }
+
+            recognition = new SpeechRecognition();
+            recognition.lang = 'es-CO'; // Español Colombia
+            recognition.continuous = false;
+            recognition.interimResults = false;
+
+            recognition.onstart = () => {
+                isListening = true;
+                voiceBtn.classList.add('mic-listening');
+                voiceBtn.innerHTML = '<i class="fas fa-microphone"></i> <span>Escuchando...</span>';
+            };
+
+            recognition.onend = () => {
+                isListening = false;
+                voiceBtn.classList.remove('mic-listening');
+                voiceBtn.innerHTML = '<i class="fas fa-microphone"></i> <span>Pedir por Voz</span>';
+            };
+
+            recognition.onerror = (event) => {
+                console.error("Error de reconocimiento:", event.error);
+                showStatusMessage("Error al escuchar. Intente de nuevo.", true);
+                isListening = false;
+                voiceBtn.classList.remove('mic-listening');
+                voiceBtn.innerHTML = '<i class="fas fa-microphone"></i> <span>Pedir por Voz</span>';
+            };
+
+            recognition.onresult = (event) => {
+                const transcript = event.results[0][0].transcript;
+                console.log("Escuchado:", transcript);
+                processVoiceCommand(transcript);
+            };
+
+            voiceBtn.addEventListener('click', () => {
+                if (isListening) {
+                    recognition.stop();
+                } else {
+                    recognition.start();
+                }
+            });
+        }
+
+        function processVoiceCommand(text) {
+            // Mapeo de palabras a números
+            const numberMap = {
+                'un': 1, 'uno': 1, 'una': 1, 'dos': 2, 'tres': 3, 'cuatro': 4, 'cinco': 5,
+                'seis': 6, 'siete': 7, 'ocho': 8, 'nueve': 9, 'diez': 10,
+                'once': 11, 'doce': 12, 'trece': 13, 'catorce': 14, 'quince': 15,
+                'dieciseis': 16, 'veinte': 20
+            };
+
+            // Normalizar texto
+            let cleanText = text.toLowerCase();
+            
+            // Reemplazar palabras numéricas por dígitos para facilitar el regex
+            for (const [word, num] of Object.entries(numberMap)) {
+                // Reemplazar palabra completa solamente
+                const regex = new RegExp(`\\b${word}\\b`, 'g');
+                cleanText = cleanText.replace(regex, num);
+            }
+
+            // Palabras clave de productos (fonética aproximada -> nombre real)
+            // Asegúrate de que las claves sean minúsculas
+            const productKeywords = {
+                'aguila': 'Aguila', 'águila': 'Aguila',
+                'poker': 'Poker', 'póker': 'Poker',
+                'light': 'Light', 'laig': 'Light', 'lite': 'Light',
+                'b': 'Poker B', // "Poker be" a veces se entiende solo "b" si dices "poker b"
+                'budweiser': 'Budwaiser', 'bud': 'Budwaiser',
+                'club': 'Club', 'colombia': 'Club',
+                'corona': 'Corona',
+                'coronita': 'Coronita',
+                'negra': 'Costeña Negra', 'costeña negra': 'Costeña Negra',
+                'verde': 'Costeña Verde', 'costeña verde': 'Costeña Verde', 'costeña': 'Costeña Verde', // Default
+                'cuates': 'Cuates',
+                'like': 'Like', 'laik': 'Like',
+                'smirnoff': 'Smirnoff', 'esmirnof': 'Smirnoff',
+                'reds': 'Reds', 'red': 'Reds',
+                'whiskey': 'Whiskey Botella', 'wisky': 'Whiskey Botella',
+                'nectar': 'Nectar Botella', 'néctar': 'Nectar Botella',
+                'pony': 'Pony Malta', 'malta': 'Pony Malta',
+                'agua': 'Agua',
+                'coca': 'Cocacola', 'cola': 'Cocacola',
+                'papas': 'Papas', 'papitas': 'Papas',
+                'doritos': 'Doritos',
+                'todo rico': 'Todorico', 'todorico': 'Todorico'
+            };
+
+            // Separar por "y" o comas para procesar partes (ej: "3 poker Y 2 light")
+            const parts = cleanText.split(/,| y /);
+            let addedCount = 0;
+
+            parts.forEach(part => {
+                part = part.trim();
+                if(!part) return;
+
+                // Buscar patrón: [Numero] [Texto]
+                // Ej: "3 poker", "2 de aguila", "una light"
+                const match = part.match(/(\d+)\s+(?:de\s+)?(.+)/);
+                
+                if (match) {
+                    const qty = parseInt(match[1]);
+                    const productStr = match[2].trim();
+                    
+                    // Buscar coincidencia en palabras clave
+                    let foundProduct = null;
+                    
+                    // Intentar coincidencia exacta o parcial
+                    for (const [key, val] of Object.entries(productKeywords)) {
+                        if (productStr.includes(key)) {
+                            foundProduct = val;
+                            // Priorizar coincidencias más largas (ej: "costeña negra" sobre "costeña")
+                            break; 
+                        }
+                    }
+
+                    if (foundProduct) {
+                        // Añadir a la ronda
+                        const productInfo = products.find(p => p.name === foundProduct);
+                        if (productInfo) {
+                            addToCurrentRound(foundProduct, productInfo.price, qty);
+                            addedCount++;
+                        }
+                    }
+                }
+            });
+
+            if (addedCount > 0) {
+                showStatusMessage(`Se añadieron ${addedCount} productos por voz.`, false);
+            } else {
+                showStatusMessage("No entendí el pedido. Intenta: '3 poker y 2 light'", true);
+            }
+        }
+        
+        // Función auxiliar para añadir a la ronda desde voz
+        function addToCurrentRound(name, price, quantity) {
+            const existingItem = currentRound.find(item => item.name === name);
+            if (existingItem) {
+                existingItem.quantity += quantity;
+            } else {
+                currentRound.push({
+                    name: name,
+                    price: price,
+                    quantity: quantity
+                });
+            }
+            renderCurrentRound();
+        }
+        // --- FIN LÓGICA DE VOZ ---
+
+        function setupLayoutToggle() {
+            leftPanel = document.getElementById('left-panel');
+            rightPanel = document.getElementById('right-panel');
+            toggleTablesBtn = document.getElementById('toggle-tables-btn');
+            
+            if (toggleTablesBtn) {
+                toggleTablesBtn.addEventListener('click', () => {
+                    isTablesVisible = !isTablesVisible; 
+                    updateLayout();
+                });
+            }
+            updateLayout(); 
+        }
+        
+        function setupOpenTableFormToggle() {
+            toggleOpenTableFormBtn = document.getElementById('toggle-open-table-form-btn');
+            openTableForm = document.getElementById('open-table-form');
+            
+            if (toggleOpenTableFormBtn && openTableForm) {
+                toggleOpenTableFormBtn.addEventListener('click', () => {
+                    isOpenTableFormVisible = !isOpenTableFormVisible; 
+                    updateOpenTableFormLayout();
+                });
+            }
+            updateOpenTableFormLayout();
+        }
+        
+        function updateOpenTableFormLayout() {
+            if (!toggleOpenTableFormBtn || !openTableForm) return;
+
+            if (isOpenTableFormVisible) {
+                openTableForm.classList.remove('hidden');
+                toggleOpenTableFormBtn.textContent = 'Cancelar';
+                toggleOpenTableFormBtn.classList.remove('bg-green-600', 'hover:bg-green-700');
+                toggleOpenTableFormBtn.classList.add('bg-gray-600', 'hover:bg-gray-700');
+            } else {
+                openTableForm.classList.add('hidden');
+                toggleOpenTableFormBtn.textContent = 'Nueva Mesa';
+                toggleOpenTableFormBtn.classList.add('bg-green-600', 'hover:bg-green-700');
+                toggleOpenTableFormBtn.classList.remove('bg-gray-600', 'hover:bg-gray-700');
+            }
+        }
+        
+        function updateLayout() {
+            if (!leftPanel || !rightPanel || !toggleTablesBtn) {
+                console.warn("Elementos del layout no encontrados, saltando actualización.");
+                return;
+            }
+
+            if (isTablesVisible) {
+                rightPanel.classList.remove('hidden');
+                leftPanel.classList.remove('w-full');
+                leftPanel.classList.add('md:w-1/3', 'lg:w-1/4');
+                toggleTablesBtn.textContent = 'Ocultar Mesas';
+                toggleTablesBtn.classList.remove('bg-gray-700', 'hover:bg-gray-600');
+                toggleTablesBtn.classList.add('bg-purple-600', 'hover:bg-purple-700'); 
+            } else {
+                rightPanel.classList.add('hidden');
+                leftPanel.classList.add('w-full');
+                leftPanel.classList.remove('md:w-1/3', 'lg:w-1/4');
+                toggleTablesBtn.textContent = 'Mostrar Mesas';
+                toggleTablesBtn.classList.add('bg-gray-700', 'hover:bg-gray-600');
+                toggleTablesBtn.classList.remove('bg-purple-600', 'hover:bg-purple-700');
+            }
+        }
+        
+        function setupGridFilterToggle() {
+            toggleFilterBtn = document.getElementById('toggle-filter-btn');
+            if (toggleFilterBtn) {
+                toggleFilterBtn.addEventListener('click', () => {
+                    isGridFiltered = !isGridFiltered; 
+                    updateFilterButtonText();
+                    applyTableGridFilter();
+                });
+            }
+        }
+        
+        function updateFilterButtonText() {
+            if (!toggleFilterBtn) return;
+            if (isGridFiltered) {
+                toggleFilterBtn.textContent = 'Mostrar Todas';
+                toggleFilterBtn.classList.remove('bg-blue-600', 'hover:bg-blue-700');
+                toggleFilterBtn.classList.add('bg-gray-600', 'hover:bg-gray-700');
+            } else {
+                toggleFilterBtn.textContent = 'Mostrar Solo Activa';
+                toggleFilterBtn.classList.add('bg-blue-600', 'hover:bg-blue-700');
+                toggleFilterBtn.classList.remove('bg-gray-600', 'hover:bg-gray-700');
+            }
+        }
+
+        function renderProductList() {
+            const select = document.getElementById('product-select');
+            select.innerHTML = ''; 
+            
+            const categories = {};
+            products.forEach(p => {
+                if (!categories[p.category]) {
+                    categories[p.category] = [];
+                }
+                categories[p.category].push(p);
+            });
+
+            for (const categoryName in categories) {
+                const optgroup = document.createElement('optgroup');
+                optgroup.label = categoryName;
+                
+                categories[categoryName].forEach(product => {
+                    const option = document.createElement('option');
+                    option.value = product.name;
+                    
+                    if (product.name === 'Descuento' || product.name === 'Otros') {
+                        option.textContent = `${product.name} (manual)`;
+                    } else {
+                        option.textContent = `${product.name} - ${formatCurrency(product.price)}`;
+                    }
+                    
+                    option.dataset.price = product.price;
+                    option.dataset.name = product.name;
+                    optgroup.appendChild(option);
+                });
+                select.appendChild(optgroup);
+            }
+        }
+        
+        function setupOpenTableForm() {
+            const select = document.getElementById('table-select');
+            const otherContainer = document.getElementById('other-table-name-container');
+            const otherInput = document.getElementById('other-table-name');
+            const openButton = document.getElementById('open-table-btn');
+
+            predefinedTables.forEach(name => {
+                const option = document.createElement('option');
+                option.value = name;
+                option.textContent = name;
+                select.appendChild(option);
+            });
+            const otherOption = document.createElement('option');
+            otherOption.value = otherOptionValue;
+            otherOption.textContent = otherOptionValue;
+            select.appendChild(otherOption);
+
+            select.addEventListener('change', () => {
+                if (select.value === otherOptionValue) {
+                    otherContainer.style.display = 'block';
+                    otherInput.focus();
+                } else {
+                    otherContainer.style.display = 'none';
+                    otherInput.value = ''; 
+                }
+            });
+
+            openButton.addEventListener('click', async () => {
+                let tableName;
+                if (select.value === otherOptionValue) {
+                    tableName = otherInput.value.trim();
+                } else {
+                    tableName = select.value;
+                }
+
+                if (!tableName) {
+                    showStatusMessage("Debe seleccionar o escribir un nombre para la mesa.", true);
+                    return;
+                }
+                
+                const tableId = tableName.replace(/\s+/g, '-').toLowerCase(); 
+
+                try {
+                    const tableDocRef = doc(tablesCollectionRef, tableId);
+                    
+                    await setDoc(tableDocRef, {
+                        id: tableId,
+                        name: tableName,
+                        items: [], 
+                        total: 0,
+                        createdAt: new Date().toISOString(),
+                        status: 'open' 
+                    });
+                    
+                    console.log(`Mesa "${tableName}" abierta.`);
+                    showStatusMessage(`Mesa "${tableName}" abierta.`, false);
+                    
+                    otherInput.value = '';
+                    select.value = predefinedTables[0]; 
+                    otherContainer.style.display = 'none';
+                    
+                    isOpenTableFormVisible = false;
+                    updateOpenTableFormLayout();
+                    
+                    setActiveTable(tableId, true); 
+
+                } catch (error) {
+                    console.error("Error al abrir la mesa:", error);
+                    showStatusMessage(`Error al abrir mesa: ${error.message}`, true);
+                }
+            });
+        }
+
+        // --- 5. LÓGICA PRINCIPAL (Listeners y Acciones) ---
+
+        function setupTableListeners() {
+            if (!tablesCollectionRef) {
+                console.error("setupTableListeners llamado antes de que tablesCollectionRef esté definido.");
+                return;
+            }
+            
+            onSnapshot(tablesCollectionRef, (snapshot) => {
+                const tablesGrid = document.getElementById('tables-grid');
+                
+                const currentTableCards = {}; 
+                Array.from(tablesGrid.children).forEach(child => {
+                    currentTableCards[child.dataset.tableId] = child;
+                });
+                
+                allTablesData.clear();
+                
+                let activeCardElement = null; 
+
+                snapshot.forEach(doc => {
+                    const table = doc.data();
+                    allTablesData.set(table.id, table); 
+                    
+                    let card; 
+                    if (currentTableCards[table.id]) {
+                        card = currentTableCards[table.id];
+                        updateTableCard(card, table);
+                        delete currentTableCards[table.id];
+                    } else {
+                        card = createTableCard(table);
+                        tablesGrid.appendChild(card);
+                    }
+                    
+                    if (table.id === activeTableId) {
+                        activeCardElement = card;
+                    }
+                });
+
+                for (const tableId in currentTableCards) {
+                    currentTableCards[tableId].remove();
+                }
+                
+                if (activeCardElement && tablesGrid.firstChild !== activeCardElement) {
+                    tablesGrid.prepend(activeCardElement);
+                }
+
+                updateActiveTableSelect(activeTableId);
+
+                if (activeTableId && !allTablesData.has(activeTableId)) {
+                    setActiveTable(null); 
+                } else {
+                    applyTableGridFilter();
+                }
+                
+            }, (error) => {
+                console.error("Error en el listener de onSnapshot:", error);
+                showStatusMessage("Error al sincronizar mesas. Revisa la consola.", true);
+            });
+        }
+        
+        function updateActiveTableSelect(currentActiveId) {
+            const select = document.getElementById('active-table-select');
+            
+            const firstOption = select.options[0];
+            select.innerHTML = ''; 
+            select.appendChild(firstOption); 
+
+            const sortedTables = [...allTablesData.values()].sort((a, b) => a.name.localeCompare(b.name));
+
+            sortedTables.forEach(table => {
+                const option = document.createElement('option');
+                option.value = table.id;
+                option.textContent = table.name;
+                select.appendChild(option);
+            });
+            
+            select.value = currentActiveId || "";
+        }
+        
+        function createTableCard(table) {
+            const card = document.createElement('div');
+            card.className = `table-card bg-gray-800 p-4 rounded-lg shadow-lg border-2 border-gray-700 transition-all duration-200 cursor-pointer ${table.items.length > 0 ? 'has-items' : ''} ${table.id === activeTableId ? 'active' : ''}`;
+            card.dataset.tableId = table.id;
+
+            card.addEventListener('click', (e) => {
+                if (e.target.closest('button')) {
+                    return;
+                }
+                setActiveTable(table.id, false);
+            });
+            
+            card.addEventListener('dblclick', (e) => {
+                if (e.target.closest('button')) {
+                    return;
+                }
+                const freshTable = allTablesData.get(table.id);
+                if (freshTable) {
+                    showZoomModal(freshTable);
+                }
+            });
+
+            renderTableCardContent(card, table);
+
+            return card;
+        }
+
+        function updateTableCard(card, table) {
+            card.classList.toggle('active', table.id === activeTableId);
+            card.classList.toggle('has-items', table.items.length > 0);
+            
+            renderTableCardContent(card, table);
+        }
+
+        function renderTableCardContent(cardElement, table) {
+            
+            const groupedItems = groupItems(table.items);
+            
+            let itemsHtml = '';
+            if (Object.keys(groupedItems).length > 0) {
+                for (const name in groupedItems) {
+                    const item = groupedItems[name];
+                    const isDiscount = item.price < 0;
+                    const isOther = item.price > 0 && (name === 'Otros');
+                    
+                    let textColor = 'text-gray-300';
+                    if (isDiscount) textColor = 'text-red-400';
+                    if (isOther) textColor = 'text-yellow-400';
+
+                    itemsHtml += `
+                        <li class="flex justify-between items-center text-sm py-1 ${textColor}">
+                            <span>
+                                ${name} 
+                                <span class="font-medium ${textColor === 'text-gray-300' ? 'text-white' : ''}">${name !== 'Otros' ? 'x ' + item.quantity : ''}</span>
+                            </span>
+                            <span class="font-semibold ${textColor === 'text-gray-300' ? 'text-white' : ''}">
+                                ${formatCurrency(item.totalPrice)}
+                                
+                                <button data-item-name="${name}" 
+                                        class="btn-delete-group text-red-500 hover:text-red-300 font-bold ml-2 px-1 rounded-full">
+                                    &times;
+                                </button>
+                            </span>
+                        </li>
+                    `;
+                }
+            } else {
+                itemsHtml = '<li class="text-sm text-gray-500 italic">Mesa vacía</li>';
+            }
+            
+            const totalConsumed = table.items.reduce((sum, item) => sum + item.price, 0);
+            const totalPaid = totalConsumed - table.total;
+
+            cardElement.innerHTML = `
+                <h3 class="text-xl font-bold mb-2 truncate ${table.items.length > 0 ? 'text-cyan-400' : 'text-gray-400'}">${table.name}</h3>
+                <ul class="mb-3 h-32 overflow-y-auto pr-1">
+                    ${itemsHtml}
+                </ul>
+                <div class="border-t border-gray-700 pt-3">
+                    <div class="space-y-1 mb-3">
+                        <div class="flex justify-between items-center text-sm">
+                            <span class="text-gray-400">Total Consumido:</span>
+                            <span class="font-semibold text-white">${formatCurrency(totalConsumed)}</span>
+                        </div>
+                        <div class="flex justify-between items-center text-sm">
+                            <span class="text-gray-400">Total Pagado:</span>
+                            <span class="font-semibold text-green-400">${formatCurrency(totalPaid)}</span>
+                        </div>
+                        <div class="flex justify-between items-center text-lg">
+                            <span class="text-gray-200 font-bold">TOTAL PENDIENTE:</span>
+                            <span class="text-2xl font-bold text-green-400">${formatCurrency(table.total)}</span>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-3 gap-2">
+                        <button class="btn-history bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-3 rounded-lg text-sm transition-all">
+                            Historial
+                        </button>
+                        <button class="btn-pdf bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-3 rounded-lg text-sm transition-all">
+                            Factura
+                        </button>
+                        <button class="btn-close-table bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-3 rounded-lg text-sm transition-all">
+                            Cerrar
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            cardElement.querySelector('.btn-history').addEventListener('click', () => {
+                const freshTable = allTablesData.get(table.id);
+                if (freshTable) showHistory(freshTable);
+            });
+
+            cardElement.querySelector('.btn-pdf').addEventListener('click', async () => { 
+                const freshTable = allTablesData.get(table.id);
+                if (freshTable) {
+                    if (freshTable.items.length === 0) {
+                        showStatusMessage("No se puede facturar una mesa vacía.", true);
+                        return;
+                    }
+                    if (isPdfLoading) return;
+                    
+                    try {
+                        const scriptsReady = await ensurePdfScripts(); 
+                        if (!scriptsReady) {
+                            showStatusMessage("Error al cargar librerías PDF. Intente de nuevo.", true);
+                            return;
+                        }
+                        generatePDF(freshTable); 
+                        showStatusMessage("Factura PDF generada.", false);
+                    } catch (pdfError) {
+                        console.error("Error al generar PDF:", pdfError);
+                        showStatusMessage(`Error al crear PDF: ${pdfError.message}`, true);
+                    }
+                }
+            });
+
+            cardElement.querySelector('.btn-close-table').addEventListener('click', () => {
+                const freshTable = allTablesData.get(table.id);
+                if (freshTable) handleCloseTable(freshTable);
+            });
+            
+            cardElement.querySelectorAll('.btn-delete-group').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const itemName = btn.dataset.itemName;
+                    const freshTable = allTablesData.get(table.id);
+                    if (freshTable) {
+                        handleDeleteGroup(freshTable, itemName);
+                    }
+                });
+            });
+        }
+        
+        function groupItems(items) {
+            const grouped = {};
+            if (!items || !Array.isArray(items)) {
+                return grouped;
+            }
+            items.forEach(item => {
+                if (!item || typeof item.name === 'undefined') return; 
+                if (!grouped[item.name]) {
+                    grouped[item.name] = {
+                        quantity: 0,
+                        price: item.price,
+                        totalPrice: 0
+                    };
+                }
+                
+                if(item.name === 'Otros' || item.name === 'Descuento') {
+                    grouped[item.name].quantity = 1; 
+                    grouped[item.name].totalPrice += item.price; 
+                }
+                else {
+                    grouped[item.name].quantity += 1; 
+                    grouped[item.name].totalPrice += item.price;
+                }
+            });
+            return grouped;
+        }
+
+        function renderCurrentRound() {
+            const panel = document.getElementById('current-round-panel');
+            const list = document.getElementById('current-round-list');
+            const totalEl = document.getElementById('current-round-total');
+            
+            if (currentRound.length === 0) {
+                panel.classList.add('hidden');
+                list.innerHTML = '';
+                totalEl.textContent = formatCurrency(0);
+                return;
+            }
+            
+            panel.classList.remove('hidden');
+            let listHtml = '';
+            let total = 0;
+            
+            currentRound.forEach((item, index) => {
+                listHtml += `
+                    <li class="flex justify-between items-center text-sm py-1 text-gray-300">
+                        <span>${item.name} <span class="text-white">x ${item.quantity}</span></span>
+                        <span class="flex items-center">
+                            <span class="mr-2">${formatCurrency(item.price * item.quantity)}</span>
+                            <button class="btn-delete-from-round text-red-500 hover:text-red-300 font-bold px-1" data-item-name="${item.name}" title="Quitar de la ronda">&times;</button>
+                        </span>
+                    </li>
+                `;
+                total += item.price * item.quantity;
+            });
+            
+            list.innerHTML = listHtml;
+            totalEl.textContent = formatCurrency(total);
+            
+            list.querySelectorAll('.btn-delete-from-round').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const nameToDelete = btn.dataset.itemName;
+                    currentRound = currentRound.filter(item => item.name !== nameToDelete);
+                    renderCurrentRound();
+                });
+            });
+        }
+
+        async function addSpecialProductToTable(productName, quantity) {
+            if (!activeTableId) {
+                showStatusMessage("Por favor, seleccione una mesa primero.", true);
+                return;
+            }
+            
+            try {
+                const tableDocRef = doc(tablesCollectionRef, activeTableId);
+                
+                if (productName === 'Descuento') {
+                    const discountAmount = parseFloat(quantity);
+                    if (isNaN(discountAmount) || discountAmount <= 0) {
+                        showStatusMessage("El monto a descontar debe ser positivo.", true);
+                        return;
+                    }
+                    const newItem = {
+                        id: `item-${Date.now()}`, name: 'Descuento',
+                        price: -discountAmount, timestamp: new Date().toISOString(),
+                        isPaid: false, 
+                        ownerName: null 
+                    };
+                    await updateDoc(tableDocRef, {
+                        items: arrayUnion(newItem), total: increment(-discountAmount) 
+                    });
+                    showStatusMessage(`Descuento de ${formatCurrency(discountAmount)} aplicado.`, false);
+                
+                } else if (productName === 'Otros') {
+                    const additionalAmount = parseFloat(quantity);
+                    if (isNaN(additionalAmount) || additionalAmount <= 0) {
+                        showStatusMessage("El monto a añadir debe ser positivo.", true);
+                        return;
+                    }
+                    const newItem = {
+                        id: `item-${Date.now()}`, name: 'Otros',
+                        price: additionalAmount, timestamp: new Date().toISOString(),
+                        isPaid: false, 
+                        ownerName: null 
+                    };
+                    await updateDoc(tableDocRef, {
+                        items: arrayUnion(newItem), total: increment(additionalAmount) 
+                    });
+                    showStatusMessage(`Cargo "Otros" de ${formatCurrency(additionalAmount)} aplicado.`, false);
+                }
+                
+                document.getElementById('product-quantity').value = "1";
+
+            } catch (error) {
+                console.error(`Error al añadir ${productName}:`, error);
+                showStatusMessage(`Error: ${error.message}`, true);
+            }
+        }
+        
+        function setupRoundAndSpecialButtons() {
+            const addBtn = document.getElementById('add-to-round-btn'); 
+            const registerBtn = document.getElementById('register-round-btn'); 
+            const cancelBtn = document.getElementById('cancel-round-btn'); 
+            
+            const select = document.getElementById('product-select');
+            const quantityInput = document.getElementById('product-quantity');
+
+            addBtn.addEventListener('click', () => {
+                const selectedOption = select.options[select.selectedIndex];
+                const productName = selectedOption.dataset.name;
+                const productPrice = parseFloat(selectedOption.dataset.price);
+                const quantity = parseInt(quantityInput.value, 10);
+                
+                if (isNaN(quantity) || quantity < 1) {
+                     showStatusMessage("La cantidad debe ser 1 o más.", true);
+                     return;
+                }
+                
+                if (productName === 'Descuento' || productName === 'Otros') {
+                    showConfirmationModal(
+                        `Confirmar Acción: ${productName}`,
+                        `"${productName}" se aplica DIRECTAMENTE a la mesa.\n\n¿Desea continuar?`,
+                        () => {
+                            addSpecialProductToTable(productName, quantity);
+                        }
+                    );
+                    return; 
+                }
+                
+                const existingItem = currentRound.find(item => item.name === productName);
+                if (existingItem) {
+                    existingItem.quantity += quantity;
+                } else {
+                    currentRound.push({
+                        name: productName,
+                        price: productPrice,
+                        quantity: quantity
+                    });
+                }
+                
+                renderCurrentRound();
+                quantityInput.value = "1"; 
+            });
+
+            registerBtn.addEventListener('click', async () => {
+                if (!activeTableId) {
+                    showStatusMessage("Por favor, seleccione una mesa primero.", true);
+                    return;
+                }
+                if (currentRound.length === 0) {
+                    showStatusMessage("No hay productos en la ronda actual.", true);
+                    return;
+                }
+                
+                const roundId = `round-${Date.now()}`;
+                const timestamp = new Date().toISOString();
+                let itemsToAdd = [];
+                let totalRoundPrice = 0;
+                
+                currentRound.forEach(item => {
+                    for (let i = 0; i < item.quantity; i++) {
+                        itemsToAdd.push({
+                            id: `item-${Date.now()}-${item.name}-${i}`, 
+                            name: item.name,
+                            price: item.price,
+                            timestamp: timestamp, 
+                            roundId: roundId,
+                            ownerName: null, 
+                            isPaid: false 
+                        });
+                    }
+                    totalRoundPrice += item.price * item.quantity;
+                });
+
+                try {
+                    const tableDocRef = doc(tablesCollectionRef, activeTableId);
+                    await updateDoc(tableDocRef, {
+                        items: arrayUnion(...itemsToAdd), 
+                        total: increment(totalRoundPrice) 
+                    });
+                    
+                    showStatusMessage(`Ronda de ${formatCurrency(totalRoundPrice)} registrada.`, false);
+                    
+                    currentRound = [];
+                    renderCurrentRound();
+
+                } catch (error) {
+                    console.error("Error al registrar ronda:", error);
+                    showStatusMessage(`Error: ${error.message}`, true);
+                }
+            });
+
+            cancelBtn.addEventListener('click', () => {
+                currentRound = [];
+                renderCurrentRound();
+            });
+        }
+        
+        // --- 6. LÓGICA DE MODALES (Historial, Zoom, Auditoría) ---
+        
+        function groupHistoryByTransaction(items) {
+            const groupedByTransaction = new Map();
+            
+            items.forEach(item => {
+                const key = item.roundId || item.id; 
+                if (!groupedByTransaction.has(key)) {
+                    groupedByTransaction.set(key, []);
+                }
+                groupedByTransaction.get(key).push(item);
+            });
+
+            const transactions = [];
+            for (const [key, itemsInGroup] of groupedByTransaction.entries()) {
+                const firstItem = itemsInGroup[0];
+                
+                if (firstItem.roundId) {
+                    const roundTotal = itemsInGroup.reduce((sum, i) => sum + i.price, 0);
+                    
+                    const detailsMap = new Map();
+                    itemsInGroup.forEach(i => {
+                        if (!detailsMap.has(i.name)) {
+                            detailsMap.set(i.name, { quantity: 0, price: i.price });
+                        }
+                        detailsMap.get(i.name).quantity += 1;
+                    });
+                    
+                    const details = Array.from(detailsMap.entries()).map(([name, data]) => ({
+                        name: name,
+                        quantity: data.quantity,
+                        price: data.price
+                    }));
+
+                    transactions.push({
+                        id: firstItem.roundId, 
+                        name: "Ronda",
+                        price: roundTotal,
+                        timestamp: firstItem.timestamp,
+                        isRound: true,
+                        ownerName: firstItem.ownerName || null, 
+                        isPaid: firstItem.isPaid || false, 
+                        details: details, 
+                        items: itemsInGroup 
+                    });
+                } else {
+                    // Item individual
+                    transactions.push({
+                        id: firstItem.id, 
+                        name: firstItem.name,
+                        price: firstItem.price,
+                        timestamp: firstItem.timestamp,
+                        isRound: false,
+                        ownerName: firstItem.ownerName || null, 
+                        isPaid: firstItem.isPaid || false, 
+                        details: [], 
+                        items: itemsInGroup 
+                    });
+                }
+            }
+            
+            const sortedByDate = transactions.sort((a, b) => {
+                if (!a.timestamp || !b.timestamp) return 0;
+                return new Date(a.timestamp) - new Date(b.timestamp);
+            });
+            
+            let roundCounter = 1;
+            const enumeratedTransactions = sortedByDate.map(tx => {
+                if (tx.isRound) {
+                    tx.roundNumber = roundCounter; 
+                    roundCounter++;
+                }
+                return tx;
+            });
+            
+            return enumeratedTransactions.reverse();
+        }
+        
+        function summarizeByOwner(transactions) {
+            const summary = new Map();
+            const chronologicalTransactions = [...transactions].reverse(); 
+            
+            for (const tx of chronologicalTransactions) {
+                const owner = tx.ownerName || "Sin Asignar"; 
+                
+                if (!summary.has(owner)) {
+                    summary.set(owner, { totalConsumed: 0, totalPending: 0, transactions: [] });
+                }
+                
+                const data = summary.get(owner);
+                data.totalConsumed += tx.price; 
+                
+                if (!tx.isPaid) {
+                     data.totalPending += tx.price;
+                }
+                
+                data.transactions.push(tx); 
+            }
+            return summary;
+        }
+
+
+        function setupHistoryModal() {
+            document.getElementById('close-history-modal-btn').addEventListener('click', () => {
+                document.getElementById('history-modal').classList.add('hidden');
+            });
+        }
+
+        // CAMBIO: Botones Pagar/Repetir apilados
+        function showHistory(table) {
+            const modal = document.getElementById('history-modal');
+            const content = document.getElementById('history-content');
+            document.getElementById('history-table-name').textContent = table.name;
+            
+            if (!table.items || table.items.length === 0) {
+                content.innerHTML = '<p class="text-gray-400 italic">No hay historial de transacciones para esta mesa.</p>';
+                modal.classList.remove('hidden');
+                return;
+            }
+
+            const sortedTransactions = groupHistoryByTransaction(table.items);
+
+            let html = '<ul class="divide-y divide-gray-700">';
+            
+            sortedTransactions.forEach(transaction => {
+                const itemTime = transaction.timestamp 
+                    ? new Date(transaction.timestamp).toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
+                    : 'Hora desconocida';
+                
+                let nameHtml = '';
+                let actionsHtml = '';
+                let transactionTitle = '';
+                let titleColor = '';
+
+                if (transaction.isRound) {
+                    // --- LÓGICA PARA RONDAS ---
+                    transactionTitle = `Ronda ${transaction.roundNumber}`;
+                    titleColor = 'text-yellow-300';
+                    
+                    let roundDetailsHtml = '<ul class="pl-4 mt-1 border-l border-gray-600">';
+                    transaction.details.forEach(detail => {
+                        roundDetailsHtml += `<li class="text-sm text-gray-400">${detail.name} x ${detail.quantity} (${formatCurrency(detail.price * detail.quantity)})</li>`;
+                    });
+                    roundDetailsHtml += '</ul>';
+
+                    if (transaction.isPaid) {
+                        // Ronda PAGADA
+                        nameHtml = transaction.ownerName ? `<span class="ml-2 pl-2 border-l border-gray-600 text-lg font-bold text-white">${transaction.ownerName}</span>` : '';
+                        
+                        // CAMBIO: Botón para reversar pago
+                        actionsHtml = `
+                            <div class="flex flex-col items-end">
+                                <span class="font-bold text-green-400 text-sm">[PAGADA]</span>
+                                <button data-round-id="${transaction.id}" data-round-price="${transaction.price}"
+                                        class="btn-reverse-payment text-yellow-500 hover:text-yellow-300 text-xs underline mt-1" title="Reversar el pago y volver a pendiente">
+                                    Reversar
+                                </button>
+                            </div>
+                        `;
+                    } else {
+                        // Ronda PENDIENTE
+                        if (transaction.ownerName) {
+                            nameHtml = `
+                                <span class="ml-2 pl-2 border-l border-gray-600 text-lg font-bold text-white">${transaction.ownerName}</span>
+                                <button class="btn-edit-owner-name text-xs text-blue-400 hover:text-blue-300 ml-2" data-tx-id="${transaction.id}" data-is-round="true">[Editar]</button>
+                            `;
+                        } else {
+                            nameHtml = `
+                                <button class="btn-edit-owner-name text-xs bg-blue-600 hover:bg-blue-700 text-white font-semibold py-1 px-2 rounded-lg ml-2" data-tx-id="${transaction.id}" data-is-round="true">[Asignar Dueño]</button>
+                            `;
+                        }
+                        
+                        // CAMBIO: Botones apilados verticalmente
+                        actionsHtml = `
+                            <div class="flex flex-col items-end space-y-2">
+                                <button data-tx-id="${transaction.id}" data-tx-price="${transaction.price}"
+                                        class="btn-pay-round w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-1 px-2 rounded-lg text-xs" title="Marcar Ronda como Pagada">
+                                    Pagar
+                                </button>
+                                <button data-item-id="${transaction.id}" 
+                                        class="btn-repeat-round w-full bg-yellow-600 hover:bg-yellow-700 text-white font-semibold py-1 px-2 rounded-lg text-xs" title="Repetir Ronda">
+                                    Repetir
+                                </button>
+                            </div>
+                            <button data-item-id="${transaction.id}" 
+                                    class="btn-delete-item text-red-500 hover:text-red-300 font-bold text-2xl px-2 ml-1 self-center" title="Eliminar Ronda">
+                                &times;
+                            </button>
+                        `;
+                    }
+                    
+                    html += `
+                        <li class="flex justify-between items-start py-3"> 
+                            <div>
+                                <div class="flex items-center">
+                                    <span class="font-semibold ${titleColor}">${transactionTitle}</span>
+                                    ${nameHtml} 
+                                </div>
+                                <span class="block text-sm text-gray-400">${itemTime}</span>
+                                ${roundDetailsHtml} 
+                            </div>
+                            <div class="flex items-center flex-shrink-0"> 
+                                <span class="font-semibold text-lg mr-2 ${titleColor}">${formatCurrency(transaction.price)}</span>
+                                ${actionsHtml}
+                            </div>
+                        </li>
+                    `;
+
+                } else {
+                    // --- LÓGICA PARA ITEMS INDIVIDUALES (Descuento, Otros) ---
+                    transactionTitle = transaction.name;
+                    titleColor = transaction.price < 0 ? 'text-red-300' : 'text-yellow-300'; // Descuento o Otros
+                    
+                    if (transaction.name === 'Descuento') {
+                        // Es un Descuento (Abono), puede tener dueño
+                        if (transaction.ownerName) {
+                            nameHtml = `
+                                <span class="ml-2 pl-2 border-l border-gray-600 text-lg font-bold text-white">${transaction.ownerName}</span>
+                                <button class="btn-edit-owner-name text-xs text-blue-400 hover:text-blue-300 ml-2" data-tx-id="${transaction.id}" data-is-round="false">[Editar]</button>
+                            `;
+                        } else {
+                            nameHtml = `
+                                <button class="btn-edit-owner-name text-xs bg-blue-600 hover:bg-blue-700 text-white font-semibold py-1 px-2 rounded-lg ml-2" data-tx-id="${transaction.id}" data-is-round="false">[Asignar Dueño]</button>
+                            `;
+                        }
+                    }
+                    // Para "Otros", nameHtml queda vacío (sin dueño)
+
+                    // Acciones (solo eliminar)
+                    actionsHtml = `
+                        <button data-item-id="${transaction.id}" 
+                                class="btn-delete-item text-red-500 hover:text-red-300 font-bold text-2xl px-2 rounded-full">
+                            &times;
+                        </button>
+                    `;
+                    
+                    html += `
+                        <li class="flex justify-between items-start py-3"> <!-- items-start -->
+                            <div>
+                                <div class="flex items-center">
+                                    <span class="font-semibold ${titleColor}">${transactionTitle}</span>
+                                    ${nameHtml} <!-- Aquí va el dueño del descuento -->
+                                </div>
+                                <span class="block text-sm text-gray-400">${itemTime}</span>
+                            </div>
+                            <div class="flex items-center">
+                                <span class="font-semibold text-lg mr-4 ${titleColor}">${formatCurrency(transaction.price)}</span>
+                                ${actionsHtml}
+                            </div>
+                        </li>
+                    `;
+                }
+            });
+            html += '</ul>';
+            content.innerHTML = html;
+            
+            // Conectar botones de eliminar
+            content.querySelectorAll('.btn-delete-item').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const transactionId = btn.dataset.itemId; 
+                    const transactionToDelete = sortedTransactions.find(t => t.id === transactionId);
+                    
+                    if (transactionToDelete) {
+                        const title = `Confirmar Borrado`;
+                        const txName = transactionToDelete.isRound ? `Ronda ${transactionToDelete.roundNumber}` : transactionToDelete.name;
+                        const message = `¿Está seguro que desea eliminar "${txName}" (${formatCurrency(transactionToDelete.price)})? Esta acción no se puede deshacer.`;
+                        
+                        showConfirmationModal(title, message, () => {
+                            handleDeleteItem(table, transactionToDelete);
+                        });
+                    }
+                });
+            });
+
+            // Conectar botones de "Repetir Ronda"
+            content.querySelectorAll('.btn-repeat-round').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const transactionId = btn.dataset.itemId;
+                    const transactionToRepeat = sortedTransactions.find(t => t.id === transactionId);
+                    
+                    if (transactionToRepeat && transactionToRepeat.isRound) {
+                        handleRepeatRound(transactionToRepeat.details);
+                    }
+                });
+            });
+            
+            // Conectar botones de "Asignar/Editar Dueño"
+            content.querySelectorAll('.btn-edit-owner-name').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const txId = btn.dataset.txId; 
+                    const isRound = btn.dataset.isRound === 'true'; 
+                    
+                    const transaction = sortedTransactions.find(t => t.id === txId);
+                    if (transaction) {
+                        showEditOwnerNameModal(table, txId, isRound, transaction.ownerName);
+                    }
+                });
+            });
+            
+            // Conectar botones de "Pagar Ronda"
+            content.querySelectorAll('.btn-pay-round').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const roundId = btn.dataset.txId; 
+                    const roundPrice = parseFloat(btn.dataset.txPrice); 
+                    const transaction = sortedTransactions.find(t => t.id === roundId);
+                    
+                    if(transaction) {
+                        const title = "Confirmar Pago de Ronda";
+                        const message = `¿Marcar la Ronda ${transaction.roundNumber} (${formatCurrency(roundPrice)}) como PAGADA? El total pendiente se reducirá.`;
+                        
+                        showConfirmationModal(title, message, () => {
+                            handleMarkRoundAsPaid(table.id, roundId, roundPrice);
+                        });
+                    }
+                });
+            });
+            
+            // NUEVO: Conectar botones de "Reversar Pago"
+            content.querySelectorAll('.btn-reverse-payment').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const roundId = btn.dataset.roundId;
+                    const roundPrice = parseFloat(btn.dataset.roundPrice);
+                    
+                    const title = "Reversar Pago";
+                    const message = `¿Está seguro que desea anular el pago de esta ronda y devolverla al saldo pendiente?`;
+                    
+                    showConfirmationModal(title, message, () => {
+                        handleReversePayment(table.id, roundId, roundPrice);
+                    });
+                });
+            });
+
+            modal.classList.remove('hidden');
+        }
+        
+        function setupReadOnlyHistoryModal() {
+            document.getElementById('close-ro-history-modal-btn').addEventListener('click', () => {
+                document.getElementById('read-only-history-modal').classList.add('hidden');
+            });
+        }
+
+        function showReadOnlyHistory(table) {
+            const modal = document.getElementById('read-only-history-modal');
+            const content = document.getElementById('ro-history-content');
+            document.getElementById('ro-history-table-name').textContent = table.name;
+            
+            if (!table.items || table.items.length === 0) {
+                content.innerHTML = '<p class="text-gray-400 italic">No hay historial de transacciones para esta mesa.</p>';
+                modal.classList.remove('hidden');
+                return;
+            }
+
+            const sortedTransactions = groupHistoryByTransaction(table.items);
+
+            let html = '<ul class="divide-y divide-gray-700">';
+            sortedTransactions.forEach(transaction => {
+                const itemTime = transaction.timestamp 
+                    ? new Date(transaction.timestamp).toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
+                    : 'Hora desconocida';
+                
+                let title = '';
+                let titleColor = '';
+                let ownerHtml = '';
+                let detailsHtml = '';
+                
+                if (transaction.isRound) {
+                    title = `Ronda ${transaction.roundNumber}`;
+                    titleColor = 'text-yellow-300';
+                    const paidMarker = transaction.isPaid ? '<span class="font-bold text-green-400 ml-2">[PAGADA]</span>' : '';
+                    ownerHtml = transaction.ownerName ? `<span class="ml-2 pl-2 border-l border-gray-600 text-lg font-bold text-white">${transaction.ownerName}</span>${paidMarker}` : paidMarker;
+
+                    let roundDetailsHtml = '<ul class="pl-4 mt-1 border-l border-gray-600">';
+                    transaction.details.forEach(detail => {
+                        roundDetailsHtml += `<li class="text-sm text-gray-400">${detail.name} x ${detail.quantity} (${formatCurrency(detail.price * detail.quantity)})</li>`;
+                    });
+                    roundDetailsHtml += '</ul>';
+                    detailsHtml = roundDetailsHtml;
+                    
+                } else {
+                    // Item individual
+                    title = transaction.name;
+                    titleColor = transaction.price < 0 ? 'text-red-300' : 'text-yellow-300';
+                    if (transaction.name === 'Descuento' && transaction.ownerName) {
+                        ownerHtml = `<span class="ml-2 pl-2 border-l border-gray-600 text-lg font-bold text-white">${transaction.ownerName}</span>`;
+                    }
+                }
+
+                html += `
+                    <li class="flex justify-between items-start py-3">
+                        <div>
+                            <div class="flex items-center"> 
+                                <span class="font-semibold ${titleColor}">${title}</span>
+                                ${ownerHtml}
+                            </div>
+                            <span class="block text-sm text-gray-400">${itemTime}</span>
+                            ${detailsHtml}
+                        </div>
+                        <div class="flex items-center flex-shrink-0">
+                            <span class="font-semibold text-lg mr-4 ${titleColor}">${formatCurrency(transaction.price)}</span>
+                        </div>
+                    </li>
+                `;
+            });
+            html += '</ul>';
+            content.innerHTML = html;
+            
+            modal.classList.remove('hidden');
+        }
+
+        function setupZoomModal() {
+            document.getElementById('close-zoom-modal-btn').addEventListener('click', () => {
+                document.getElementById('zoom-modal').classList.add('hidden');
+            });
+            
+            const tabProduct = document.getElementById('zoom-tab-product');
+            const tabOwner = document.getElementById('zoom-tab-owner');
+            const contentProduct = document.getElementById('zoom-content');
+            const contentOwner = document.getElementById('zoom-owner-content');
+
+            tabProduct.addEventListener('click', () => {
+                contentProduct.classList.remove('hidden');
+                contentOwner.classList.add('hidden');
+                tabProduct.classList.add('bg-cyan-600');
+                tabProduct.classList.remove('bg-gray-700');
+                tabOwner.classList.add('bg-gray-700');
+                tabOwner.classList.remove('bg-cyan-600');
+            });
+
+            tabOwner.addEventListener('click', () => {
+                contentProduct.classList.add('hidden');
+                contentOwner.classList.remove('hidden');
+                tabOwner.classList.add('bg-cyan-600');
+                tabOwner.classList.remove('bg-gray-700');
+                tabProduct.classList.add('bg-gray-700');
+                tabProduct.classList.remove('bg-cyan-600');
+            });
+        }
+        
+        function showZoomModal(table) {
+            const modal = document.getElementById('zoom-modal');
+            document.getElementById('zoom-table-name').textContent = table.name;
+            
+            const totalConsumed = table.items.reduce((sum, item) => sum + item.price, 0);
+            document.getElementById('zoom-total').textContent = formatCurrency(totalConsumed);
+            
+            // --- Pestaña 1: Resumen por Producto (Consumido) ---
+            const groupedItems = groupItems(table.items);
+            const contentProduct = document.getElementById('zoom-content');
+            
+            let productHtml = '';
+            if (Object.keys(groupedItems).length === 0) {
+                productHtml = '<p class="text-gray-400 italic text-lg">Mesa vacía</p>';
+            } else {
+                productHtml = '<ul class="divide-y divide-gray-700">';
+                for (const name in groupedItems) {
+                    const item = groupedItems[name];
+                    const isDiscount = item.price < 0;
+                    const isOther = item.price > 0 && (name === 'Otros');
+                    
+                    let textColor = 'text-white';
+                    if (isDiscount) textColor = 'text-red-300';
+                    if (isOther) textColor = 'text-yellow-300';
+
+                    productHtml += `
+                        <li class="flex justify-between items-center py-3">
+                            <span class="text-lg ${textColor}">
+                                ${name} 
+                                <span class="font-medium">${name !== 'Otros' ? 'x ' + item.quantity : ''}</span>
+                            </span>
+                            <span class="font-semibold text-xl ${textColor}">
+                                ${formatCurrency(item.totalPrice)}
+                            </span>
+                        </li>
+                    `;
+                }
+                productHtml += '</ul>';
+            }
+            contentProduct.innerHTML = productHtml;
+            
+            // --- Pestaña 2: Resumen por Dueño (Pendiente) ---
+            const sortedTransactions = groupHistoryByTransaction(table.items);
+            const ownerSummary = summarizeByOwner(sortedTransactions);
+            const contentOwner = document.getElementById('zoom-owner-content');
+            
+            let ownerHtml = '';
+            if (ownerSummary.size === 0) {
+                ownerHtml = '<p class="text-gray-400 italic text-lg">No hay transacciones.</p>';
+            } else {
+                ownerHtml = '<ul class="divide-y divide-gray-700">';
+                ownerSummary.forEach((data, owner) => {
+                    const ownerColor = (owner === 'Sin Asignar') ? 'text-gray-400' : 'text-cyan-400';
+                    const totalPending = data.totalPending;
+                    const totalColor = (totalPending < 0) ? 'text-red-400' : (totalPending > 0 ? 'text-green-400' : 'text-gray-400');
+                    
+                    ownerHtml += `
+                        <li class="py-3">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-xl font-semibold ${ownerColor}">${owner} (Pendiente)</span>
+                                <span class="text-xl font-bold ${totalColor}">${formatCurrency(totalPending)}</span>
+                            </div>
+                            <ul class="pl-4 border-l border-gray-600 space-y-1">`;
+                    
+                    data.transactions.forEach(tx => {
+                        const txTime = tx.timestamp ? new Date(tx.timestamp).toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' }) : '';
+                        let txName;
+                        const paidMarker = tx.isPaid ? ' (PAGADA)' : ''; 
+                        
+                        if (tx.isRound) {
+                            txName = `Ronda ${tx.roundNumber}${paidMarker} (${tx.details.map(d => `${d.quantity} ${d.name}`).join(', ')})`;
+                        } else {
+                            txName = tx.name; // Descuentos, Otros
+                        }
+                        
+                        ownerHtml += `
+                            <li class="flex justify-between text-sm ${tx.price < 0 ? 'text-red-400' : 'text-gray-300'}">
+                                <span class="pr-2">${txName} <span class="text-gray-500 text-xs">${txTime}</span></span>
+                                <span class="flex-shrink-0">${formatCurrency(tx.price)}</span>
+                            </li>
+                        `;
+                    });
+                            
+                    ownerHtml += `</ul></li>`;
+                });
+                ownerHtml += '</ul>';
+            }
+            contentOwner.innerHTML = ownerHtml;
+
+            // --- Resetear Pestañas ---
+            const tabProduct = document.getElementById('zoom-tab-product');
+            const tabOwner = document.getElementById('zoom-tab-owner');
+            contentProduct.classList.remove('hidden');
+            contentOwner.classList.add('hidden');
+            tabProduct.classList.add('bg-cyan-600');
+            tabProduct.classList.remove('bg-gray-700');
+            tabOwner.classList.add('bg-gray-700');
+            tabOwner.classList.remove('bg-cyan-600');
+            
+            modal.classList.remove('hidden');
+        }
+        
+        function setupAuditModal() {
+            const modal = document.getElementById('audit-modal');
+            const showBtn = document.getElementById('show-audit-btn');
+            const closeBtn = document.getElementById('close-audit-modal-btn');
+            const dateInput = document.getElementById('audit-date');
+            const nameInput = document.getElementById('audit-table-name');
+            const deleteAllBtn = document.getElementById('delete-all-filtered-btn'); 
+
+            const today = new Date();
+            today.setMinutes(today.getMinutes() - today.getTimezoneOffset());
+            dateInput.value = today.toISOString().split('T')[0];
+
+            showBtn.addEventListener('click', () => {
+                modal.classList.remove('hidden');
+                fetchClosedTables(); 
+            });
+            
+            closeBtn.addEventListener('click', () => {
+                modal.classList.add('hidden');
+            });
+            
+            dateInput.addEventListener('change', fetchClosedTables);
+            nameInput.addEventListener('input', fetchClosedTables);
+            
+            deleteAllBtn.addEventListener('click', handleDeleteAllFiltered);
+        }
+
+        function setupConfirmationModal() {
+            const modal = document.getElementById('confirmation-modal');
+            const cancelBtn = document.getElementById('confirmation-cancel-btn');
+            const okBtn = document.getElementById('confirmation-ok-btn');
+
+            cancelBtn.addEventListener('click', () => {
+                modal.classList.add('hidden');
+                onConfirmAction = null; 
+            });
+
+            okBtn.addEventListener('click', () => {
+                if (typeof onConfirmAction === 'function') {
+                    onConfirmAction(); 
+                }
+                modal.classList.add('hidden'); 
+                onConfirmAction = null; 
+            });
+        }
+        
+        function setupEditOwnerNameModal() {
+            const modal = document.getElementById('edit-owner-name-modal');
+            const cancelBtn = document.getElementById('edit-owner-name-cancel-btn');
+            const saveBtn = document.getElementById('edit-owner-name-save-btn');
+            const input = document.getElementById('owner-name-input');
+            
+            cancelBtn.addEventListener('click', () => {
+                modal.classList.add('hidden');
+                currentEditContext = null;
+            });
+            
+            saveBtn.addEventListener('click', async () => {
+                if (!currentEditContext) return;
+                
+                const { tableId, transactionId, isRound } = currentEditContext;
+                const newName = input.value.trim();
+                
+                saveBtn.disabled = true;
+                saveBtn.textContent = 'Guardando...';
+                
+                try {
+                    await handleUpdateOwnerName(tableId, transactionId, isRound, newName);
+                    
+                    modal.classList.add('hidden');
+                    currentEditContext = null;
+                    
+                    const tableRefId = tableId; 
+                    if (tableRefId) {
+                        const freshTableSnap = await getDoc(doc(tablesCollectionRef, tableRefId));
+                        if (freshTableSnap.exists()) {
+                            showHistory(freshTableSnap.data());
+                        }
+                    }
+                    
+                } catch (error) {
+                    console.error("Error al guardar nombre de dueño:", error);
+                    showStatusMessage("Error al guardar el nombre.", true);
+                } finally {
+                    saveBtn.disabled = false;
+                    saveBtn.textContent = 'Guardar';
+                }
+            });
+        }
+        
+        function setupTransferModal() {
+            const modal = document.getElementById('transfer-modal');
+            const closeBtn = document.getElementById('close-transfer-modal-btn');
+            const cancelBtn = document.getElementById('transfer-cancel-btn');
+            const okBtn = document.getElementById('transfer-ok-btn');
+            const select = document.getElementById('transfer-table-select');
+            const otherContainer = document.getElementById('transfer-other-name-container');
+            const otherInput = document.getElementById('transfer-other-name');
+            
+            select.innerHTML = ''; 
+            predefinedTables.forEach(name => {
+                const option = document.createElement('option');
+                option.value = name;
+                option.textContent = name;
+                select.appendChild(option);
+            });
+            const otherOption = document.createElement('option');
+            otherOption.value = otherOptionValue;
+            otherOption.textContent = otherOptionValue;
+            select.appendChild(otherOption);
+            
+            select.addEventListener('change', () => {
+                if (select.value === otherOptionValue) {
+                    otherContainer.style.display = 'block';
+                    otherInput.focus();
+                } else {
+                    otherContainer.style.display = 'none';
+                    otherInput.value = ''; 
+                }
+            });
+            
+            closeBtn.addEventListener('click', () => modal.classList.add('hidden'));
+            cancelBtn.addEventListener('click', () => modal.classList.add('hidden'));
+            
+            okBtn.addEventListener('click', () => {
+                handleTransferTable();
+            });
+        }
+
+        function showConfirmationModal(title, message, onConfirm) {
+            const modal = document.getElementById('confirmation-modal');
+            document.getElementById('confirmation-title').textContent = title;
+            document.getElementById('confirmation-message').textContent = message;
+            onConfirmAction = onConfirm; 
+            modal.classList.remove('hidden'); 
+        }
+        
+        function showEditOwnerNameModal(table, transactionId, isRound, currentName) {
+            currentEditContext = { tableId: table.id, transactionId, isRound };
+            const modal = document.getElementById('edit-owner-name-modal');
+            const input = document.getElementById('owner-name-input');
+            const suggestionsContainer = document.getElementById('owner-name-suggestions');
+
+            input.value = currentName || '';
+            
+            const transactions = groupHistoryByTransaction(table.items);
+            const allNames = transactions.map(tx => tx.ownerName).filter(name => name); 
+            const uniqueNames = [...new Set(allNames)]; 
+
+            if (uniqueNames.length > 0) {
+                let suggestionsHtml = '';
+                uniqueNames.forEach(name => {
+                    suggestionsHtml += `
+                        <button class="btn-suggestion bg-gray-600 hover:bg-gray-500 text-white font-semibold py-1 px-3 rounded-lg text-sm" data-name="${name}">
+                            ${name}
+                        </button>
+                    `;
+                });
+                suggestionsContainer.innerHTML = suggestionsHtml;
+                
+                suggestionsContainer.querySelectorAll('.btn-suggestion').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        e.preventDefault(); 
+                        input.value = btn.dataset.name;
+                    });
+                });
+            } else {
+                suggestionsContainer.innerHTML = '<p class="text-sm text-gray-500 italic">No hay dueños anteriores en esta mesa.</p>';
+            }
+
+            modal.classList.remove('hidden');
+            input.focus(); 
+        }
+        
+        function showTransferModal() {
+            const modal = document.getElementById('transfer-modal');
+            const fromNameEl = document.getElementById('transfer-from-name');
+            const select = document.getElementById('transfer-table-select');
+            const otherContainer = document.getElementById('transfer-other-name-container');
+            const otherInput = document.getElementById('transfer-other-name');
+            const errorEl = document.getElementById('transfer-error-message');
+            
+            const currentTable = allTablesData.get(activeTableId);
+            if (!currentTable) {
+                showStatusMessage("No hay mesa activa para transferir.", true);
+                return;
+            }
+            
+            fromNameEl.textContent = currentTable.name;
+            select.value = predefinedTables[0]; 
+            otherContainer.style.display = 'none';
+            otherInput.value = '';
+            errorEl.textContent = '';
+            
+            modal.classList.remove('hidden');
+        }
+        
+        async function fetchClosedTables() {
+            const content = document.getElementById('audit-content');
+            const totalEl = document.getElementById('audit-total');
+            const dateStr = document.getElementById('audit-date').value;
+            const nameQuery = document.getElementById('audit-table-name').value.trim().toLowerCase();
+            
+            content.innerHTML = '<p class="text-gray-400 italic">Buscando...</p>';
+            currentAuditFilteredIds = [];
+            
+            if (!dateStr) {
+                content.innerHTML = '<p class="text-yellow-400">Por favor, seleccione una fecha.</p>';
+                totalEl.textContent = formatCurrency(0);
+                return;
+            }
+            
+            const [year, month, day] = dateStr.split('-').map(Number);
+            const startDate = new Date(year, month - 1, day, 0, 0, 0, 0);
+            const endDate = new Date(year, month - 1, day, 23, 59, 59, 999);
+            
+            const startISO = startDate.toISOString();
+            const endISO = endDate.toISOString();
+
+            try {
+                const q = query(closedTablesCollectionRef, 
+                    where("closedAt", ">=", startISO),
+                    where("closedAt", "<=", endISO)
+                );
+                
+                const snapshot = await getDocs(q);
+                let tablesHtml = '<ul class="divide-y divide-gray-700">';
+                let totalAudited = 0;
+                let tablesFound = 0;
+
+                snapshot.forEach(doc => {
+                    const table = doc.data();
+                    
+                    if (nameQuery && !table.name.toLowerCase().includes(nameQuery)) {
+                        return; 
+                    }
+                    
+                    currentAuditFilteredIds.push(doc.id); 
+                    
+                    tablesFound++;
+                    const totalConsumed = table.items.reduce((sum, item) => sum + item.price, 0);
+                    totalAudited += totalConsumed;
+                    
+                    const groupedItems = groupItems(table.items);
+                    let itemsDetailHtml = '';
+                    for (const name in groupedItems) {
+                        const item = groupedItems[name];
+                        
+                        const isDiscount = item.price < 0;
+                        const isOther = item.price > 0 && (name === 'Otros');
+                        
+                        let textColor = 'text-gray-400';
+                        if (isDiscount) textColor = 'text-red-400';
+                        if (isOther) textColor = 'text-yellow-400';
+                        
+                        itemsDetailHtml += `
+                            <li class="flex justify-between text-sm ${textColor}">
+                                <span>${name} ${name !== 'Otros' ? 'x ' + item.quantity : ''}</span>
+                                <span>${formatCurrency(item.totalPrice)}</span>
+                            </li>
+                        `;
+                    }
+                    
+                    const closedTime = new Date(table.closedAt).toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' });
+
+                    tablesHtml += `
+                        <li class="py-4" id="audit-item-${doc.id}">
+                            <div class="flex justify-between items-start mb-2">
+                                <div>
+                                    <span class="text-lg font-semibold text-cyan-400">${table.name}</span>
+                                    <span class="block text-sm text-gray-500">Cerrada a las: ${closedTime}</span>
+                                </div>
+                                <span class="text-xl font-bold text-green-400">${formatCurrency(totalConsumed)}</span>
+                            </div>
+                            <ul class="pl-4 border-l border-gray-700 mb-3">
+                                ${itemsDetailHtml}
+                            </ul>
+                            <div class="flex gap-2 flex-wrap"> 
+                                <button data-table-id="${doc.id}" class="btn-view-closed-detail bg-blue-600 hover:bg-blue-700 text-white font-semibold py-1 px-3 rounded-lg text-sm transition-all">
+                                    Ver Detalle
+                                </button>
+                                <button data-table-id="${doc.id}" class="btn-reopen-table bg-yellow-600 hover:bg-yellow-700 text-white font-semibold py-1 px-3 rounded-lg text-sm transition-all">
+                                    Reabrir
+                                </button>
+                                <button data-table-id="${doc.id}" data-table-name="${table.name}" class="btn-delete-closed-item bg-red-600 hover:bg-red-700 text-white font-semibold py-1 px-3 rounded-lg text-sm transition-all">
+                                    Borrar
+                                </button>
+                            </div>
+                        </li>
+                    `;
+                });
+                
+                tablesHtml += '</ul>';
+                
+                if (tablesFound === 0) {
+                     content.innerHTML = '<p class="text-gray-400 italic">No se encontraron mesas cerradas para esta fecha o filtro.</p>';
+                } else {
+                    content.innerHTML = tablesHtml;
+                }
+                
+                content.querySelectorAll('.btn-view-closed-detail').forEach(btn => {
+                    btn.addEventListener('click', async () => {
+                        const docId = btn.dataset.tableId;
+                        try {
+                            const tableDoc = await getDoc(doc(closedTablesCollectionRef, docId));
+                            if (tableDoc.exists()) {
+                                showReadOnlyHistory(tableDoc.data());
+                            } else {
+                                showStatusMessage("No se encontró el detalle de esa mesa.", true);
+                            }
+                        } catch (error) {
+                            console.error("Error al obtener detalle de mesa cerrada:", error);
+                            showStatusMessage("Error al cargar detalle.", true);
+                        }
+                    });
+                });
+
+                content.querySelectorAll('.btn-reopen-table').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const docId = btn.dataset.tableId;
+                        handleReopenTable(docId);
+                    });
+                });
+                
+                content.querySelectorAll('.btn-delete-closed-item').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const docId = btn.dataset.tableId;
+                        const tableName = btn.dataset.tableName;
+                        handleDeleteClosedTable(docId, tableName);
+                    });
+                });
+                
+                totalEl.textContent = formatCurrency(totalAudited);
+
+            } catch (error) {
+                console.error("Error al buscar mesas cerradas:", error);
+                content.innerHTML = `<p class="text-red-400">Error al cargar auditoría: ${error.message}</p>`;
+            }
+        }
+        
+
+        // --- 7. ACCIONES (Eliminar, Cerrar, PDF) ---
+
+        async function handleDeleteItem(table, transactionToDelete) {
+            try {
+                const tableDocRef = doc(tablesCollectionRef, table.id);
+                
+                const priceAdjustment = transactionToDelete.isPaid ? 0 : -transactionToDelete.price;
+                
+                await updateDoc(tableDocRef, {
+                    items: arrayRemove(...transactionToDelete.items), 
+                    total: increment(priceAdjustment) 
+                });
+                
+                showStatusMessage(`Item eliminado.`, false);
+                
+                const freshTableSnap = await getDoc(tableDocRef);
+                if (freshTableSnap.exists()) {
+                    if (!document.getElementById('history-modal').classList.contains('hidden')) {
+                        showHistory(freshTableSnap.data());
+                    }
+                } else {
+                    document.getElementById('history-modal').classList.add('hidden');
+                }
+
+            } catch (error) {
+                console.error("Error al eliminar item:", error);
+                showStatusMessage(`Error al eliminar: ${error.message}`, true);
+            }
+        }
+        
+        async function handleDeleteGroup(table, itemName) {
+            showConfirmationModal(
+                `Borrar "${itemName}"`,
+                `Para borrar items, debe hacerlo desde el "Historial" para mantener la integridad de las rondas.\n\n¿Desea abrir el historial ahora?`,
+                () => {
+                    showHistory(table);
+                }
+            );
+            return;
+        }
+        
+        function handleCloseTable(table) {
+            let title = `Cerrar Mesa "${table.name}"`;
+            let message = `¿Desea CERRAR la mesa "${table.name}"?\nTotal Pendiente: ${formatCurrency(table.total)}`;
+            
+            if (table.total > 0) {
+                 message += `\n\n¡ATENCIÓN! La mesa todavía tiene un saldo pendiente.`;
+            }
+            if (table.items.length === 0) {
+                message = `La mesa "${table.name}" está vacía.\n¿Desea cerrarla de todas formas?`;
+            }
+
+            showConfirmationModal(title, message, async () => {
+                try {
+                    const closedDocRef = doc(closedTablesCollectionRef, `${table.id}-${Date.now()}`); 
+                    await setDoc(closedDocRef, {
+                        ...table, 
+                        status: 'closed',
+                        closedAt: new Date().toISOString()
+                    });
+                    
+                    const tableDocRef = doc(tablesCollectionRef, table.id);
+                    await deleteDoc(tableDocRef);
+                    
+                    showStatusMessage(`Mesa "${table.name}" cerrada.`, false);
+
+                } catch (dbError) {
+                    console.error("Error al cerrar la mesa en DB:", dbError);
+                    showStatusMessage(`Error al cerrar la mesa en la base de datos.`, true);
+                }
+            });
+        }
+        
+        async function handleReopenTable(closedDocId) {
+            let tableData;
+            let originalTableId;
+
+            try {
+                const closedDocRef = doc(closedTablesCollectionRef, closedDocId);
+                const closedDocSnap = await getDoc(closedDocRef);
+                if (!closedDocSnap.exists()) {
+                    showStatusMessage("No se encontró la mesa cerrada.", true);
+                    return;
+                }
+                tableData = closedDocSnap.data();
+                originalTableId = tableData.id; 
+                
+                const openTableDocRef = doc(tablesCollectionRef, originalTableId);
+                const openTableDocSnap = await getDoc(openTableDocRef);
+                if (openTableDocSnap.exists()) {
+                    showStatusMessage(`Ya existe una mesa abierta llamada "${tableData.name}". No se puede reabrir.`, true);
+                    return;
+                }
+
+            } catch (error) {
+                console.error("Error al buscar mesa para reabrir:", error);
+                showStatusMessage("Error al buscar la mesa.", true);
+                return;
+            }
+
+            const title = `Reabrir Mesa`;
+            const message = `¿Está seguro que desea REABRIR la mesa "${tableData.name}"?`;
+
+            showConfirmationModal(title, message, async () => {
+                try {
+                    const reOpenedTableData = { ...tableData };
+                    delete reOpenedTableData.closedAt; 
+                    reOpenedTableData.status = 'open'; 
+                    
+                    const batch = writeBatch(db);
+
+                    const openTableRef = doc(tablesCollectionRef, originalTableId);
+                    batch.set(openTableRef, reOpenedTableData);
+
+                    const closedTableRef = doc(closedTablesCollectionRef, closedDocId);
+                    batch.delete(closedTableRef);
+
+                    await batch.commit();
+                    showStatusMessage(`Mesa "${tableData.name}" ha sido reabierta.`, false);
+                    fetchClosedTables();
+
+                } catch (error) {
+                    console.error("Error al reabrir la mesa:", error);
+                    showStatusMessage("Error al reabrir la mesa.", true);
+                }
+            });
+        }
+        
+        async function handleMarkRoundAsPaid(tableId, roundId, roundPrice) {
+            const tableDocRef = doc(tablesCollectionRef, tableId);
+            try {
+                const tableSnap = await getDoc(tableDocRef);
+                if (!tableSnap.exists()) {
+                    throw new Error("La mesa no fue encontrada.");
+                }
+                const currentItems = tableSnap.data().items;
+                
+                const newItems = currentItems.map(item => {
+                    if (item.roundId === roundId) {
+                        return { ...item, isPaid: true }; 
+                    }
+                    return item; 
+                });
+                
+                await updateDoc(tableDocRef, {
+                    items: newItems,
+                    total: increment(-roundPrice) 
+                });
+                
+                showStatusMessage("Ronda marcada como pagada.", false);
+                
+                const freshTableSnap = await getDoc(tableDocRef);
+                if (freshTableSnap.exists()) {
+                    if (!document.getElementById('history-modal').classList.contains('hidden')) {
+                        showHistory(freshTableSnap.data());
+                    }
+                }
+
+            } catch (error) {
+                console.error("Error en handleMarkRoundAsPaid:", error);
+                showStatusMessage(`Error al marcar pago: ${error.message}`, true);
+            }
+        }
+        
+        async function handleReversePayment(tableId, roundId, roundPrice) {
+            const tableDocRef = doc(tablesCollectionRef, tableId);
+            try {
+                const tableSnap = await getDoc(tableDocRef);
+                if (!tableSnap.exists()) throw new Error("Mesa no encontrada");
+                
+                const currentItems = tableSnap.data().items;
+                
+                const newItems = currentItems.map(item => {
+                    if (item.roundId === roundId) {
+                        return { ...item, isPaid: false };
+                    }
+                    return item;
+                });
+                
+                await updateDoc(tableDocRef, {
+                    items: newItems,
+                    total: increment(roundPrice) 
+                });
+                
+                showStatusMessage("Pago reversado. Ronda pendiente nuevamente.", false);
+                
+                if (document.getElementById('history-modal').classList.contains('hidden') === false) {
+                    const freshSnap = await getDoc(tableDocRef);
+                    showHistory(freshSnap.data());
+                }
+                
+            } catch (error) {
+                console.error("Error al reversar:", error);
+                showStatusMessage(`Error: ${error.message}`, true);
+            }
+        }
+        
+        async function handleUpdateOwnerName(tableId, transactionId, isRound, newName) {
+            const tableDocRef = doc(tablesCollectionRef, tableId);
+            try {
+                const tableSnap = await getDoc(tableDocRef);
+                if (!tableSnap.exists()) { throw new Error("La mesa no fue encontrada."); }
+                const currentItems = tableSnap.data().items;
+                
+                const newItems = currentItems.map(item => {
+                    if (isRound && item.roundId === transactionId) {
+                        return { ...item, ownerName: newName || null };
+                    }
+                    if (!isRound && item.id === transactionId) {
+                        return { ...item, ownerName: newName || null };
+                    }
+                    return item; 
+                });
+                
+                await updateDoc(tableDocRef, {
+                    items: newItems
+                });
+                
+                showStatusMessage("Dueño actualizado.", false);
+                
+            } catch (error) {
+                console.error("Error en handleUpdateOwnerName:", error);
+                showStatusMessage(`Error al actualizar dueño: ${error.message}`, true);
+                throw error;
+            }
+        }
+
+        
+        async function handleTransferTable() {
+            const select = document.getElementById('transfer-table-select');
+            const otherInput = document.getElementById('transfer-other-name');
+            const errorEl = document.getElementById('transfer-error-message');
+            
+            let destinationName;
+            if (select.value === otherOptionValue) {
+                destinationName = otherInput.value.trim();
+            } else {
+                destinationName = select.value;
+            }
+            
+            if (!destinationName) {
+                errorEl.textContent = "Debe seleccionar o escribir un nombre de destino.";
+                return;
+            }
+            const destinationId = destinationName.replace(/\s+/g, '-').toLowerCase();
+            if (destinationId === activeTableId) {
+                errorEl.textContent = "No puede transferir una mesa a sí misma.";
+                return;
+            }
+            
+            const currentTableData = allTablesData.get(activeTableId);
+            if (!currentTableData) {
+                errorEl.textContent = "Error: No se encontró la mesa activa.";
+                return;
+            }
+            
+            try {
+                const destinationDocRef = doc(tablesCollectionRef, destinationId);
+                const destinationDocSnap = await getDoc(destinationDocRef);
+                
+                if (destinationDocSnap.exists()) {
+                    errorEl.textContent = `La mesa "${destinationName}" ya está abierta. No se puede transferir.`;
+                    return;
+                }
+                
+                const newTableData = { ...currentTableData };
+                newTableData.id = destinationId;
+                newTableData.name = destinationName;
+                
+                const batch = writeBatch(db);
+                
+                batch.set(destinationDocRef, newTableData);
+                
+                const oldTableRef = doc(tablesCollectionRef, activeTableId);
+                batch.delete(oldTableRef);
+                
+                await batch.commit();
+                
+                showStatusMessage(`Mesa "${currentTableData.name}" transferida a "${destinationName}".`, false);
+                document.getElementById('transfer-modal').classList.add('hidden');
+                setActiveTable(null); 
+
+            } catch (error) {
+                console.error("Error al transferir mesa:", error);
+                errorEl.textContent = `Error: ${error.message}`;
+            }
+        }
+
+        function handleDeleteClosedTable(docId, tableName) {
+            
+            const title = `Borrar Registro`;
+            const message = `¿Está seguro que desea BORRAR PERMANENTEMENTE el registro de la mesa "${tableName}"?\n\nEsta acción no se puede deshacer.`;
+
+            showConfirmationModal(title, message, async () => {
+                try {
+                    const docRef = doc(closedTablesCollectionRef, docId);
+                    await deleteDoc(docRef);
+                    
+                    showStatusMessage(`Mesa "${tableName}" borrada de la auditoría.`, false);
+                    
+                    const itemEl = document.getElementById(`audit-item-${docId}`);
+                    if (itemEl) {
+                        itemEl.remove();
+                    }
+                    
+                    fetchClosedTables();
+
+                } catch (error) {
+                    console.error("Error al borrar mesa de auditoría:", error);
+                    showStatusMessage("Error al borrar registro.", true);
+                }
+            });
+        }
+        
+        function handleDeleteAllFiltered() {
+            if (currentAuditFilteredIds.length === 0) {
+                showStatusMessage("No hay mesas en el filtro actual para borrar.", true);
+                return;
+            }
+            
+            const title = `Borrar ${currentAuditFilteredIds.length} Registros`;
+            const message = `¿Está seguro que desea BORRAR PERMANENTEMENTE los ${currentAuditFilteredIds.length} registros que coinciden con el filtro?\n\nEsta acción no se puede deshacer.`;
+
+            showConfirmationModal(title, message, async () => {
+                try {
+                    const batch = writeBatch(db);
+                    
+                    currentAuditFilteredIds.forEach(docId => {
+                        const docRef = doc(closedTablesCollectionRef, docId);
+                        batch.delete(docRef);
+                    });
+                    
+                    await batch.commit();
+                    
+                    showStatusMessage(`${currentAuditFilteredIds.length} registros borrados.`, false);
+                    
+                    fetchClosedTables();
+
+                } catch (error) {
+                    console.error("Error en borrado múltiple:", error);
+                    showStatusMessage("Error al borrar los registros.", true);
+                }
+            });
+        }
+
+        function loadScript(src) {
+            return new Promise((resolve, reject) => {
+                if (document.querySelector(`script[src="${src}"]`)) {
+                    resolve();
+                    return;
+                }
+                const script = document.createElement('script');
+                script.src = src;
+                script.onload = () => resolve();
+                script.onerror = () => reject(new Error(`Falló al cargar el script: ${src}`));
+                document.head.appendChild(script);
+            });
+        }
+        
+        async function ensurePdfScripts() {
+            if (pdfScriptsLoaded) return true; 
+            if (isPdfLoading) {
+                showStatusMessage("Cargando librerías PDF...", false);
+                return false; 
+            }
+            
+            isPdfLoading = true;
+            showStatusMessage("Cargando librerías PDF...", false);
+            
+            try {
+                await loadScript("https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js");
+                console.log("jsPDF cargado.");
+                await loadScript("https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js");
+                console.log("jsPDF-AutoTable cargado.");
+                
+                pdfScriptsLoaded = true;
+                isPdfLoading = false;
+                showStatusMessage("Librerías PDF listas.", false);
+                return true;
+            } catch (error) {
+                console.error(error);
+                showStatusMessage(error.message, true);
+                pdfScriptsLoaded = false; 
+                isPdfLoading = false;
+                return false;
+            }
+        }
+
+        function generatePDF(table) {
+            if (typeof window.jspdf === 'undefined' || typeof window.jspdf.jsPDF === 'undefined') {
+                console.error("jsPDF no está cargado en window.");
+                showStatusMessage("Error: Librería PDF no cargada.", true);
+                return; 
+            }
+            
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            if (typeof doc.autoTable !== 'function') {
+                console.error("Error: El plugin jsPDF-AutoTable no se adjuntó a jsPDF.");
+                showStatusMessage("Error: El plugin de tablas PDF no cargó.", true);
+                return; 
+            }
+            
+            if (logoBase64) {
+                try {
+                    const pageWidth = doc.internal.pageSize.getWidth();
+                    const pageHeight = doc.internal.pageSize.getHeight();
+                    const imgWidth = 100; 
+                    const imgHeight = 100; 
+                    const x = (pageWidth - imgWidth) / 2;
+                    const y = (pageHeight - imgHeight) / 2;
+                    doc.saveGraphicsState(); 
+                    doc.setGState(new doc.GState({ opacity: 0.1 })); 
+                    doc.addImage(logoBase64, 'PNG', x, y, imgWidth, imgHeight);
+                    doc.restoreGraphicsState(); 
+                } catch (imgError) {
+                    console.error("Error al añadir la marca de agua (Base64 inválido?):", imgError);
+                }
+            }
+            
+            // --- Tabla 1: Resumen por Producto (CONSUMIDO) ---
+            const groupedItems = groupItems(table.items);
+            let subtotal = 0; 
+            let discounts = 0; 
+            let others = 0; 
+            const tableBody = [];
+            
+            for (const name in groupedItems) {
+                const item = groupedItems[name];
+                
+                if (item.price < 0) {
+                    discounts += item.totalPrice; 
+                } else if (name === 'Otros') {
+                    others += item.totalPrice; 
+                }
+                else {
+                    subtotal += item.totalPrice;
+                    tableBody.push([
+                        item.quantity.toString(),
+                        name,
+                        formatCurrency(item.price), 
+                        formatCurrency(item.totalPrice) 
+                    ]);
+                }
+            }
+            
+            if (others > 0) {
+                 tableBody.push(['1', 'Otros Cargos', formatCurrency(others), formatCurrency(others)]);
+            }
+            if (discounts < 0) {
+                tableBody.push(['1', 'Descuentos Aplicados', formatCurrency(discounts), formatCurrency(discounts)]);
+            }
+
+            const today = new Date();
+            const dateStr = today.toLocaleDateString('es-CO');
+            const timeStr = today.toLocaleTimeString('es-CO');
+            
+            doc.setFontSize(20);
+            doc.setFont('helvetica', 'bold');
+            doc.text("Sanchez's Sport Bar", 105, 20, { align: 'center' });
+            doc.setFontSize(12);
+            doc.setFont('helvetica', 'normal');
+            doc.text("Factura de Venta", 105, 30, { align: 'center' });
+            doc.setFontSize(10);
+            doc.text(`Mesa: ${table.name}`, 20, 40);
+            doc.text(`Fecha: ${dateStr}`, 20, 45);
+            doc.text(`Hora: ${timeStr}`, 20, 50);
+
+            doc.autoTable({
+                startY: 60,
+                head: [['Cant.', 'Producto', 'P. Unitario', 'Total Consumido']],
+                body: tableBody,
+                theme: 'striped',
+                headStyles: { fillColor: [30, 30, 30] }
+            });
+
+            let finalY = doc.autoTable.previous.finalY;
+            
+            // --- Tabla 2: Resumen por Dueño (Condicional) ---
+            const sortedTransactions = groupHistoryByTransaction(table.items);
+            const ownerSummary = summarizeByOwner(sortedTransactions);
+            const hasAssignedOwners = ownerSummary.size > 1 || (ownerSummary.size === 1 && !ownerSummary.has("Sin Asignar"));
+
+            if (hasAssignedOwners) {
+                const ownerTableBody = [];
+                ownerSummary.forEach((data, owner) => {
+                    if (data.totalConsumed === 0 && data.totalPending === 0) return;
+                    
+                    let isFirstRowForOwner = true;
+                    
+                    data.transactions.forEach(tx => {
+                        let detailContent = '';
+                        const paidMarker = tx.isPaid ? ' (PAGADA)' : ''; 
+                        
+                        if (tx.isRound) {
+                            const roundTitle = `Ronda ${tx.roundNumber}${paidMarker}: `;
+                            const productsDetail = tx.details.map(d => `${d.quantity} ${d.name}`).join(', ');
+                            detailContent = roundTitle + productsDetail;
+                        } else {
+                            detailContent = tx.name;
+                        }
+                        
+                        ownerTableBody.push([
+                            isFirstRowForOwner ? owner : '', 
+                            detailContent, 
+                            formatCurrency(tx.price) 
+                        ]);
+                        isFirstRowForOwner = false;
+                    });
+                    
+                    ownerTableBody.push([
+                        { content: 'Total Pendiente ' + owner, colSpan: 2, styles: { halign: 'right', fontStyle: 'bold', fillColor: '#2d3748' } },
+                        { content: formatCurrency(data.totalPending), styles: { fontStyle: 'bold', fillColor: '#2d3748' } }
+                    ]);
+                });
+
+                doc.setFontSize(12);
+                doc.setFont('helvetica', 'bold');
+                doc.text("Resumen por Dueño (Total Pendiente)", 105, finalY + 10, { align: 'center' });
+
+                doc.autoTable({
+                    startY: finalY + 15,
+                    head: [['Dueño', 'Detalle de Transacción', 'Subtotal']],
+                    body: ownerTableBody,
+                    theme: 'striped',
+                    headStyles: { fillColor: [23, 73, 91] }, 
+                    didParseCell: function (data) {
+                        if (data.column.index === 0 && data.cell.raw === '') {
+                             data.cell.styles.fillColor = '#ffffff'; 
+                        }
+                        if (data.column.index === 0 && data.cell.raw !== '') {
+                            data.cell.styles.valign = 'middle';
+                        }
+                    }
+                });
+                
+                finalY = doc.autoTable.previous.finalY; 
+            }
+            
+            // --- Totales Finales (Consumido, Pagado, Pendiente) ---
+            doc.setFontSize(12);
+            doc.setFont('helvetica', 'bold');
+            
+            let currentY = finalY + 10;
+            
+            const totalConsumed = subtotal + others + discounts; 
+            const totalPaid = totalConsumed - table.total; 
+
+            doc.text("Total Consumido:", 150, currentY, { align: 'right' });
+            doc.text(formatCurrency(totalConsumed), 200, currentY, { align: 'right' });
+            currentY += 7;
+
+            doc.text("Total Pagado:", 150, currentY, { align: 'right' });
+            doc.text(formatCurrency(totalPaid), 200, currentY, { align: 'right' });
+            currentY += 7;
+            
+            currentY += 2; 
+
+            doc.setFontSize(16);
+            doc.text("TOTAL PENDIENTE:", 150, currentY, { align: 'right' });
+            doc.text(formatCurrency(table.total), 200, currentY, { align: 'right' });
+            
+            doc.setFontSize(10);
+            doc.setFont('helvetica', 'italic');
+            doc.text("¡Gracias por tu visita!", 105, currentY + 15, { align: 'center' });
+            
+            const fileName = `Factura-Mesa-${table.name}-${dateStr}.pdf`;
+            doc.save(fileName);
+        }
+
+        // --- 8. FUNCIONES UTILITARIAS ---
+
+        function applyTableGridFilter() {
+            const tablesGrid = document.getElementById('tables-grid');
+            if (!tablesGrid) return;
+
+            Array.from(tablesGrid.children).forEach(card => {
+                const cardId = card.dataset.tableId;
+                
+                if (isGridFiltered && activeTableId) {
+                    if (cardId === activeTableId) {
+                        card.classList.remove('hidden');
+                    } else {
+                        card.classList.add('hidden');
+                    }
+                } else {
+                    card.classList.remove('hidden');
+                }
+            });
+        }
+
+        function formatCurrency(value) {
+            return new Intl.NumberFormat('es-CO', {
+                style: 'currency',
+                currency: 'COP',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            }).format(value);
+        }
+        
+        function showStatusMessage(message, isError = false) {
+            const el = document.getElementById('status-message');
+            el.textContent = message;
+            if (isError) {
+                el.className = 'mt-4 text-center text-red-400 animate-pulse';
+            } else {
+                el.className = 'mt-4 text-center text-green-400';
+            }
+            
+            setTimeout(() => {
+                if (el.textContent === message) {
+                    el.textContent = '';
+                    el.className = 'mt-4 text-center';
+                }
+            }, 4000);
+        }
+        
+        function setActiveTable(tableId, shouldApplyFilter = false) {
+            const oldActiveId = activeTableId;
+            activeTableId = tableId;
+            
+            const indicator = document.getElementById('active-table-indicator');
+            const indicatorName = document.getElementById('active-table-name');
+            const activeTableSelect = document.getElementById('active-table-select');
+            const transferBtn = document.getElementById('transfer-table-btn'); 
+
+            if (oldActiveId && oldActiveId !== tableId) {
+                const oldCard = document.querySelector(`[data-table-id="${oldActiveId}"]`);
+                if (oldCard) {
+                    oldCard.classList.remove('active');
+                }
+            }
+            
+            if (tableId) {
+                 const newCard = document.querySelector(`[data-table-id="${tableId}"]`);
+                 if (newCard) {
+                    newCard.classList.add('active');
+                    
+                    const tablesGrid = document.getElementById('tables-grid');
+                    if (tablesGrid.firstChild !== newCard) {
+                        tablesGrid.prepend(newCard);
+                    }
+                    newCard.scrollIntoView({ behavior: 'auto', block: 'start' });
+
+                    const freshTable = allTablesData.get(tableId);
+                    if (freshTable) {
+                        indicatorName.textContent = freshTable.name;
+                        indicator.classList.remove('hidden');
+                        transferBtn.classList.remove('hidden'); 
+                    }
+                 }
+                 activeTableSelect.value = tableId;
+                 
+                 isGridFiltered = shouldApplyFilter; 
+                 updateFilterButtonText();
+                 if (toggleFilterBtn) toggleFilterBtn.classList.remove('hidden'); 
+
+            } else {
+                indicator.classList.add('hidden');
+                transferBtn.classList.add('hidden'); 
+                activeTableSelect.value = "";
+                
+                isGridFiltered = false; 
+                if (toggleFilterBtn) toggleFilterBtn.classList.add('hidden'); 
+            }
+            
+            applyTableGridFilter();
+        }
+
+        function handleRepeatRound(roundDetails) {
+            if (!roundDetails || roundDetails.length === 0) {
+                return;
+            }
+            
+            roundDetails.forEach(itemToRepeat => {
+                const existingItem = currentRound.find(item => item.name === itemToRepeat.name);
+                
+                if (existingItem) {
+                    existingItem.quantity += itemToRepeat.quantity;
+                } else {
+                    currentRound.push({
+                        name: itemToRepeat.name,
+                        price: itemToRepeat.price,
+                        quantity: itemToRepeat.quantity
+                    });
+                }
+            });
+            
+            renderCurrentRound();
+            
+            document.getElementById('history-modal').classList.add('hidden');
+            
+            showStatusMessage("Ronda anterior añadida a la 'Ronda Actual' para editar.", false);
+            
+            document.getElementById('current-round-panel').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+
+        // --- INICIAR LA APP ---
+        initializeFirebase();
+
+    </script>
+</body>
+</html>
