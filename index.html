@@ -6,8 +6,9 @@
     <title>Sanchez's Sport Bar - Cuentas</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- CAMBIO: Iconos para el micrófono -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <!-- NUEVO: Librería SheetJS para exportar a Excel -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
     <style>
         body {
@@ -116,7 +117,7 @@
                 <span id="active-table-name" class="font-bold text-lg text-white block"></span>
             </div>
 
-            <!-- NUEVO: Botón de Micrófono -->
+            <!-- Botón de Micrófono -->
             <button id="voice-command-btn" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200 shadow-lg flex items-center justify-center gap-2">
                 <i class="fas fa-microphone"></i> <span>Pedir por Voz</span>
             </button>
@@ -241,32 +242,76 @@
 
     <!-- Modal de Auditoría -->
     <div id="audit-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-40 hidden">
-        <div class="bg-gray-800 rounded-lg shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col">
+        <div class="bg-gray-800 rounded-lg shadow-2xl w-full max-w-5xl max-h-[95vh] flex flex-col">
             <div class="flex justify-between items-center p-4 border-b border-gray-700">
-                <h3 class="text-xl font-semibold text-white">Auditoría de Mesas Cerradas</h3>
+                <h3 class="text-xl font-semibold text-white">Auditoría Avanzada</h3>
                 <button id="close-audit-modal-btn" class="text-gray-400 hover:text-white">&times;</button>
             </div>
-            <div class="p-4 bg-gray-900 flex flex-col sm:flex-row gap-4 items-start">
-                <div class="flex-1 w-full sm:w-auto">
-                    <label for="audit-date" class="block text-sm font-medium text-gray-300 mb-1">Fecha</label>
-                    <input type="date" id="audit-date" class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg p-2">
+            
+            <!-- Controles de Auditoría -->
+            <div class="p-4 bg-gray-900 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
+                <div>
+                    <label for="audit-start" class="block text-sm font-medium text-gray-300 mb-1">Desde (Fecha y Hora)</label>
+                    <input type="datetime-local" id="audit-start" class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg p-2 text-sm">
                 </div>
-                <div class="flex-1 w-full sm:w-auto">
-                    <label for="audit-table-name" class="block text-sm font-medium text-gray-300 mb-1">Buscar por Nombre</label>
-                    <input type="text" id="audit-table-name" placeholder="Nombre de la mesa..." class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg p-2">
+                <div>
+                    <label for="audit-end" class="block text-sm font-medium text-gray-300 mb-1">Hasta (Fecha y Hora)</label>
+                    <input type="datetime-local" id="audit-end" class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg p-2 text-sm">
                 </div>
-                <div class="flex-shrink-0 mt-4 sm:mt-0 space-y-2">
-                    <div class="text-right">
-                        <span class="block text-lg font-bold text-green-400">Total Auditado:</span>
-                        <span id="audit-total" class="block text-2xl font-bold text-green-400">$0</span>
-                    </div>
-                    <button id="delete-all-filtered-btn" class="w-full bg-red-700 hover:bg-red-800 text-white font-bold py-2 px-4 rounded-lg transition duration-200 shadow-lg text-sm">
-                        Borrar Todo (Filtro)
+                <div>
+                    <button id="audit-filter-btn" class="w-full bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-2 px-4 rounded-lg transition duration-200 shadow-lg">
+                        <i class="fas fa-search mr-2"></i> Filtrar
+                    </button>
+                </div>
+                <div>
+                    <button id="export-excel-btn" class="w-full bg-green-700 hover:bg-green-800 text-white font-bold py-2 px-4 rounded-lg transition duration-200 shadow-lg hidden">
+                        <i class="fas fa-file-excel mr-2"></i> Descargar Excel
                     </button>
                 </div>
             </div>
-            <div id="audit-content" class="p-6 overflow-y-auto">
-                <!-- El historial de mesas cerradas se genera aquí -->
+
+            <!-- Resumen de Totales -->
+            <div class="px-4 py-2 bg-gray-800 border-b border-gray-700 flex flex-col sm:flex-row justify-between items-center">
+                <div class="text-sm text-gray-400 mb-2 sm:mb-0 w-full sm:w-auto">
+                    <input type="text" id="audit-table-name" placeholder="Buscar mesa por nombre..." class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg p-1 px-3">
+                </div>
+                <div class="text-right">
+                    <span class="text-gray-400 text-sm">Ventas Totales en Periodo:</span>
+                    <span id="audit-total" class="block text-2xl font-bold text-green-400">$0</span>
+                </div>
+            </div>
+
+            <!-- Contenido Principal: Dos Columnas -->
+            <div class="flex-1 overflow-hidden flex flex-col md:flex-row">
+                <!-- Columna Izquierda: Resumen por Producto -->
+                <div class="w-full md:w-1/3 bg-gray-800 border-r border-gray-700 flex flex-col">
+                    <div class="p-3 bg-gray-900 border-b border-gray-700">
+                        <h4 class="text-sm font-bold text-cyan-400 uppercase">Resumen x Producto</h4>
+                    </div>
+                    <div id="audit-product-summary" class="p-4 overflow-y-auto flex-1 text-sm">
+                        <p class="text-gray-500 italic">Seleccione un rango para ver estadísticas.</p>
+                    </div>
+                </div>
+
+                <!-- Columna Derecha: Lista de Mesas -->
+                <div class="w-full md:w-2/3 bg-gray-800 flex flex-col">
+                    <div class="p-3 bg-gray-900 border-b border-gray-700 flex justify-between items-center">
+                        <h4 class="text-sm font-bold text-yellow-400 uppercase">Mesas Cerradas</h4>
+                        <button id="delete-filtered-btn" class="text-xs text-red-400 hover:text-red-300 underline hidden">
+                            Borrar Filtradas
+                        </button>
+                    </div>
+                    <div id="audit-content" class="p-4 overflow-y-auto flex-1">
+                        <p class="text-gray-500 italic">Configure el filtro para buscar.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pie de Modal: Zona de Peligro -->
+            <div class="p-3 bg-gray-900 border-t border-red-900/30 flex justify-end">
+                <button id="reset-database-btn" class="bg-red-900 hover:bg-red-800 text-white font-bold py-2 px-6 rounded-lg transition duration-200 text-xs border border-red-700">
+                    <i class="fas fa-trash-alt mr-2"></i> RESTABLECER TODO (BORRAR HISTORIAL COMPLETO)
+                </button>
             </div>
         </div>
     </div>
@@ -481,7 +526,10 @@
         let toggleOpenTableFormBtn, openTableForm;
         let isOpenTableFormVisible = false;
         
-        let currentAuditFilteredIds = [];
+        let currentAuditFilteredIds = []; // IDs de las mesas que coinciden con el filtro
+        let currentAuditProductStats = []; // Datos para exportar a excel (resumen productos)
+        let currentAuditTableStats = [];   // Datos para exportar a excel (detalle mesas)
+        
         let onConfirmAction = null;
         let currentEditContext = null; 
         
@@ -1913,16 +1961,28 @@
             const modal = document.getElementById('audit-modal');
             const showBtn = document.getElementById('show-audit-btn');
             const closeBtn = document.getElementById('close-audit-modal-btn');
-            const dateInput = document.getElementById('audit-date');
+            
+            const startInput = document.getElementById('audit-start');
+            const endInput = document.getElementById('audit-end');
+            const filterBtn = document.getElementById('audit-filter-btn');
+            
             const nameInput = document.getElementById('audit-table-name');
             const deleteAllBtn = document.getElementById('delete-all-filtered-btn'); 
+            const exportExcelBtn = document.getElementById('export-excel-btn');
+            const resetDbBtn = document.getElementById('reset-database-btn');
 
-            const today = new Date();
-            today.setMinutes(today.getMinutes() - today.getTimezoneOffset());
-            dateInput.value = today.toISOString().split('T')[0];
+            // Set default dates: Today 00:00 to Today 23:59
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            
+            startInput.value = `${year}-${month}-${day}T00:00`;
+            endInput.value = `${year}-${month}-${day}T23:59`;
 
             showBtn.addEventListener('click', () => {
                 modal.classList.remove('hidden');
+                // No auto-fetch immediately, wait for user or fetch default
                 fetchClosedTables(); 
             });
             
@@ -1930,10 +1990,26 @@
                 modal.classList.add('hidden');
             });
             
-            dateInput.addEventListener('change', fetchClosedTables);
-            nameInput.addEventListener('input', fetchClosedTables);
+            filterBtn.addEventListener('click', fetchClosedTables);
             
-            deleteAllBtn.addEventListener('click', handleDeleteAllFiltered);
+            // Filtro local de nombre (ya que los resultados ya están cargados)
+            nameInput.addEventListener('input', () => {
+                const query = nameInput.value.toLowerCase();
+                const listItems = document.querySelectorAll('#audit-content li');
+                listItems.forEach(item => {
+                    const tableName = item.getAttribute('data-search-name');
+                    if (tableName && tableName.includes(query)) {
+                        item.classList.remove('hidden');
+                    } else {
+                        item.classList.add('hidden');
+                    }
+                });
+            });
+            
+            if(deleteAllBtn) deleteAllBtn.addEventListener('click', handleDeleteAllFiltered);
+            
+            exportExcelBtn.addEventListener('click', exportAuditToExcel);
+            resetDbBtn.addEventListener('click', handleResetDatabase);
         }
 
         function setupConfirmationModal() {
@@ -2108,25 +2184,23 @@
         
         async function fetchClosedTables() {
             const content = document.getElementById('audit-content');
+            const productSummaryContent = document.getElementById('audit-product-summary');
             const totalEl = document.getElementById('audit-total');
-            const dateStr = document.getElementById('audit-date').value;
-            const nameQuery = document.getElementById('audit-table-name').value.trim().toLowerCase();
+            const excelBtn = document.getElementById('export-excel-btn');
             
-            content.innerHTML = '<p class="text-gray-400 italic">Buscando...</p>';
-            currentAuditFilteredIds = [];
+            const startStr = document.getElementById('audit-start').value;
+            const endStr = document.getElementById('audit-end').value;
             
-            if (!dateStr) {
-                content.innerHTML = '<p class="text-yellow-400">Por favor, seleccione una fecha.</p>';
-                totalEl.textContent = formatCurrency(0);
+            content.innerHTML = '<p class="text-gray-400 italic animate-pulse">Buscando datos...</p>';
+            productSummaryContent.innerHTML = '<p class="text-gray-400 italic animate-pulse">Calculando...</p>';
+            
+            if (!startStr || !endStr) {
+                content.innerHTML = '<p class="text-yellow-400">Seleccione fecha de inicio y fin.</p>';
                 return;
             }
             
-            const [year, month, day] = dateStr.split('-').map(Number);
-            const startDate = new Date(year, month - 1, day, 0, 0, 0, 0);
-            const endDate = new Date(year, month - 1, day, 23, 59, 59, 999);
-            
-            const startISO = startDate.toISOString();
-            const endISO = endDate.toISOString();
+            const startISO = new Date(startStr).toISOString();
+            const endISO = new Date(endStr).toISOString();
 
             try {
                 const q = query(closedTablesCollectionRef, 
@@ -2135,37 +2209,58 @@
                 );
                 
                 const snapshot = await getDocs(q);
+                
+                currentAuditFilteredIds = [];
+                currentAuditTableStats = [];
+                
                 let tablesHtml = '<ul class="divide-y divide-gray-700">';
                 let totalAudited = 0;
                 let tablesFound = 0;
+                
+                // Mapa para consolidar productos: { "Cerveza Poker": { quantity: 10, total: 33000 } }
+                const productStatsMap = new Map();
 
                 snapshot.forEach(doc => {
                     const table = doc.data();
-                    
-                    if (nameQuery && !table.name.toLowerCase().includes(nameQuery)) {
-                        return; 
-                    }
-                    
-                    currentAuditFilteredIds.push(doc.id); 
-                    
+                    currentAuditFilteredIds.push(doc.id);
                     tablesFound++;
+                    
                     const totalConsumed = table.items.reduce((sum, item) => sum + item.price, 0);
                     totalAudited += totalConsumed;
                     
-                    const groupedItems = groupItems(table.items);
+                    // Procesar items para estadísticas de producto
+                    const tableGroupedItems = groupItems(table.items);
+                    
+                    // Agregar a datos generales para Excel
+                    currentAuditTableStats.push({
+                        fecha: new Date(table.closedAt).toLocaleString('es-CO'),
+                        mesa: table.name,
+                        total: totalConsumed
+                    });
+
+                    // Consolidar productos globalmente
+                    for (const name in tableGroupedItems) {
+                        const itemData = tableGroupedItems[name];
+                        if (!productStatsMap.has(name)) {
+                            productStatsMap.set(name, { quantity: 0, total: 0 });
+                        }
+                        const currentStats = productStatsMap.get(name);
+                        currentStats.quantity += itemData.quantity;
+                        currentStats.total += itemData.totalPrice;
+                    }
+                    
+                    // Renderizado de lista de mesas (visual)
                     let itemsDetailHtml = '';
-                    for (const name in groupedItems) {
-                        const item = groupedItems[name];
-                        
+                    for (const name in tableGroupedItems) {
+                        const item = tableGroupedItems[name];
                         const isDiscount = item.price < 0;
                         const isOther = item.price > 0 && (name === 'Otros');
-                        
                         let textColor = 'text-gray-400';
                         if (isDiscount) textColor = 'text-red-400';
                         if (isOther) textColor = 'text-yellow-400';
                         
                         itemsDetailHtml += `
-                            <li class="flex justify-between text-sm ${textColor}">
+                            <li class="flex justify-between text-xs ${textColor}">
                                 <span>${name} ${name !== 'Otros' ? 'x ' + item.quantity : ''}</span>
                                 <span>${formatCurrency(item.totalPrice)}</span>
                             </li>
@@ -2175,70 +2270,82 @@
                     const closedTime = new Date(table.closedAt).toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' });
 
                     tablesHtml += `
-                        <li class="py-4" id="audit-item-${doc.id}">
-                            <div class="flex justify-between items-start mb-2">
+                        <li class="py-3" id="audit-item-${doc.id}" data-search-name="${table.name.toLowerCase()}">
+                            <div class="flex justify-between items-start mb-1">
                                 <div>
-                                    <span class="text-lg font-semibold text-cyan-400">${table.name}</span>
-                                    <span class="block text-sm text-gray-500">Cerrada a las: ${closedTime}</span>
+                                    <span class="text-base font-semibold text-cyan-400">${table.name}</span>
+                                    <span class="block text-xs text-gray-500">${closedTime}</span>
                                 </div>
-                                <span class="text-xl font-bold text-green-400">${formatCurrency(totalConsumed)}</span>
+                                <span class="text-base font-bold text-green-400">${formatCurrency(totalConsumed)}</span>
                             </div>
-                            <ul class="pl-4 border-l border-gray-700 mb-3">
+                            <ul class="pl-2 border-l-2 border-gray-700 mb-2">
                                 ${itemsDetailHtml}
                             </ul>
-                            <div class="flex gap-2 flex-wrap"> 
-                                <button data-table-id="${doc.id}" class="btn-view-closed-detail bg-blue-600 hover:bg-blue-700 text-white font-semibold py-1 px-3 rounded-lg text-sm transition-all">
-                                    Ver Detalle
+                            <div class="flex gap-2 justify-end"> 
+                                <button data-table-id="${doc.id}" class="btn-view-closed-detail text-xs bg-blue-600 hover:bg-blue-700 text-white py-1 px-2 rounded">
+                                    Detalle
                                 </button>
-                                <button data-table-id="${doc.id}" class="btn-reopen-table bg-yellow-600 hover:bg-yellow-700 text-white font-semibold py-1 px-3 rounded-lg text-sm transition-all">
+                                <button data-table-id="${doc.id}" class="btn-reopen-table text-xs bg-yellow-600 hover:bg-yellow-700 text-white py-1 px-2 rounded">
                                     Reabrir
                                 </button>
-                                <button data-table-id="${doc.id}" data-table-name="${table.name}" class="btn-delete-closed-item bg-red-600 hover:bg-red-700 text-white font-semibold py-1 px-3 rounded-lg text-sm transition-all">
+                                <button data-table-id="${doc.id}" data-table-name="${table.name}" class="btn-delete-closed-item text-xs bg-red-600 hover:bg-red-700 text-white py-1 px-2 rounded">
                                     Borrar
                                 </button>
                             </div>
                         </li>
                     `;
                 });
-                
                 tablesHtml += '</ul>';
                 
+                // Renderizar Resumen de Productos
+                let productSummaryHtml = '<table class="w-full text-left border-collapse">';
+                productSummaryHtml += '<thead><tr class="text-xs text-gray-400 border-b border-gray-700"><th class="py-1">Producto</th><th class="py-1 text-right">Cant.</th><th class="py-1 text-right">Total</th></tr></thead><tbody>';
+                
+                // Convertir mapa a array para ordenar por cantidad vendida
+                currentAuditProductStats = Array.from(productStatsMap.entries()).map(([name, data]) => ({
+                    name, 
+                    quantity: data.quantity, 
+                    total: data.total
+                })).sort((a, b) => b.quantity - a.quantity);
+
+                if (currentAuditProductStats.length === 0) {
+                    productSummaryHtml += '<tr><td colspan="3" class="text-center py-4 text-gray-500">No hay ventas registradas.</td></tr>';
+                } else {
+                    currentAuditProductStats.forEach(stat => {
+                        productSummaryHtml += `
+                            <tr class="border-b border-gray-800 hover:bg-gray-800/50">
+                                <td class="py-1 text-gray-300">${stat.name}</td>
+                                <td class="py-1 text-right font-mono text-gray-400">${stat.quantity}</td>
+                                <td class="py-1 text-right font-mono text-green-400 text-xs">${formatCurrency(stat.total)}</td>
+                            </tr>
+                        `;
+                    });
+                }
+                productSummaryHtml += '</tbody></table>';
+                productSummaryContent.innerHTML = productSummaryHtml;
+
+                // Renderizar Lista de Mesas
                 if (tablesFound === 0) {
-                     content.innerHTML = '<p class="text-gray-400 italic">No se encontraron mesas cerradas para esta fecha o filtro.</p>';
+                     content.innerHTML = '<p class="text-gray-400 italic p-4">No se encontraron mesas cerradas en este periodo.</p>';
+                     excelBtn.classList.add('hidden');
                 } else {
                     content.innerHTML = tablesHtml;
+                    excelBtn.classList.remove('hidden');
                 }
                 
+                // Reconectar Listeners de botones dinámicos
                 content.querySelectorAll('.btn-view-closed-detail').forEach(btn => {
                     btn.addEventListener('click', async () => {
                         const docId = btn.dataset.tableId;
-                        try {
-                            const tableDoc = await getDoc(doc(closedTablesCollectionRef, docId));
-                            if (tableDoc.exists()) {
-                                showReadOnlyHistory(tableDoc.data());
-                            } else {
-                                showStatusMessage("No se encontró el detalle de esa mesa.", true);
-                            }
-                        } catch (error) {
-                            console.error("Error al obtener detalle de mesa cerrada:", error);
-                            showStatusMessage("Error al cargar detalle.", true);
-                        }
+                        const tableDoc = await getDoc(doc(closedTablesCollectionRef, docId));
+                        if (tableDoc.exists()) showReadOnlyHistory(tableDoc.data());
                     });
                 });
-
                 content.querySelectorAll('.btn-reopen-table').forEach(btn => {
-                    btn.addEventListener('click', () => {
-                        const docId = btn.dataset.tableId;
-                        handleReopenTable(docId);
-                    });
+                    btn.addEventListener('click', () => handleReopenTable(btn.dataset.tableId));
                 });
-                
                 content.querySelectorAll('.btn-delete-closed-item').forEach(btn => {
-                    btn.addEventListener('click', () => {
-                        const docId = btn.dataset.tableId;
-                        const tableName = btn.dataset.tableName;
-                        handleDeleteClosedTable(docId, tableName);
-                    });
+                    btn.addEventListener('click', () => handleDeleteClosedTable(btn.dataset.tableId, btn.dataset.tableName));
                 });
                 
                 totalEl.textContent = formatCurrency(totalAudited);
@@ -2249,6 +2356,104 @@
             }
         }
         
+        function exportAuditToExcel() {
+            if (!currentAuditProductStats.length && !currentAuditTableStats.length) {
+                showStatusMessage("No hay datos para exportar", true);
+                return;
+            }
+
+            const wb = XLSX.utils.book_new();
+            
+            // Hoja 1: Resumen Productos
+            const wsDataProducts = [
+                ["Reporte de Ventas por Producto"],
+                ["Periodo:", `${document.getElementById('audit-start').value} a ${document.getElementById('audit-end').value}`],
+                [],
+                ["Producto", "Cantidad Vendida", "Total Vendido ($)"]
+            ];
+            
+            currentAuditProductStats.forEach(p => {
+                wsDataProducts.push([p.name, p.quantity, p.total]);
+            });
+            
+            const wsProducts = XLSX.utils.aoa_to_sheet(wsDataProducts);
+            XLSX.utils.book_append_sheet(wb, wsProducts, "Resumen Productos");
+            
+            // Hoja 2: Detalle Mesas
+            const wsDataTables = [
+                ["Reporte de Mesas Cerradas"],
+                [],
+                ["Fecha Cierre", "Nombre Mesa", "Total Mesa ($)"]
+            ];
+            
+            currentAuditTableStats.forEach(t => {
+                wsDataTables.push([t.fecha, t.mesa, t.total]);
+            });
+            
+            const totalPeriodo = currentAuditTableStats.reduce((sum, t) => sum + t.total, 0);
+            wsDataTables.push([], ["TOTAL PERIODO:", "", totalPeriodo]);
+
+            const wsTables = XLSX.utils.aoa_to_sheet(wsDataTables);
+            XLSX.utils.book_append_sheet(wb, wsTables, "Detalle Mesas");
+
+            // Guardar archivo
+            const dateStr = new Date().toISOString().slice(0,10);
+            XLSX.writeFile(wb, `Reporte_Ventas_${dateStr}.xlsx`);
+        }
+
+        async function handleResetDatabase() {
+            const confirm1 = confirm("⚠️ PELIGRO ⚠️\n\n¿Estás seguro que deseas RESTABLECER TODOS LOS DATOS?\n\nEsto borrará PERMANENTEMENTE todo el historial de mesas cerradas para liberar espacio.\n\nNo podrás recuperar esta información (a menos que descargues el Excel primero).");
+            
+            if (!confirm1) return;
+            
+            const confirm2 = confirm("¿De verdad estás seguro?\n\nPresiona Aceptar para borrar TODA la base de datos de mesas cerradas.");
+            
+            if (!confirm2) return;
+            
+            showStatusMessage("Iniciando borrado masivo... Por favor espere.", false);
+            
+            try {
+                // Obtener todos los documentos de la colección closedTables
+                // Nota: Firestore limita los batchs a 500 operaciones. Si hay muchas, hay que hacerlo por lotes.
+                const q = query(closedTablesCollectionRef);
+                const snapshot = await getDocs(q);
+                
+                if (snapshot.empty) {
+                    showStatusMessage("La base de datos ya está vacía.", false);
+                    return;
+                }
+
+                // Borrar en lotes de 400 para seguridad
+                const batchSize = 400;
+                let batch = writeBatch(db);
+                let count = 0;
+                let totalDeleted = 0;
+
+                for (const document of snapshot.docs) {
+                    batch.delete(doc(closedTablesCollectionRef, document.id));
+                    count++;
+                    totalDeleted++;
+
+                    if (count >= batchSize) {
+                        await batch.commit();
+                        batch = writeBatch(db); // Nuevo batch
+                        count = 0;
+                        console.log(`Borrados ${totalDeleted} documentos...`);
+                    }
+                }
+
+                if (count > 0) {
+                    await batch.commit();
+                }
+
+                showStatusMessage(`Base de datos restablecida. ${totalDeleted} registros eliminados.`, false);
+                document.getElementById('audit-modal').classList.add('hidden'); // Cerrar modal
+                
+            } catch (error) {
+                console.error("Error crítico al restablecer base de datos:", error);
+                showStatusMessage("Error al borrar datos. Revise consola.", true);
+            }
+        }
 
         // --- 7. ACCIONES (Eliminar, Cerrar, PDF) ---
 
