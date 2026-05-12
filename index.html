@@ -46,23 +46,42 @@
             opacity: 0;
         }
         .qty-controls.show {
-            max-width: 100px;
+            max-width: 120px;
             opacity: 1;
             margin-left: 8px;
+        }
+
+        /* Botón deshacer flotante para móvil */
+        #floating-undo-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 40;
+            display: none;
         }
     </style>
 </head>
 <body class="flex flex-col md:flex-row min-h-screen">
 
+    <!-- Botón Deshacer Flotante -->
+    <button id="floating-undo-btn" class="bg-orange-600 hover:bg-orange-700 text-white w-14 h-14 rounded-full shadow-2xl flex items-center justify-center transition-all active:scale-95 border-2 border-white/20">
+        <i class="fas fa-undo-alt text-xl"></i>
+    </button>
+
     <!-- Panel Lateral Izquierdo -->
-    <div id="left-panel" class="w-full md:w-1/3 lg:w-1/4 bg-gray-900 p-4 md:p-6 flex flex-col md:h-screen md:overflow-y-auto border-r border-gray-800 text-white">
+    <div id="left-panel" class="w-full md:w-1/3 lg:w-1/4 bg-gray-900 p-4 md:p-6 flex flex-col md:h-screen md:overflow-y-auto border-r border-gray-800">
         <h2 class="text-2xl md:text-3xl font-bold mb-6 text-white border-b border-gray-700 pb-2 text-center md:text-left tracking-tighter">Sanchez's Sport Bar</h2>
         
-        <button id="toggle-open-table-form-btn" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200 shadow-lg mb-4 uppercase text-xs tracking-widest">
-            Nueva Mesa
-        </button>
+        <div class="flex gap-2 mb-4">
+            <button id="toggle-open-table-form-btn" class="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-lg transition shadow-lg uppercase text-[10px] tracking-widest">
+                Nueva Mesa
+            </button>
+            <button id="main-undo-btn" class="hidden bg-orange-600 hover:bg-orange-700 text-white px-4 rounded-lg shadow-lg transition-all" title="Deshacer último registro">
+                <i class="fas fa-undo-alt"></i>
+            </button>
+        </div>
 
-        <div id="open-table-form" class="hidden mb-6 p-4 bg-gray-800 rounded-lg shadow-md border border-gray-700 text-white">
+        <div id="open-table-form" class="hidden mb-6 p-4 bg-gray-800 rounded-lg shadow-md border border-gray-700">
             <h3 class="text-xl font-semibold text-green-400 mb-3 text-center uppercase text-xs font-bold tracking-widest">Abrir Mesa</h3>
             <div class="flex flex-col gap-4">
                 <select id="table-select" class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg p-2 text-base focus:ring-green-500 focus:outline-none"></select>
@@ -80,47 +99,51 @@
         <div class="flex flex-col space-y-4">
             <h3 class="text-xl font-semibold text-cyan-400 border-b border-gray-800 pb-1 uppercase text-xs font-bold tracking-widest">Añadir Producto</h3>
             
-            <select id="product-select" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg p-3 text-base focus:ring-cyan-500 focus:outline-none"></select>
+            <!-- BUSCADOR DE PRODUCTOS -->
+            <div class="relative">
+                <input type="text" id="product-search" placeholder="🔍 Buscar producto..." class="w-full bg-gray-700 border border-gray-600 text-white rounded-t-lg p-2 text-sm focus:ring-1 focus:ring-cyan-500 focus:outline-none border-b-0">
+                <select id="product-select" class="w-full bg-gray-800 border border-gray-700 text-white rounded-b-lg p-3 text-base focus:ring-cyan-500 focus:outline-none"></select>
+            </div>
 
             <div class="grid grid-cols-1 gap-1">
-                <label class="text-[10px] text-gray-500 uppercase font-bold ml-1 tracking-widest tracking-tighter">Cantidad / Valor Otros</label>
+                <label class="text-[10px] text-gray-500 uppercase font-bold ml-1 tracking-widest">Cantidad / Valor Otros</label>
                 <input type="number" id="product-quantity" value="1" min="1" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg p-3 focus:outline-none">
             </div>
 
             <div class="grid grid-cols-1 gap-1">
-                <label class="text-[10px] text-gray-500 uppercase font-bold ml-1 tracking-widest tracking-tighter">Mesa Activa (Atajo)</label>
+                <label class="text-[10px] text-gray-500 uppercase font-bold ml-1 tracking-widest tracking-tighter">Atajo (Mesa Activa)</label>
                 <select id="active-table-select" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg p-3 text-base focus:outline-none">
                     <option value="">-- Seleccione una mesa --</option>
                 </select>
             </div>
 
             <div id="active-table-indicator" class="hidden p-3 bg-cyan-900/50 border border-cyan-700/50 rounded-lg text-center">
-                <span class="text-[10px] text-cyan-300 uppercase font-bold tracking-widest tracking-tighter">Editando:</span>
-                <span id="active-table-name" class="font-bold text-xl text-white block uppercase tracking-tighter"></span>
+                <span class="text-[10px] text-cyan-300 uppercase font-bold tracking-widest tracking-widest">Editando:</span>
+                <span id="active-table-name" class="font-bold text-xl text-white block"></span>
             </div>
 
-            <button id="voice-command-btn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg transition shadow-lg flex items-center justify-center gap-2 tracking-widest uppercase text-xs">
+            <button id="voice-command-btn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200 shadow-lg flex items-center justify-center gap-2 tracking-widest uppercase text-xs">
                 <i class="fas fa-microphone"></i> <span>Pedir por Voz</span>
             </button>
 
-            <button id="add-to-round-btn" class="w-full bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-4 px-4 rounded-lg transition duration-200 shadow-lg text-lg uppercase tracking-widest">
+            <button id="add-to-round-btn" class="w-full bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-4 px-4 rounded-lg transition duration-200 shadow-lg text-lg uppercase tracking-wider">
                 Añadir a la Ronda
             </button>
             
             <div id="current-round-panel" class="mt-2 p-3 bg-gray-800 rounded-lg border border-cyan-900/50 hidden shadow-xl border-t-2 border-t-cyan-500">
                 <div class="flex justify-between items-center mb-2">
-                    <h4 id="round-panel-title" class="text-xs font-bold text-yellow-400 uppercase tracking-widest">Ronda Actual</h4>
+                    <h4 id="round-panel-title" class="text-sm font-bold text-yellow-400 uppercase tracking-widest">Ronda Actual</h4>
                     <button id="cancel-round-btn" class="text-[10px] bg-red-900/50 text-red-400 px-2 py-1 rounded font-bold uppercase hover:bg-red-900 transition-all">Limpiar</button>
                 </div>
-                <ul id="current-round-list" class="max-h-56 overflow-y-auto divide-y divide-gray-700/50 scroll-thin"></ul>
+                <ul id="current-round-list" class="max-h-56 overflow-y-auto divide-y divide-gray-700 scroll-thin"></ul>
                 <div class="flex justify-between items-center mt-3 pt-2 border-t border-gray-700">
-                    <span class="text-xs text-gray-400 font-bold uppercase tracking-widest">Total Ronda:</span>
-                    <span id="current-round-total" class="font-bold text-2xl text-yellow-400 font-mono tracking-tighter">$0</span>
+                    <span class="text-xs text-gray-400 font-bold uppercase tracking-wider">Total Pedido:</span>
+                    <span id="current-round-total" class="font-bold text-2xl text-yellow-400">$0</span>
                 </div>
             </div>
             
             <button id="register-round-btn" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-4 px-4 rounded-lg transition duration-200 shadow-lg mt-2 uppercase tracking-widest">
-                Registrar Ronda en Mesa
+                Confirmar y Registrar
             </button>
             
             <button id="transfer-table-btn" class="hidden w-full bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200 shadow-lg mt-2 uppercase text-sm tracking-widest">
@@ -130,8 +153,8 @@
         
         <div id="status-message" class="mt-4 text-center h-4 text-[10px] font-bold uppercase tracking-widest"></div>
 
-        <div class="mt-auto pt-6 text-white">
-            <button id="show-audit-btn" class="w-full bg-gray-800 hover:bg-gray-700 border border-gray-700 text-gray-300 font-bold py-3 px-4 rounded-lg transition duration-200 shadow-lg uppercase text-xs tracking-widest">
+        <div class="mt-auto pt-6">
+            <button id="show-audit-btn" class="w-full bg-gray-800 hover:bg-gray-700 border border-gray-700 text-gray-300 font-bold py-3 px-4 rounded-lg transition duration-200 shadow-lg uppercase text-xs">
                 <i class="fas fa-history mr-2"></i> Auditoría / Cerradas
             </button>
         </div>
@@ -140,7 +163,7 @@
     <!-- Panel Derecho -->
     <div id="right-panel" class="w-full md:w-2/3 lg:w-3/4 p-4 md:p-6 flex-1 flex flex-col md:h-screen">
         <div class="flex justify-between items-center mb-6 gap-4">
-            <h2 class="text-2xl font-bold text-white uppercase tracking-tighter tracking-tighter">Mesas Abiertas</h2>
+            <h2 class="text-2xl font-bold text-white uppercase tracking-tighter">Mesas Abiertas</h2>
             <button id="toggle-filter-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg text-[10px] transition shadow-lg uppercase tracking-widest">
                 Mostrar Solo Activa
             </button>
@@ -148,154 +171,144 @@
         <div id="tables-grid" class="flex-1 overflow-y-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 pr-2"></div>
     </div>
 
-    <!-- Modales -->
-    <div id="transfer-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-50 hidden">
-        <div class="bg-gray-800 rounded-xl shadow-2xl w-full max-w-md border border-gray-700">
-            <div class="p-5 border-b border-gray-700 flex justify-between items-center bg-gray-900/50 rounded-t-xl text-white text-white">
-                <h3 class="text-xl font-bold tracking-widest">Transferir Cuenta</h3>
-                <button id="close-transfer-modal-btn" class="text-gray-400 text-3xl leading-none hover:text-white">&times;</button>
-            </div>
-            <div class="p-6 space-y-4 text-white text-white">
-                <p class="text-sm text-gray-400 italic">Mover cuenta de <span id="transfer-from-name" class="text-yellow-400 font-bold"></span> hacia:</p>
-                <select id="transfer-table-select" class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg p-3 focus:outline-none"></select>
-                <div id="transfer-other-name-container" style="display: none;">
-                    <input type="text" id="transfer-other-name" placeholder="Nombre nueva mesa" class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg p-3 focus:outline-none">
-                </div>
-            </div>
-            <div class="p-4 bg-gray-900/50 flex justify-end gap-3 rounded-b-xl text-white text-white text-white">
-                <button id="transfer-cancel-btn" class="bg-gray-600 px-6 py-2 rounded font-bold text-xs uppercase text-white">Cancelar</button>
-                <button id="transfer-ok-btn" class="bg-yellow-600 px-6 py-2 rounded font-bold text-xs uppercase shadow-lg">Confirmar</button>
+    <!-- Modal de Confirmación Global -->
+    <div id="confirmation-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-[100] hidden">
+        <div class="bg-gray-800 rounded-xl p-6 w-full max-w-sm border border-gray-700 shadow-2xl">
+            <h3 id="confirmation-title" class="text-xl font-bold text-white mb-2 tracking-tighter">Confirmar</h3>
+            <p id="confirmation-message" class="text-gray-400 mb-6 text-sm"></p>
+            <div class="flex justify-end gap-2 text-white text-white">
+                <button id="confirmation-cancel-btn" class="bg-gray-600 px-5 py-2 rounded font-bold text-xs uppercase text-white">No</button>
+                <button id="confirmation-ok-btn" class="bg-red-600 px-5 py-2 rounded font-bold text-xs uppercase shadow-lg text-white">Confirmar</button>
             </div>
         </div>
     </div>
 
-    <div id="move-round-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-[70] hidden">
-        <div class="bg-gray-800 rounded-xl shadow-2xl w-full max-w-sm border border-cyan-700">
-            <div class="p-5 border-b border-gray-700 bg-gray-900/50 rounded-t-xl text-white text-white">
-                <h3 class="text-lg font-bold tracking-tight uppercase tracking-widest">Mover Ronda</h3>
-            </div>
-            <div class="p-6 space-y-4 text-white text-white">
-                <p class="text-xs text-gray-400 italic font-bold">Seleccione la mesa de destino:</p>
-                <select id="move-round-dest-select" class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg p-3 focus:outline-none"></select>
-            </div>
-            <div class="p-4 bg-gray-900/50 flex justify-end gap-3 rounded-b-xl text-white text-white">
-                <button onclick="document.getElementById('move-round-modal').classList.add('hidden')" class="bg-gray-600 px-5 py-2 rounded font-bold text-xs uppercase">Cancelar</button>
-                <button id="move-round-confirm-btn" class="bg-indigo-600 px-5 py-2 rounded font-bold text-xs uppercase shadow-lg">Traspasar</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="history-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-50 hidden">
-        <div class="bg-gray-800 rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col border border-gray-700 text-white text-white text-white">
-            <div class="flex justify-between items-center p-5 border-b border-gray-700 bg-gray-900/50 rounded-t-xl">
-                <h3 class="text-xl font-bold tracking-widest text-xs uppercase tracking-widest tracking-widest">Historial: <span id="history-table-name" class="text-cyan-400 font-black"></span></h3>
+    <!-- Inyectamos los demás modales por simplicidad de código -->
+    <div id="history-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-50 hidden text-white">
+        <div class="bg-gray-800 rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col border border-gray-700">
+            <div class="flex justify-between items-center p-5 border-b border-gray-700 bg-gray-900/50">
+                <h3 class="text-xl font-bold uppercase tracking-widest text-xs tracking-widest">Historial: <span id="history-table-name" class="text-cyan-400 font-black"></span></h3>
                 <button id="close-history-modal-btn" class="text-gray-400 hover:text-white text-3xl leading-none">&times;</button>
             </div>
             <div id="history-content" class="p-6 overflow-y-auto scroll-thin"></div>
         </div>
     </div>
 
-    <div id="zoom-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-50 hidden text-white text-white text-white">
+    <div id="zoom-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-50 hidden text-white text-white">
         <div class="bg-gray-800 rounded-xl shadow-2xl w-full max-w-lg max-h-[90vh] flex flex-col border border-gray-700 text-white">
-            <div class="flex justify-between items-center p-4 border-b border-gray-700 bg-gray-900/50 rounded-t-xl">
-                <h3 class="text-lg font-bold uppercase tracking-wider tracking-tighter tracking-widest tracking-tighter text-white">Detalle Mesa: <span id="zoom-table-name" class="text-cyan-400 font-black"></span></h3>
+            <div class="flex justify-between items-center p-4 border-b border-gray-700 bg-gray-900/50 text-white">
+                <h3 class="text-lg font-bold uppercase tracking-wider tracking-tighter tracking-widest tracking-tighter">Detalle: <span id="zoom-table-name" class="text-cyan-400 font-black"></span></h3>
                 <button id="close-zoom-modal-btn" class="text-gray-400 hover:text-white text-3xl leading-none">&times;</button>
             </div>
-            <div class="flex border-b border-gray-700 bg-gray-900/30">
-                <button id="zoom-tab-product" class="flex-1 py-3 font-bold text-[10px] uppercase bg-cyan-600 text-white tracking-widest">Por Producto</button>
-                <button id="zoom-tab-owner" class="flex-1 py-3 font-bold text-[10px] uppercase bg-gray-700 hover:bg-gray-600 transition-all text-white tracking-widest">Por Dueño</button>
+            <div class="flex border-b border-gray-700 bg-gray-900/30 text-[10px] font-bold uppercase text-white">
+                <button id="zoom-tab-product" class="flex-1 py-3 bg-cyan-600 text-white">Por Producto</button>
+                <button id="zoom-tab-owner" class="flex-1 py-3 bg-gray-700 text-white">Por Dueño</button>
             </div>
             <div class="flex-1 overflow-y-auto scroll-thin">
                 <div id="zoom-content" class="p-6"></div>
                 <div id="zoom-owner-content" class="p-6 hidden"></div>
             </div>
-            <div class="p-5 border-t border-gray-700 bg-gray-900 rounded-b-xl">
-                <div class="flex justify-between items-center px-2">
-                    <span class="text-sm font-bold text-gray-400 uppercase tracking-widest tracking-widest tracking-widest">Total Consumido</span>
-                    <h4 class="text-3xl font-black text-green-400 tracking-tighter font-mono tracking-tighter tracking-tighter tracking-tighter tracking-tighter tracking-tighter" id="zoom-total"></h4>
+            <div class="p-5 border-t border-gray-700 bg-gray-900 rounded-b-xl text-white">
+                <div class="flex justify-between items-center px-2 text-white">
+                    <span class="text-sm font-bold text-gray-400 uppercase tracking-widest tracking-widest">Total Consumido</span>
+                    <h4 class="text-3xl font-black text-green-400 tracking-tighter font-mono tracking-tighter tracking-tighter tracking-tighter tracking-tighter" id="zoom-total"></h4>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modales adicionales (Transferir, Mover Ronda, Dueño, Auditoría) -->
+    <div id="transfer-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-50 hidden text-white">
+        <div class="bg-gray-800 rounded-xl shadow-2xl w-full max-w-md border border-gray-700">
+            <div class="p-5 border-b border-gray-700 flex justify-between items-center bg-gray-900/50 rounded-t-xl text-white">
+                <h3 class="text-xl font-bold tracking-tighter tracking-widest uppercase tracking-widest text-white">Transferir Cuenta</h3>
+                <button id="close-transfer-modal-btn" class="text-gray-400 text-3xl hover:text-white">&times;</button>
+            </div>
+            <div class="p-6 space-y-4 text-white">
+                <p class="text-sm text-gray-400 italic">Mover cuenta de <span id="transfer-from-name" class="text-yellow-400 font-bold"></span> hacia:</p>
+                <select id="transfer-table-select" class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg p-3 focus:outline-none"></select>
+                <div id="transfer-other-name-container" style="display: none;">
+                    <input type="text" id="transfer-other-name" placeholder="Nombre nueva mesa" class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg p-3 focus:outline-none">
+                </div>
+            </div>
+            <div class="p-4 bg-gray-900/50 flex justify-end gap-3 rounded-b-xl text-white font-bold text-xs uppercase text-white">
+                <button id="transfer-cancel-btn" class="bg-gray-600 px-6 py-2 rounded font-bold text-xs uppercase text-white">Cancelar</button>
+                <button id="transfer-ok-btn" class="bg-yellow-600 px-6 py-2 rounded shadow-lg text-white">Confirmar</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="move-round-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-[70] hidden text-white">
+        <div class="bg-gray-800 rounded-xl shadow-2xl w-full max-w-sm border border-cyan-700 text-white font-bold text-xs uppercase text-white">
+            <div class="p-5 border-b border-gray-700 bg-gray-900/50 rounded-t-xl text-white text-white">
+                <h3 class="text-lg font-bold uppercase tracking-widest text-white">Mover Ronda</h3>
+            </div>
+            <div class="p-6 space-y-4 text-white">
+                <p class="text-xs text-gray-400 italic font-bold">Seleccione la mesa de destino:</p>
+                <select id="move-round-dest-select" class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg p-3 focus:outline-none"></select>
+            </div>
+            <div class="p-4 bg-gray-900/50 flex justify-end gap-3 rounded-b-xl text-white">
+                <button onclick="document.getElementById('move-round-modal').classList.add('hidden')" class="bg-gray-600 px-5 py-2 rounded font-bold text-xs uppercase text-white">Cancelar</button>
+                <button id="move-round-confirm-btn" class="bg-indigo-600 px-5 py-2 rounded font-bold text-xs uppercase shadow-lg text-white">Traspasar</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="edit-owner-name-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-[60] hidden text-white">
+        <div class="bg-gray-800 rounded-xl p-6 w-full max-w-sm border border-gray-700 shadow-2xl text-white text-white">
+            <h3 class="text-lg font-bold uppercase tracking-widest tracking-tighter tracking-tighter">Asignar Dueño</h3>
+            <div id="owner-name-suggestions" class="flex flex-wrap gap-2 mb-4"></div>
+            <input type="text" id="owner-name-input" class="w-full bg-gray-700 border border-gray-600 text-white p-3 rounded-lg mb-4 focus:ring-cyan-500 focus:outline-none" placeholder="Nombre...">
+            <div class="flex justify-end gap-2 text-white">
+                <button id="edit-owner-name-cancel-btn" class="bg-gray-600 px-5 py-2 rounded font-bold text-xs uppercase tracking-widest text-white">Cerrar</button>
+                <button id="edit-owner-name-save-btn" class="bg-green-600 px-5 py-2 rounded font-bold text-xs uppercase shadow-lg tracking-widest text-white">Guardar</button>
             </div>
         </div>
     </div>
 
     <!-- Modal Auditoría -->
-    <div id="audit-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-40 hidden text-white text-white text-white">
-        <div class="bg-gray-800 rounded-xl shadow-2xl w-full max-w-6xl max-h-[95vh] flex flex-col border border-gray-700">
+    <div id="audit-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-40 hidden text-white">
+        <div class="bg-gray-800 rounded-xl shadow-2xl w-full max-w-6xl max-h-[95vh] flex flex-col border border-gray-700 text-white text-white">
             <div class="flex justify-between items-center p-4 border-b border-gray-700 bg-gray-900/50 rounded-t-xl text-white">
                 <h3 class="text-xl font-bold uppercase tracking-widest text-white">Auditoría Avanzada</h3>
                 <button id="close-audit-modal-btn" class="text-gray-400 hover:text-white text-3xl leading-none">&times;</button>
             </div>
-            
             <div class="p-4 bg-gray-900 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 items-end text-white">
                 <div>
                     <label class="block text-[10px] font-bold text-gray-500 mb-1 uppercase tracking-widest">Desde</label>
-                    <input type="datetime-local" id="audit-start" class="w-full bg-gray-800 border-gray-700 text-white rounded p-2 text-sm focus:ring-cyan-500">
+                    <input type="datetime-local" id="audit-start" class="w-full bg-gray-800 border-gray-700 text-white rounded p-2 text-sm focus:ring-cyan-500 text-white">
                 </div>
                 <div>
                     <label class="block text-[10px] font-bold text-gray-500 mb-1 uppercase tracking-widest">Hasta</label>
-                    <input type="datetime-local" id="audit-end" class="w-full bg-gray-800 border-gray-700 text-white rounded p-2 text-sm focus:ring-cyan-500">
+                    <input type="datetime-local" id="audit-end" class="w-full bg-gray-800 border-gray-700 text-white rounded p-2 text-sm focus:ring-cyan-500 text-white">
                 </div>
-                <div>
-                    <button id="audit-filter-btn" class="w-full bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-2 rounded shadow-lg uppercase text-xs tracking-widest">Filtrar</button>
-                </div>
-                <div>
-                    <button id="export-excel-btn" class="w-full bg-green-700 hover:bg-green-800 text-white font-bold py-2 rounded hidden shadow-lg uppercase text-xs tracking-widest">Excel</button>
-                </div>
-                <div>
-                    <button id="delete-filtered-audit-btn" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 rounded hidden shadow-lg uppercase text-xs tracking-widest">Borrar Rango</button>
-                </div>
+                <button id="audit-filter-btn" class="bg-cyan-600 hover:bg-cyan-700 font-bold py-2 rounded shadow-lg uppercase text-xs tracking-widest text-white">Filtrar</button>
+                <button id="export-excel-btn" class="bg-green-700 hover:bg-green-800 text-white font-bold py-2 rounded hidden shadow-lg uppercase text-xs tracking-widest">Excel</button>
+                <button id="delete-filtered-audit-btn" class="bg-red-600 hover:bg-red-700 font-bold py-2 rounded hidden shadow-lg uppercase text-xs tracking-widest text-white">Borrar Rango</button>
             </div>
-
             <div class="px-4 py-3 bg-gray-800 border-b border-gray-700 flex flex-col sm:flex-row justify-between items-center gap-4 text-white">
-                <input type="text" id="audit-table-name" placeholder="Buscar mesa..." class="bg-gray-700 border-gray-600 text-white rounded p-2 text-xs w-full sm:w-1/3 focus:outline-none">
+                <input type="text" id="audit-table-name" placeholder="Buscar mesa..." class="bg-gray-700 border-gray-600 text-white rounded p-2 text-xs w-full sm:w-1/3 focus:outline-none text-white">
                 <div class="text-center sm:text-right">
-                    <span class="text-gray-400 text-[10px] uppercase font-bold tracking-widest tracking-tighter tracking-tighter tracking-tighter">Total Periodo:</span>
-                    <span id="audit-total" class="block text-3xl font-bold text-green-400 tracking-tighter font-black font-mono tracking-tighter font-black font-mono tracking-tighter font-black font-mono">$0</span>
+                    <span class="text-gray-400 text-[10px] uppercase font-bold tracking-widest tracking-tighter">Total Periodo:</span>
+                    <span id="audit-total" class="block text-3xl font-bold text-green-400 font-mono tracking-tighter font-black font-mono">$0</span>
                 </div>
             </div>
-
             <div class="flex border-b border-gray-700 bg-gray-900/30 md:hidden text-white">
                 <button id="audit-tab-list" class="flex-1 py-3 font-bold text-[10px] uppercase bg-cyan-600 text-white tracking-widest">Listado Mesas</button>
-                <button id="audit-tab-summary" class="flex-1 py-3 font-bold text-[10px] uppercase bg-gray-700 text-white tracking-widest">Resumen Ventas</button>
+                <button id="audit-tab-summary" class="flex-1 py-3 font-bold text-[10px] uppercase bg-gray-700 text-white tracking-widest text-white">Resumen Ventas</button>
             </div>
-
-            <div class="flex-1 overflow-hidden flex flex-col md:flex-row text-white">
+            <div class="flex-1 overflow-hidden flex flex-col md:flex-row text-white text-white text-white">
                 <div id="audit-summary-panel" class="w-full md:w-1/3 bg-gray-900/30 border-r border-gray-700 flex flex-col overflow-y-auto scroll-thin hidden md:flex">
-                    <div class="p-3 bg-gray-900/80 font-bold text-cyan-400 text-[10px] uppercase tracking-widest border-b border-gray-700">Unidades Vendidas</div>
+                    <div class="p-3 bg-gray-900 font-bold text-cyan-400 text-[10px] uppercase tracking-widest border-b border-gray-700">Resumen Productos</div>
                     <div id="audit-product-summary" class="p-4 text-sm font-bold"></div>
                 </div>
-                <div id="audit-content" class="w-full md:w-2/3 bg-gray-800 p-4 overflow-y-auto scroll-thin flex flex-col">
+                <div id="audit-content" class="w-full md:w-2/3 bg-gray-800 p-4 overflow-y-auto scroll-thin flex flex-col text-white">
                     <p class="text-gray-500 italic text-center py-10 tracking-widest font-xs">Configure el rango y presione Filtrar.</p>
                 </div>
             </div>
-            
             <div class="p-3 bg-gray-900/80 border-t border-red-900/30 flex justify-between items-center px-6 text-white text-white">
                 <p class="text-[9px] text-gray-500 uppercase tracking-widest italic tracking-widest tracking-widest">Mantenga limpia la base de datos.</p>
                 <button id="reset-all-history-btn" class="text-red-500 hover:text-red-400 text-[10px] font-black uppercase tracking-widest transition-all">Restablecer Todo</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal Editar Dueño -->
-    <div id="edit-owner-name-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-[60] hidden text-white text-white text-white">
-        <div class="bg-gray-800 rounded-xl p-6 w-full max-w-sm border border-gray-700 shadow-2xl">
-            <h3 class="text-lg font-bold text-white mb-4 uppercase tracking-widest tracking-tighter tracking-tighter tracking-tighter">Asignar Dueño</h3>
-            <div id="owner-name-suggestions" class="flex flex-wrap gap-2 mb-4"></div>
-            <input type="text" id="owner-name-input" class="w-full bg-gray-700 border border-gray-600 text-white p-3 rounded-lg mb-4 focus:ring-cyan-500 focus:outline-none" placeholder="Nombre...">
-            <div class="flex justify-end gap-2 text-white">
-                <button id="edit-owner-name-cancel-btn" class="bg-gray-600 px-5 py-2 rounded font-bold text-xs uppercase tracking-widest tracking-widest tracking-widest tracking-widest tracking-widest">Cerrar</button>
-                <button id="edit-owner-name-save-btn" class="bg-green-600 px-5 py-2 rounded font-bold text-xs uppercase shadow-lg tracking-widest tracking-widest tracking-widest tracking-widest">Guardar</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="confirmation-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-[100] hidden text-white text-white text-white text-white text-white text-white">
-        <div class="bg-gray-800 rounded-xl p-6 w-full max-w-sm border border-gray-700 shadow-2xl">
-            <h3 id="confirmation-title" class="text-xl font-bold text-white mb-2 tracking-tighter uppercase tracking-widest text-white tracking-widest tracking-widest tracking-widest tracking-widest tracking-widest tracking-widest">Confirmar</h3>
-            <p id="confirmation-message" class="text-gray-400 mb-6 text-sm"></p>
-            <div class="flex justify-end gap-2 text-white text-white text-white text-white text-white text-white text-white">
-                <button id="confirmation-cancel-btn" class="bg-gray-600 px-5 py-2 rounded font-bold text-xs uppercase tracking-widest tracking-widest tracking-widest">No</button>
-                <button id="confirmation-ok-btn" class="bg-red-600 px-5 py-2 rounded font-bold text-xs uppercase shadow-lg tracking-widest tracking-widest tracking-widest">Confirmar</button>
             </div>
         </div>
     </div>
@@ -318,47 +331,56 @@
         const products = [
             { category: "Cervezas", name: "Aguila", price: 3300 },
             { category: "Cervezas", name: "Poker", price: 3300 },
+            { category: "Cervezas", name: "Budwaiser", price: 3300 },
             { category: "Cervezas", name: "Light", price: 3500 },
             { category: "Cervezas", name: "Poker B", price: 3500 },
             { category: "Cervezas", name: "Aguila B", price: 3500 },
-            { category: "Cervezas", name: "Budwaiser", price: 3300 },
             { category: "Cervezas", name: "Club", price: 4000 },
-            { category: "Cervezas", name: "Corona", price: 6000 },
             { category: "Cervezas", name: "Coronita", price: 4000 },
+            { category: "Cervezas", name: "Cerveza Lata", price: 4000 },
+            { category: "Cervezas", name: "Corona", price: 6000 },
             { category: "Cervezas", name: "Costeña Negra", price: 3000 },
             { category: "Cervezas", name: "Costeña Verde", price: 3000 },
-            { category: "Cervezas", name: "Cerveza Lata", price: 4000 },
-            { category: "RTD (Listos)", name: "Cuates", price: 6000 },
-            { category: "RTD (Listos)", name: "Like", price: 5000 },
-            { category: "RTD (Listos)", name: "Smirnoff Ice", price: 10000 },
             { category: "RTD (Listos)", name: "Reds", price: 4500 },
-            { category: "Licores", name: "Whiskey Botella", price: 75000 },
-            { category: "Licores", name: "Whiskey 1/2", price: 40000 },
-            { category: "Licores", name: "Whiskey 1/4", price: 55000 },
-            { category: "Licores", name: "Smirnoff Botella", price: 70000 },
-            { category: "Licores", name: "Smirnoff 1/2", price: 40000 },
-            { category: "Licores", name: "Ron 1/2", price: 42000 },
-            { category: "Licores", name: "Nectar Botella", price: 62000 },
+            { category: "RTD (Listos)", name: "Like", price: 6000 },
+            { category: "RTD (Listos)", name: "Cuates", price: 6000 },
+            { category: "RTD (Listos)", name: "Smirnoff Ice", price: 10000 },
             { category: "Licores", name: "Nectar 1/2", price: 34000 },
-            { category: "Licores", name: "Antioqueño Azul 1/2", price: 40000 },
             { category: "Licores", name: "Antioqueño Verde 1/2", price: 36000 },
+            { category: "Licores", name: "Whiskey 1/2", price: 40000 },
+            { category: "Licores", name: "Smirnoff 1/2", price: 40000 },
+            { category: "Licores", name: "Antioqueño Azul 1/2", price: 40000 },
+            { category: "Licores", name: "Ron 1/2", price: 42000 },
+            { category: "Licores", name: "Amarillo 1/2", price: 43000 },
+            { category: "Licores", name: "Whiskey 1/4", price: 55000 },
+            { category: "Licores", name: "Nectar Botella", price: 62000 },
+            { category: "Licores", name: "Smirnoff Botella", price: 70000 },
             { category: "Licores", name: "Amarillo Botella", price: 73000 },
-            { category: "Licores", name: "Amarillo 1/2", price: 42000 },
+            { category: "Licores", name: "Whiskey Botella", price: 75000 },
             { category: "Licores", name: "Tequila 1/2", price: 75000 },
-            { category: "Shots", name: "Shot Tequila", price: 7500 }, 
-            { category: "Shots", name: "Shot Whisky", price: 4500 }, 
             { category: "Shots", name: "Shot Aguardiente", price: 3700 },
+            { category: "Shots", name: "Shot Whisky", price: 4500 },
+            { category: "Shots", name: "Shot Tequila", price: 7500 },
+            { category: "Sin Alcohol", name: "Agua", price: 2500 },
             { category: "Sin Alcohol", name: "Pony Malta", price: 3300 },
             { category: "Sin Alcohol", name: "Hit", price: 3300 },
             { category: "Sin Alcohol", name: "Sporade", price: 3300 },
-            { category: "Sin Alcohol", name: "Agua", price: 2000 },
             { category: "Sin Alcohol", name: "Cocacola", price: 3300 },
-            { category: "Snacks", name: "Doritos", price: 3300 }, 
-            { category: "Snacks", name: "Papas", price: 3300 }, 
-            { category: "Snacks", name: "Detodtito", price: 3700 }, 
-            { category: "Snacks", name: "Todorico", price: 3700 }, 
-            { category: "Otros", name: "Mustang", price: 1200 }, 
-            { category: "Otros", name: "Lucky", price: 1400 }, 
+            { category: "Sin Alcohol", name: "Electrolit", price: 10000 },
+            { category: "Petaquería", name: "Petaco AG-PK", price: 93000 },
+            { category: "Petaquería", name: "Petaco Ligth", price: 95000 },
+            { category: "Petaquería", name: "1/2 Petaco AG-PK", price: 48000 },
+            { category: "Petaquería", name: "1/2 Petaco Lg", price: 49000 },
+            { category: "Snacks y Otros", name: "Mustang", price: 1300 },
+            { category: "Snacks y Otros", name: "Lucky", price: 1500 },
+            { category: "Snacks y Otros", name: "1/2 Mustang", price: 8000 },
+            { category: "Snacks y Otros", name: "1/2 Lucky", price: 9000 },
+            { category: "Snacks y Otros", name: "Doritos", price: 3300 },
+            { category: "Snacks y Otros", name: "Papas", price: 3300 },
+            { category: "Snacks y Otros", name: "Detodtito", price: 3700 },
+            { category: "Snacks y Otros", name: "Todorico", price: 3700 },
+            { category: "Snacks y Otros", name: "Bonfiest", price: 6000 },
+            { category: "Snacks y Otros", name: "Chiclets", price: 300 },
             { category: "Otros", name: "Otros", price: 0 }, 
             { category: "Descuento", name: "Descuento", price: 0 }
         ];
@@ -374,6 +396,9 @@
         let isGridFiltered = false;
         let editingRoundData = null;
         let activeQtyControlsName = null;
+
+        // Memoria para el botón Deshacer
+        let lastTransaction = null; 
 
         const app = initializeApp(firebaseConfig);
         db = getFirestore(app);
@@ -392,11 +417,23 @@
             setupVoice();
             listenTables();
             setDefaultAuditDates();
+            setupUndoButtons();
         }
 
-        function renderProducts() {
+        // --- BUSCADOR DE PRODUCTOS ---
+        function renderProducts(filterQuery = "") {
             const s = document.getElementById('product-select');
-            const cats = {}; products.forEach(p => { if(!cats[p.category]) cats[p.category] = []; cats[p.category].push(p); });
+            const queryClean = filterQuery.toLowerCase().trim();
+            s.innerHTML = '';
+            
+            const cats = {}; 
+            products.forEach(p => { 
+                if (p.name.toLowerCase().includes(queryClean) || p.category.toLowerCase().includes(queryClean)) {
+                    if(!cats[p.category]) cats[p.category] = []; 
+                    cats[p.category].push(p); 
+                }
+            });
+
             for(let c in cats) {
                 const g = document.createElement('optgroup'); g.label = c;
                 cats[c].forEach(p => {
@@ -428,7 +465,6 @@
                 allTablesData.clear();
                 grid.innerHTML = '';
                 const f = as.options[0]; as.innerHTML = ''; as.appendChild(f);
-                
                 snap.forEach(d => {
                     const t = d.data(); allTablesData.set(t.id, t);
                     grid.appendChild(createCard(t));
@@ -452,21 +488,21 @@
             const totalConsumed = t.items.reduce((sum, i) => sum + i.price, 0);
             const totalPaid = totalConsumed - t.total;
             c.innerHTML = `
-                <h3 class="text-xl font-black mb-3 ${t.items.length > 0 ? 'text-cyan-400' : 'text-gray-500'} uppercase tracking-tighter tracking-tighter tracking-tighter">${t.name}</h3>
-                <ul class="h-32 overflow-y-auto mb-4 pr-1 scroll-thin">${itemsHtml || '<li class="italic text-gray-600 py-4 text-center">Mesa vacía</li>'}</ul>
-                <div class="border-t border-gray-700 pt-3">
-                    <div class="space-y-1 mb-4 px-1">
-                        <div class="flex justify-between text-[11px] text-gray-500 uppercase font-black tracking-widest tracking-tighter tracking-tighter tracking-tighter"><span>Total Consumido:</span><span>${formatCurrency(totalConsumed)}</span></div>
-                        <div class="flex justify-between text-[11px] text-gray-500 uppercase font-black tracking-widest tracking-tighter tracking-tighter tracking-tighter"><span>Total Pagado:</span><span class="text-green-500">${formatCurrency(totalPaid)}</span></div>
-                        <div class="flex justify-between items-center mt-2">
-                            <span class="text-xs font-black text-gray-300 uppercase tracking-widest tracking-tighter tracking-tighter tracking-tighter">PENDIENTE:</span>
-                            <span class="text-2xl font-black text-green-400 tracking-tighter font-mono tracking-tighter tracking-tighter tracking-tighter tracking-tighter font-mono tracking-tighter tracking-tighter tracking-tighter">${formatCurrency(t.total)}</span>
+                <h3 class="text-xl font-black mb-3 ${t.items.length > 0 ? 'text-cyan-400' : 'text-gray-500'} uppercase tracking-tighter">${t.name}</h3>
+                <ul class="h-32 overflow-y-auto mb-4 pr-1 scroll-thin">${itemsHtml || '<li class="italic text-gray-600 py-4 text-center text-white">Mesa vacía</li>'}</ul>
+                <div class="border-t border-gray-700 pt-3 text-white">
+                    <div class="space-y-1 mb-4 px-1 text-white text-white">
+                        <div class="flex justify-between text-[11px] text-gray-500 uppercase font-black tracking-widest tracking-tighter text-white"><span>Consumido:</span><span>${formatCurrency(totalConsumed)}</span></div>
+                        <div class="flex justify-between text-[11px] text-gray-500 uppercase font-black tracking-widest tracking-tighter text-white"><span>Pagado:</span><span class="text-green-500">${formatCurrency(totalPaid)}</span></div>
+                        <div class="flex justify-between items-center mt-2 text-white">
+                            <span class="text-xs font-black text-gray-300 uppercase tracking-widest tracking-tighter text-white">PENDIENTE:</span>
+                            <span class="text-2xl font-black text-green-400 tracking-tighter font-mono tracking-tighter text-white">${formatCurrency(t.total)}</span>
                         </div>
                     </div>
-                    <div class="grid grid-cols-3 gap-2 text-white">
-                        <button onclick="window.openHistory(event, '${t.id}')" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 rounded-lg text-[10px] uppercase shadow-md tracking-tighter tracking-tighter tracking-tighter">Historial</button>
-                        <button onclick="window.genFactura(event, '${t.id}')" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2.5 rounded-lg text-[10px] uppercase shadow-md tracking-tighter tracking-tighter tracking-tighter">Factura</button>
-                        <button onclick="window.closeTable(event, '${t.id}')" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2.5 rounded-lg text-[10px] uppercase shadow-md tracking-tighter tracking-tighter tracking-tighter">Cerrar</button>
+                    <div class="grid grid-cols-3 gap-2 text-white text-white">
+                        <button onclick="window.openHistory(event, '${t.id}')" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 rounded-lg text-[10px] uppercase shadow-md tracking-tighter">Historial</button>
+                        <button onclick="window.genFactura(event, '${t.id}')" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2.5 rounded-lg text-[10px] uppercase shadow-md tracking-tighter">Factura</button>
+                        <button onclick="window.closeTable(event, '${t.id}')" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2.5 rounded-lg text-[10px] uppercase shadow-md tracking-tighter text-white">Cerrar</button>
                     </div>
                 </div>`;
             c.onclick = (e) => { if(!e.target.closest('button')) setActive(t.id); };
@@ -487,6 +523,16 @@
             document.getElementById('cancel-round-btn').onclick = () => { 
                 currentRound = []; editingRoundData = null; activeQtyControlsName = null; renderRound(); 
             };
+            
+            // Buscador de productos
+            document.getElementById('product-search').oninput = (e) => renderProducts(e.target.value);
+            document.getElementById('product-select').ondblclick = () => {
+                const search = document.getElementById('product-search');
+                search.value = "";
+                renderProducts("");
+                search.focus();
+            };
+
             document.getElementById('show-audit-btn').onclick = () => document.getElementById('audit-modal').classList.remove('hidden');
             document.getElementById('audit-filter-btn').onclick = fetchAudit;
             document.getElementById('export-excel-btn').onclick = exportExcel;
@@ -515,192 +561,47 @@
             document.getElementById('audit-table-name').addEventListener('input', (e) => {
                 const queryStr = e.target.value.toLowerCase();
                 const items = document.querySelectorAll('#audit-content .audit-item');
-                items.forEach(item => {
-                    const name = item.dataset.tableName.toLowerCase();
-                    item.style.display = name.includes(queryStr) ? 'block' : 'none';
-                });
+                items.forEach(item => { const name = item.dataset.tableName.toLowerCase(); item.style.display = name.includes(queryStr) ? 'block' : 'none'; });
             });
 
             document.getElementById('move-round-confirm-btn').onclick = confirmMoveRound;
         }
 
-        function switchAuditTab(tab) {
-            const tl = document.getElementById('audit-tab-list');
-            const ts = document.getElementById('audit-tab-summary');
-            const cl = document.getElementById('audit-content');
-            const cp = document.getElementById('audit-summary-panel');
-            if(tab === 'list') {
-                tl.classList.replace('bg-gray-700', 'bg-cyan-600'); ts.classList.replace('bg-cyan-600', 'bg-gray-700');
-                cl.classList.remove('hidden'); cp.classList.add('hidden');
-            } else {
-                ts.classList.replace('bg-gray-700', 'bg-cyan-600'); tl.classList.replace('bg-cyan-600', 'bg-gray-700');
-                cp.classList.remove('hidden'); cl.classList.add('hidden');
-            }
-        }
-
-        async function openTable() {
-            const s = document.getElementById('table-select');
-            const other = document.getElementById('other-table-name').value.trim();
-            const name = s.value === '--- Otra ---' ? other : s.value;
-            if(!name) return showMsg("Nombre no válido", true);
-            const id = name.replace(/\s+/g, '-').toLowerCase();
-            await setDoc(doc(tablesCollectionRef, id), { id, name, items: [], total: 0, status: 'open', createdAt: new Date().toISOString() });
-            document.getElementById('open-table-form').classList.add('hidden');
-            document.getElementById('toggle-open-table-form-btn').textContent = 'Nueva Mesa';
-            setActive(id); 
-            showMsg("Mesa abierta y activada");
-        }
-
-        function openTransferModal() {
-            if(!activeTableId) return showMsg("Seleccione mesa activa", true);
-            const t = allTablesData.get(activeTableId);
-            document.getElementById('transfer-from-name').textContent = t.name;
-            document.getElementById('transfer-modal').classList.remove('hidden');
-        }
-
-        async function transferTable() {
-            const destSelect = document.getElementById('transfer-table-select');
-            const destOther = document.getElementById('transfer-other-name').value.trim();
-            const destName = destSelect.value === '--- Otra ---' ? destOther : destSelect.value;
-            if(!destName) return showMsg("Destino no válido", true);
-            const destId = destName.replace(/\s+/g, '-').toLowerCase();
-            if(destId === activeTableId) return showMsg("Mismo destino", true);
-            const check = await getDoc(doc(tablesCollectionRef, destId));
-            if(check.exists()) return showMsg("Esa mesa ya está abierta", true);
-            const sourceData = allTablesData.get(activeTableId);
-            const batch = writeBatch(db);
-            batch.set(doc(tablesCollectionRef, destId), { ...sourceData, id: destId, name: destName });
-            batch.delete(doc(tablesCollectionRef, activeTableId));
-            await batch.commit();
-            document.getElementById('transfer-modal').classList.add('hidden');
-            setActive(destId);
-            showMsg("Mesa transferida");
-        }
-
-        let currentMovingRound = null;
-        window.moveRoundPrompt = (sourceTableId, roundId, price) => {
-            currentMovingRound = { sourceTableId, roundId, price };
-            const modal = document.getElementById('move-round-modal');
-            const select = document.getElementById('move-round-dest-select');
-            select.innerHTML = '';
-            let count = 0;
-            allTablesData.forEach(t => {
-                if(t.id !== sourceTableId) {
-                    const opt = document.createElement('option');
-                    opt.value = t.id; opt.textContent = t.name;
-                    select.appendChild(opt);
-                    count++;
-                }
+        // --- LÓGICA DE DESHACER (UNDO) ---
+        function setupUndoButtons() {
+            const btns = [document.getElementById('main-undo-btn'), document.getElementById('floating-undo-btn')];
+            btns.forEach(btn => {
+                btn.onclick = () => {
+                    if(!lastTransaction) return;
+                    confirmDialog("Deshacer Cambio", "¿Reversar el último registro realizado en " + lastTransaction.tableName + "?", async () => {
+                        try {
+                            const ref = doc(tablesCollectionRef, lastTransaction.tableId);
+                            const s = await getDoc(ref);
+                            if(!s.exists()) { showMsg("La mesa ya no existe", true); lastTransaction = null; updateUndoVisibility(); return; }
+                            
+                            const itemsIdToRem = new Set(lastTransaction.itemIds);
+                            const newItems = s.data().items.filter(i => !itemsIdToRem.has(i.id));
+                            
+                            await updateDoc(ref, { 
+                                items: newItems, 
+                                total: increment(-lastTransaction.totalReversed) 
+                            });
+                            
+                            showMsg("Cambio reversado");
+                            lastTransaction = null;
+                            updateUndoVisibility();
+                        } catch (e) {
+                            showMsg("Error al deshacer", true);
+                        }
+                    });
+                };
             });
-            if(count === 0) return showMsg("No hay otras mesas abiertas", true);
-            modal.classList.remove('hidden');
-        };
-
-        async function confirmMoveRound() {
-            if(!currentMovingRound) return;
-            const destTableId = document.getElementById('move-round-dest-select').value;
-            const { sourceTableId, roundId, price } = currentMovingRound;
-            try {
-                const batch = writeBatch(db);
-                const sourceRef = doc(tablesCollectionRef, sourceTableId);
-                const destRef = doc(tablesCollectionRef, destTableId);
-                const sourceSnap = await getDoc(sourceRef);
-                const itemsToMove = sourceSnap.data().items.filter(i => i.roundId === roundId);
-                const remainingItems = sourceSnap.data().items.filter(i => i.roundId !== roundId);
-                batch.update(sourceRef, { items: remainingItems, total: increment(-price) });
-                batch.update(destRef, { items: arrayUnion(...itemsToMove), total: increment(price) });
-                await batch.commit();
-                document.getElementById('move-round-modal').classList.add('hidden');
-                document.getElementById('history-modal').classList.add('hidden');
-                showMsg("Ronda trasladada");
-            } catch (err) { showMsg("Error al mover", true); }
         }
 
-        window.editRoundPrompt = (sourceTableId, roundId, price) => {
-            confirmDialog("Editar Ronda", "¿Modificar esta ronda? Se conservará su lugar en el historial.", async () => {
-                try {
-                    const sourceRef = doc(tablesCollectionRef, sourceTableId);
-                    const sourceSnap = await getDoc(sourceRef);
-                    const allItems = sourceSnap.data().items;
-                    const roundItems = allItems.filter(i => i.roundId === roundId);
-                    const remainingItems = allItems.filter(i => i.roundId !== roundId);
-                    const firstItem = roundItems[0];
-                    const txs = groupHistoryByTransaction(allItems);
-                    const foundTx = txs.find(t => t.id === roundId);
-
-                    editingRoundData = {
-                        roundId: roundId,
-                        timestamp: firstItem.timestamp,
-                        roundNumber: foundTx ? foundTx.roundNumber : null,
-                        ownerName: firstItem.ownerName || null,
-                        isPaid: firstItem.isPaid || false
-                    };
-
-                    currentRound = [];
-                    const grouped = groupItems(roundItems);
-                    for(let name in grouped) {
-                        currentRound.push({ name: name, price: grouped[name].price, quantity: grouped[name].quantity });
-                    }
-
-                    const unpaidPrice = roundItems.reduce((sum, item) => sum + (item.isPaid ? 0 : item.price), 0);
-                    await updateDoc(sourceRef, { items: remainingItems, total: increment(-unpaidPrice) });
-
-                    activeQtyControlsName = null;
-                    renderRound();
-                    document.getElementById('history-modal').classList.add('hidden');
-                    document.getElementById('current-round-panel').scrollIntoView({ behavior: 'smooth' });
-                    setActive(sourceTableId);
-                    showMsg("Modificando Ronda " + (editingRoundData.roundNumber || ""));
-                } catch (err) {
-                    showMsg("Error al cargar", true);
-                }
-            });
-        };
-
-        window.removeItemFromCurrentRound = (name) => {
-            currentRound = currentRound.filter(item => item.name !== name);
-            if(currentRound.length === 0) { editingRoundData = null; activeQtyControlsName = null; }
-            renderRound();
-        };
-
-        window.toggleQtyControls = (name) => {
-            activeQtyControlsName = (activeQtyControlsName === name) ? null : name;
-            renderRound();
-        };
-
-        window.updateCurrentRoundQty = (e, name, delta) => {
-            if(e) e.stopPropagation();
-            const item = currentRound.find(x => x.name === name);
-            if(item) {
-                item.quantity += delta;
-                if(item.quantity < 1) item.quantity = 1;
-                renderRound();
-            }
-        };
-
-        async function applySpecial(type, val) {
-            if(!activeTableId) return showMsg("Seleccione mesa", true);
-            const item = { 
-                id: `i-${Date.now()}-${Math.random()}`, 
-                name: type, 
-                price: type === 'Descuento' ? -val : val, 
-                timestamp: new Date().toISOString(), 
-                isPaid: false 
-            };
-            await updateDoc(doc(tablesCollectionRef, activeTableId), { items: arrayUnion(item), total: increment(item.price) });
-            showMsg(`${type} aplicado`);
-        }
-
-        function addToRound() {
-            const s = document.getElementById('product-select');
-            const q = parseInt(document.getElementById('product-quantity').value) || 1;
-            const name = s.options[s.selectedIndex].dataset.name;
-            const price = parseFloat(s.options[s.selectedIndex].dataset.price);
-            if(name === 'Descuento' || name === 'Otros') { confirmDialog(`Aplicar ${name}`, `¿Aplicar ${formatCurrency(q)} de ${name}?`, () => applySpecial(name, q)); return; }
-            const ex = currentRound.find(x => x.name === name);
-            if(ex) ex.quantity += q; else currentRound.push({ name, price, quantity: q });
-            renderRound();
-            document.getElementById('product-quantity').value = 1;
+        function updateUndoVisibility() {
+            const visible = !!lastTransaction;
+            document.getElementById('main-undo-btn').classList.toggle('hidden', !visible);
+            document.getElementById('floating-undo-btn').style.display = (visible && window.innerWidth < 768) ? 'flex' : 'none';
         }
 
         async function registerRound() {
@@ -711,422 +612,312 @@
             const paid = editingRoundData ? editingRoundData.isPaid : false;
 
             const items = [];
+            const itemIds = [];
             let sumToPending = 0;
+            const tData = allTablesData.get(activeTableId);
+
             currentRound.forEach(r => {
                 for(let i=0; i<r.quantity; i++) {
-                    items.push({ 
-                        id: `i-${Date.now()}-${i}-${Math.random()}`, 
-                        name: r.name, 
-                        price: r.price, 
-                        roundId: rId, 
-                        timestamp: time, 
-                        isPaid: paid,
-                        ownerName: owner
-                    });
+                    const id = `i-${Date.now()}-${i}-${Math.random()}`;
+                    itemIds.push(id);
+                    items.push({ id, name: r.name, price: r.price, roundId: rId, timestamp: time, isPaid: paid, ownerName: owner });
                 }
                 if(!paid) sumToPending += (r.price * r.quantity);
             });
+
             await updateDoc(doc(tablesCollectionRef, activeTableId), { items: arrayUnion(...items), total: increment(sumToPending) });
-            currentRound = []; editingRoundData = null; activeQtyControlsName = null;
-            renderRound();
-            showMsg("Ronda registrada");
+
+            // Guardar para Deshacer
+            if(!editingRoundData) {
+                lastTransaction = { tableId: activeTableId, tableName: tData.name, itemIds: itemIds, totalReversed: sumToPending };
+                updateUndoVisibility();
+            }
+
+            currentRound = []; editingRoundData = null; activeQtyControlsName = null; renderRound();
+            showMsg("Registrado");
+        }
+
+        async function applySpecial(type, val) {
+            if(!activeTableId) return showMsg("Seleccione mesa", true);
+            const tData = allTablesData.get(activeTableId);
+            const id = `i-${Date.now()}-${Math.random()}`;
+            const item = { id, name: type, price: type === 'Descuento' ? -val : val, timestamp: new Date().toISOString(), isPaid: false };
+            
+            await updateDoc(doc(tablesCollectionRef, activeTableId), { items: arrayUnion(item), total: increment(item.price) });
+            
+            lastTransaction = { tableId: activeTableId, tableName: tData.name, itemIds: [id], totalReversed: item.price };
+            updateUndoVisibility();
+            
+            showMsg(`${type} aplicado`);
+        }
+
+        // --- FUNCIONES COMUNES ADAPTADAS ---
+        async function openTable() {
+            const s = document.getElementById('table-select'); const other = document.getElementById('other-table-name').value.trim();
+            const name = s.value === '--- Otra ---' ? other : s.value; if(!name) return showMsg("Nombre no válido", true);
+            const id = name.replace(/\s+/g, '-').toLowerCase();
+            await setDoc(doc(tablesCollectionRef, id), { id, name, items: [], total: 0, status: 'open', createdAt: new Date().toISOString() });
+            document.getElementById('open-table-form').classList.add('hidden'); document.getElementById('toggle-open-table-form-btn').textContent = 'Nueva Mesa';
+            setActive(id); showMsg("Abierta");
+        }
+
+        function switchAuditTab(tab) {
+            const tl = document.getElementById('audit-tab-list'); const ts = document.getElementById('audit-tab-summary');
+            const cl = document.getElementById('audit-content'); const cp = document.getElementById('audit-summary-panel');
+            if(tab === 'list') { tl.classList.replace('bg-gray-700', 'bg-cyan-600'); ts.classList.replace('bg-cyan-600', 'bg-gray-700'); cl.classList.remove('hidden'); cp.classList.add('hidden'); }
+            else { ts.classList.replace('bg-gray-700', 'bg-cyan-600'); tl.classList.replace('bg-cyan-600', 'bg-gray-700'); cp.classList.remove('hidden'); cl.classList.add('hidden'); }
+        }
+
+        function openTransferModal() { if(!activeTableId) return showMsg("Seleccione mesa activa", true); const t = allTablesData.get(activeTableId); document.getElementById('transfer-from-name').textContent = t.name; document.getElementById('transfer-modal').classList.remove('hidden'); }
+        async function transferTable() {
+            const destSelect = document.getElementById('transfer-table-select'); const destOther = document.getElementById('transfer-other-name').value.trim();
+            const destName = destSelect.value === '--- Otra ---' ? destOther : destSelect.value;
+            if(!destName) return showMsg("Destino no válido", true); const destId = destName.replace(/\s+/g, '-').toLowerCase();
+            if(destId === activeTableId) return showMsg("Mismo destino", true);
+            const check = await getDoc(doc(tablesCollectionRef, destId)); if(check.exists()) return showMsg("Ya existe", true);
+            const sourceData = allTablesData.get(activeTableId); const batch = writeBatch(db);
+            batch.set(doc(tablesCollectionRef, destId), { ...sourceData, id: destId, name: destName }); batch.delete(doc(tablesCollectionRef, activeTableId));
+            await batch.commit(); document.getElementById('transfer-modal').classList.add('hidden'); setActive(destId); showMsg("Transferida");
+        }
+
+        window.moveRoundPrompt = (sourceTableId, roundId, price) => {
+            currentMovingRound = { sourceTableId, roundId, price }; const modal = document.getElementById('move-round-modal');
+            const select = document.getElementById('move-round-dest-select'); select.innerHTML = '';
+            let count = 0; allTablesData.forEach(t => { if(t.id !== sourceTableId) { const opt = document.createElement('option'); opt.value = t.id; opt.textContent = t.name; select.appendChild(opt); count++; } });
+            if(count === 0) return showMsg("Abra otra mesa primero", true); modal.classList.remove('hidden');
+        };
+        async function confirmMoveRound() {
+            if(!currentMovingRound) return; const destTableId = document.getElementById('move-round-dest-select').value;
+            const { sourceTableId, roundId, price } = currentMovingRound;
+            try {
+                const batch = writeBatch(db); const sourceRef = doc(tablesCollectionRef, sourceTableId); const destRef = doc(tablesCollectionRef, destTableId);
+                const sourceSnap = await getDoc(sourceRef); const itemsToMove = sourceSnap.data().items.filter(i => i.roundId === roundId);
+                const remainingItems = sourceSnap.data().items.filter(i => i.roundId !== roundId);
+                batch.update(sourceRef, { items: remainingItems, total: increment(-price) });
+                batch.update(destRef, { items: arrayUnion(...itemsToMove), total: increment(price) });
+                await batch.commit(); document.getElementById('move-round-modal').classList.add('hidden'); document.getElementById('history-modal').classList.add('hidden'); showMsg("Ronda movida");
+            } catch (err) { showMsg("Error al mover", true); }
+        }
+
+        window.editRoundPrompt = (sourceTableId, roundId, price) => {
+            confirmDialog("Editar Ronda", "¿Modificar esta ronda? Se conservará su lugar original.", async () => {
+                try {
+                    const sourceRef = doc(tablesCollectionRef, sourceTableId); const sourceSnap = await getDoc(sourceRef);
+                    const allItems = sourceSnap.data().items; const roundItems = allItems.filter(i => i.roundId === roundId);
+                    const remainingItems = allItems.filter(i => i.roundId !== roundId); const firstItem = roundItems[0];
+                    const txs = groupHistoryByTransaction(allItems); const foundTx = txs.find(t => t.id === roundId);
+                    editingRoundData = { roundId, timestamp: firstItem.timestamp, roundNumber: foundTx ? foundTx.roundNumber : null, ownerName: firstItem.ownerName || null, isPaid: firstItem.isPaid || false };
+                    currentRound = []; const grouped = groupItems(roundItems);
+                    for(let name in grouped) { currentRound.push({ name, price: grouped[name].price, quantity: grouped[name].quantity }); }
+                    const unpaidPrice = roundItems.reduce((sum, item) => sum + (item.isPaid ? 0 : item.price), 0);
+                    await updateDoc(sourceRef, { items: remainingItems, total: increment(-unpaidPrice) });
+                    activeQtyControlsName = null; renderRound(); document.getElementById('history-modal').classList.add('hidden');
+                    document.getElementById('current-round-panel').scrollIntoView({ behavior: 'smooth' }); setActive(sourceTableId); showMsg("Modificando...");
+                } catch (err) { showMsg("Error al cargar", true); }
+            });
+        };
+
+        window.removeItemFromCurrentRound = (name) => { currentRound = currentRound.filter(item => item.name !== name); if(currentRound.length === 0) { editingRoundData = null; activeQtyControlsName = null; } renderRound(); };
+        window.toggleQtyControls = (name) => { activeQtyControlsName = (activeQtyControlsName === name) ? null : name; renderRound(); };
+        window.updateCurrentRoundQty = (e, name, delta) => { if(e) e.stopPropagation(); const item = currentRound.find(x => x.name === name); if(item) { item.quantity += delta; if(item.quantity < 1) item.quantity = 1; renderRound(); } };
+
+        function addToRound() {
+            const s = document.getElementById('product-select'); const q = parseInt(document.getElementById('product-quantity').value) || 1;
+            const name = s.options[s.selectedIndex].dataset.name; const price = parseFloat(s.options[s.selectedIndex].dataset.price);
+            if(name === 'Descuento' || name === 'Otros') { confirmDialog(`Aplicar ${name}`, `¿Aplicar ${formatCurrency(q)} de ${name}?`, () => applySpecial(name, q)); return; }
+            const ex = currentRound.find(x => x.name === name); if(ex) ex.quantity += q; else currentRound.push({ name, price, quantity: q });
+            
+            // LIMPIAR BÚSQUEDA AL AÑADIR
+            const search = document.getElementById('product-search');
+            search.value = "";
+            renderProducts("");
+
+            renderRound(); document.getElementById('product-quantity').value = 1;
         }
 
         function renderRound() {
-            const p = document.getElementById('current-round-panel'); 
-            const l = document.getElementById('current-round-list'); 
-            const t = document.getElementById('current-round-total');
-            const titleEl = document.getElementById('round-panel-title');
-            if(currentRound.length === 0) { p.classList.add('hidden'); return; }
-            p.classList.remove('hidden');
-            titleEl.textContent = editingRoundData ? `Modificando Ronda ${editingRoundData.roundNumber || ""}` : "Ronda Actual";
+            const p = document.getElementById('current-round-panel'); const l = document.getElementById('current-round-list'); const t = document.getElementById('current-round-total'); const titleEl = document.getElementById('round-panel-title');
+            if(currentRound.length === 0) { p.classList.add('hidden'); return; } p.classList.remove('hidden');
+            titleEl.textContent = editingRoundData ? `Editando Ronda ${editingRoundData.roundNumber || ""}` : "Ronda Actual";
             let h = '', s = 0; 
             currentRound.forEach(r => { 
                 const isControlsVisible = activeQtyControlsName === r.name;
-                h += `
-                <li class="py-3 flex justify-between items-center bg-gray-900/40 rounded px-3 mb-1.5 border border-gray-700/50 transition-all">
-                    <div class="flex flex-col">
-                        <span class="text-xs font-black text-gray-100 uppercase tracking-tighter">${r.name}</span>
-                        <span class="text-[10px] text-gray-500 font-black uppercase tracking-widest font-mono tracking-tighter">${formatCurrency(r.price)}</span>
-                    </div>
-                    <div class="flex items-center gap-1 transition-all transition-all">
-                        <div class="flex items-center">
-                            <span onclick="window.toggleQtyControls('${r.name}')" 
-                                  class="w-10 h-10 flex items-center justify-center bg-gray-800 text-cyan-400 font-black text-base rounded-lg border border-gray-700 cursor-pointer shadow-inner hover:bg-gray-700 transition-all uppercase tracking-tighter">
-                                ${r.quantity}
-                            </span>
-                            <div class="qty-controls flex gap-1 ${isControlsVisible ? 'show' : ''}">
-                                <button onclick="window.updateCurrentRoundQty(event, '${r.name}', -1)" class="w-8 h-8 flex items-center justify-center bg-gray-700 text-red-400 font-black rounded border border-gray-600 shadow-sm">-</button>
-                                <button onclick="window.updateCurrentRoundQty(event, '${r.name}', 1)" class="w-8 h-8 flex items-center justify-center bg-gray-700 text-green-400 font-black rounded border border-gray-600 shadow-sm">+</button>
-                            </div>
-                        </div>
-                        <div class="flex flex-col items-end min-w-[70px] ml-3 text-white">
-                            <span class="text-xs font-black text-yellow-500 font-mono tracking-tighter tracking-tighter">${formatCurrency(r.price * r.quantity)}</span>
-                            <button onclick="window.removeItemFromCurrentRound('${r.name}')" class="text-red-500 font-black text-xl leading-none mt-0.5 hover:text-red-400 transition-all">&times;</button>
-                        </div>
-                    </div>
-                </li>`; 
+                h += `<li class="py-3 flex justify-between items-center bg-gray-900/40 rounded px-3 mb-1.5 border border-gray-700/50 transition-all"><div class="flex flex-col"><span class="text-xs font-black text-gray-100 uppercase tracking-tighter">${r.name}</span><span class="text-[10px] text-gray-500 font-black uppercase tracking-widest font-mono">${formatCurrency(r.price)}</span></div>
+                    <div class="flex items-center gap-1 transition-all"><div class="flex items-center"><span onclick="window.toggleQtyControls('${r.name}')" class="w-10 h-10 flex items-center justify-center bg-gray-800 text-cyan-400 font-black text-base rounded-lg border border-gray-700 cursor-pointer shadow-inner hover:bg-gray-700">${r.quantity}</span>
+                    <div class="qty-controls flex gap-1 ${isControlsVisible ? 'show' : ''}"><button onclick="window.updateCurrentRoundQty(event, '${r.name}', -1)" class="w-8 h-8 flex items-center justify-center bg-gray-700 text-red-400 font-black rounded border border-gray-600 shadow-sm">-</button><button onclick="window.updateCurrentRoundQty(event, '${r.name}', 1)" class="w-8 h-8 flex items-center justify-center bg-gray-700 text-green-400 font-black rounded border border-gray-600 shadow-sm">+</button></div></div>
+                    <div class="flex flex-col items-end min-w-[70px] ml-3 text-white"><span class="text-xs font-black text-yellow-500 font-mono tracking-tighter">${formatCurrency(r.price * r.quantity)}</span><button onclick="window.removeItemFromCurrentRound('${r.name}')" class="text-red-500 font-black text-xl leading-none mt-0.5 hover:text-red-400 transition-all">&times;</button></div></div></li>`; 
                 s += (r.price * r.quantity); 
             });
             l.innerHTML = h; t.textContent = formatCurrency(s);
         }
 
-        window.openHistory = (e, id) => { if(e) e.stopPropagation(); showHistory(allTablesData.get(id)); };
-
-        function showHistory(t) {
-            const mod = document.getElementById('history-modal');
-            document.getElementById('history-table-name').textContent = t.name;
-            const cont = document.getElementById('history-content');
-            const txs = groupHistoryByTransaction(t.items);
-            let html = '<ul class="divide-y divide-gray-700">';
-            txs.forEach(tx => {
-                const isPaid = tx.isPaid;
-                const ownerBtn = tx.ownerName 
-                    ? `<span onclick="window.askOwner('${t.id}', '${tx.id}', ${tx.isRound})" class="ml-2 bg-blue-900/50 text-blue-400 border border-blue-700 px-2 rounded text-[10px] cursor-pointer font-bold uppercase tracking-tighter tracking-tighter">${tx.ownerName}</span>` 
-                    : `<button onclick="window.askOwner('${t.id}', '${tx.id}', ${tx.isRound})" class="ml-2 bg-blue-600/20 text-blue-400 px-2 rounded text-[10px] border border-blue-600/30 uppercase font-bold transition-all tracking-tighter">Asignar Dueño</button>`;
-                
-                html += `<li class="py-5 flex flex-col gap-2 text-white">
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <span class="font-black text-lg ${tx.isRound ? 'text-yellow-400' : 'text-cyan-400'} uppercase tracking-tighter tracking-tighter">${tx.isRound ? 'Ronda ' + tx.roundNumber : tx.name}</span>
-                            ${ownerBtn}
-                            <p class="text-[11px] text-gray-500 font-medium font-mono">${new Date(tx.timestamp).toLocaleTimeString('es-CO')}</p>
-                        </div>
-                        <div class="flex items-center gap-4">
-                            <span class="text-xl font-black ${isPaid ? 'text-green-500/50 line-through' : 'text-white'} tracking-tighter font-mono tracking-tighter font-mono tracking-tighter">${formatCurrency(tx.price)}</span>
-                            <div class="flex gap-1 text-white text-white">
-                                ${isPaid ? `<button onclick="window.reversePayment('${t.id}', '${tx.id}', ${tx.price})" class="bg-gray-700 text-white font-bold py-2 px-3 rounded text-[10px] uppercase shadow-sm tracking-tighter">PAGADO</button>` : `<button onclick="window.payRound('${t.id}', '${tx.id}', ${tx.price})" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-3 rounded text-[10px] uppercase shadow-sm tracking-tighter">Pagar</button>`}
-                                <button onclick="window.repeatRound('${tx.id}')" class="bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-2 px-3 rounded text-[10px] uppercase shadow-sm tracking-tighter">Repetir</button>
-                                ${tx.isRound ? `<button onclick="window.moveRoundPrompt('${t.id}', '${tx.id}', ${tx.price})" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-3 rounded text-[10px] uppercase shadow-sm tracking-tighter text-white tracking-tighter text-white">Mover</button>` : ''}
-                                ${tx.isRound ? `<button onclick="window.editRoundPrompt('${t.id}', '${tx.id}', ${tx.price})" class="bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 px-3 rounded text-[10px] shadow-sm tracking-tighter tracking-tighter"><i class="fas fa-edit"></i></button>` : ''}
-                                <button onclick="window.deleteTx('${t.id}', '${tx.id}', ${tx.isRound}, ${tx.price}, ${tx.isPaid})" class="text-red-500 font-black text-2xl px-2 transition-transform hover:scale-110 tracking-widest tracking-widest">&times;</button>
-                            </div>
-                        </div>
-                    </div>
-                    ${tx.isRound ? `<ul class="pl-4 border-l-2 border-gray-700 mt-1 space-y-0.5 font-medium tracking-tighter tracking-tighter">${tx.details.map(d => `<li class="text-xs text-gray-400 font-medium tracking-tighter">${d.name} <span class="text-gray-200 font-bold tracking-tighter tracking-tighter tracking-tighter">x ${d.quantity}</span></li>`).join('')}</ul>` : ''}
-                </li>`;
-            });
-            cont.innerHTML = html + `</ul>`;
-            mod.classList.remove('hidden');
-        }
-
         async function fetchAudit() {
-            const start = document.getElementById('audit-start').value;
-            const end = document.getElementById('audit-end').value;
-            if(!start || !end) return;
-            const content = document.getElementById('audit-content');
-            const summary = document.getElementById('audit-product-summary');
-            const delBtn = document.getElementById('delete-filtered-audit-btn');
-            const excBtn = document.getElementById('export-excel-btn');
-            
-            content.innerHTML = '<p class="animate-pulse text-cyan-400 font-black text-center py-10 uppercase tracking-widest tracking-widest tracking-widest">Consultando registros...</p>';
+            const start = document.getElementById('audit-start').value; const end = document.getElementById('audit-end').value;
+            if(!start || !end) return; const content = document.getElementById('audit-content'); const summary = document.getElementById('audit-product-summary');
+            const delBtn = document.getElementById('delete-filtered-audit-btn'); const excBtn = document.getElementById('export-excel-btn');
+            content.innerHTML = '<p class="animate-pulse text-cyan-400 font-black text-center py-10 uppercase tracking-widest">Consultando...</p>';
             const qRef = query(closedTablesCollectionRef, where("closedAt", ">=", new Date(start).toISOString()), where("closedAt", "<=", new Date(end).toISOString()));
-            const snap = await getDocs(qRef);
-            const prodMap = new Map(); let total = 0; let listHtml = '<div class="grid grid-cols-1 gap-3 text-white">';
-            
-            if(snap.empty) { 
-                content.innerHTML = '<p class="text-gray-500 italic text-center py-10 tracking-widest tracking-widest">Sin resultados.</p>'; 
-                summary.innerHTML = ''; delBtn.classList.add('hidden'); excBtn.classList.add('hidden'); return; 
-            }
-            
+            const snap = await getDocs(qRef); const prodMap = new Map(); let total = 0; let listHtml = '<div class="grid grid-cols-1 gap-3">';
+            if(snap.empty) { content.innerHTML = '<p class="text-gray-500 italic text-center py-10 tracking-widest">Sin resultados.</p>'; summary.innerHTML = ''; delBtn.classList.add('hidden'); excBtn.classList.add('hidden'); return; }
             snap.forEach(d => {
-                const t = d.data(); const tTotal = t.items.reduce((s, i) => s + i.price, 0); total += tTotal;
-                const grouped = groupItems(t.items); let detail = '';
-                for(let n in grouped) {
-                    detail += `<div class="flex justify-between text-[11px] text-gray-400 px-1 font-medium tracking-tight tracking-tight"><span>${n} x ${grouped[n].quantity}</span> <span>${formatCurrency(grouped[n].totalPrice)}</span></div>`;
-                    if(!prodMap.has(n)) prodMap.set(n, { q: 0, v: 0 }); const p = prodMap.get(n); p.q += grouped[n].quantity; p.v += grouped[n].totalPrice;
-                }
-                listHtml += `<div class="audit-item bg-gray-900/40 p-4 rounded-xl border border-gray-700/50 cursor-pointer hover:border-cyan-500/50 shadow-lg" data-table-name="${t.name}" ondblclick="window.showZoomFromAudit('${d.id}')">
-                    <div class="flex justify-between items-start mb-2">
-                        <div><h5 class="font-black text-cyan-400 uppercase tracking-tighter tracking-tighter">${t.name}</h5><p class="text-[10px] text-gray-500 font-black tracking-widest tracking-widest font-mono tracking-widest tracking-widest font-mono font-mono">${new Date(t.closedAt).toLocaleString()}</p></div>
-                        <span class="text-green-400 font-black text-lg tracking-tighter font-mono tracking-tighter font-mono tracking-tighter tracking-tighter font-mono tracking-tighter">${formatCurrency(tTotal)}</span>
-                    </div>
-                    <div class="space-y-0.5 border-l-2 border-gray-700 pl-3 my-3 shadow-inner py-1 bg-black/10 rounded tracking-tighter font-mono font-mono">${detail}</div>
-                    
-                    <div class="flex gap-2">
-                        <button onclick="window.reopenTable('${d.id}')" class="flex-1 bg-yellow-600 hover:bg-yellow-700 text-white font-black py-2 rounded-lg uppercase text-[10px] tracking-widest shadow-lg transition-all tracking-widest tracking-widest">Reabrir Mesa</button>
-                        
-                        <!-- BOTÓN PAPELERA INDIVIDUAL -->
-                        <button onclick="window.deleteIndividualClosedTable('${d.id}', '${t.name}')" class="bg-red-900/50 hover:bg-red-600 text-red-400 hover:text-white w-10 flex items-center justify-center rounded-lg border border-red-900/50 transition-all shadow-lg">
-                            <i class="fas fa-trash-alt"></i>
-                        </button>
-                    </div>
-                </div>`;
+                const t = d.data(); const tTotal = t.items.reduce((s, i) => s + i.price, 0); total += tTotal; const grouped = groupItems(t.items); let detail = '';
+                for(let n in grouped) { detail += `<div class="flex justify-between text-[11px] text-gray-400 px-1 font-medium tracking-tight"><span>${n} x ${grouped[n].quantity}</span> <span>${formatCurrency(grouped[n].totalPrice)}</span></div>`; if(!prodMap.has(n)) prodMap.set(n, { q: 0, v: 0 }); const p = prodMap.get(n); p.q += grouped[n].quantity; p.v += grouped[n].totalPrice; }
+                listHtml += `<div class="audit-item bg-gray-900/40 p-4 rounded-xl border border-gray-700/50 cursor-pointer hover:border-cyan-500/50 shadow-lg" data-table-name="${t.name}" ondblclick="window.showZoomFromAudit('${d.id}')"><div class="flex justify-between items-start mb-2"><div><h5 class="font-black text-cyan-400 uppercase tracking-tighter">${t.name}</h5><p class="text-[10px] text-gray-500 font-black font-mono">${new Date(t.closedAt).toLocaleString()}</p></div><span class="text-green-400 font-black text-lg font-mono">${formatCurrency(tTotal)}</span></div><div class="space-y-0.5 border-l-2 border-gray-700 pl-3 my-3 shadow-inner py-1 bg-black/10 rounded tracking-tighter font-mono">${detail}</div><div class="flex gap-2 text-white"><button onclick="window.reopenTable('${d.id}')" class="flex-1 bg-yellow-600 hover:bg-yellow-700 text-white font-black py-2 rounded-lg uppercase text-[10px] tracking-widest shadow-lg">Reabrir</button><button onclick="window.deleteIndividualClosedTable('${d.id}', '${t.name}')" class="bg-red-900/50 hover:bg-red-600 text-red-400 hover:text-white w-10 flex items-center justify-center rounded-lg border border-red-900/50 transition-all shadow-lg"><i class="fas fa-trash-alt"></i></button></div></div>`;
             });
-            document.getElementById('audit-total').textContent = formatCurrency(total);
-            content.innerHTML = listHtml + '</div>';
+            document.getElementById('audit-total').textContent = formatCurrency(total); content.innerHTML = listHtml + '</div>';
             currentAuditProductStats = []; let sumHtml = '<ul class="space-y-2 text-white">';
             const sorted = [...prodMap.entries()].sort((a,b) => b[1].q - a[1].q);
-            sorted.forEach(([n, d]) => {
-                currentAuditProductStats.push({ Producto: n, Unidades: d.q, Total: d.v });
-                sumHtml += `<li class="flex justify-between border-b border-gray-800 pb-1.5 px-1 font-medium tracking-tighter tracking-tighter tracking-tighter tracking-tighter tracking-tighter tracking-tighter font-mono font-mono"><span class="text-gray-300 font-black uppercase text-xs tracking-tighter tracking-tighter">${n}</span> <span class="font-black text-cyan-400 tracking-tighter font-mono tracking-tighter font-mono tracking-tighter tracking-tighter">${d.q}</span></li>`;
-            });
-            summary.innerHTML = sumHtml + '</ul>';
-            excBtn.classList.remove('hidden'); delBtn.classList.remove('hidden');
+            sorted.forEach(([n, d]) => { currentAuditProductStats.push({ Producto: n, Unidades: d.q, Total: d.v }); sumHtml += `<li class="flex justify-between border-b border-gray-800 pb-1.5 px-1 font-medium"><span class="uppercase text-xs tracking-tighter">${n}</span> <span class="font-black text-cyan-400 tracking-tighter">${d.q}</span></li>`; });
+            summary.innerHTML = sumHtml + '</ul>'; excBtn.classList.remove('hidden'); delBtn.classList.remove('hidden');
             if(window.innerWidth < 768) switchAuditTab('list');
         }
 
         async function handleDeleteFiltered() {
-            const start = document.getElementById('audit-start').value;
-            const end = document.getElementById('audit-end').value;
+            const start = document.getElementById('audit-start').value; const end = document.getElementById('audit-end').value;
             if(!start || !end) return;
-            confirmDialog("⚠ BORRAR RANGO", "¿Eliminar permanentemente los registros de este periodo?", async () => {
+            confirmDialog("⚠ BORRAR RANGO", "¿Eliminar permanentemente los registros mostrados?", async () => {
                 try {
-                    showMsg("Borrando datos...", false);
-                    const qRef = query(closedTablesCollectionRef, where("closedAt", ">=", new Date(start).toISOString()), where("closedAt", "<=", new Date(end).toISOString()));
-                    const snap = await getDocs(qRef);
-                    if(snap.empty) { showMsg("Nada que borrar"); return; }
-                    const batch = writeBatch(db);
-                    snap.forEach(d => batch.delete(d.ref));
-                    await batch.commit();
-                    showMsg("Rango eliminado"); fetchAudit();
-                } catch (e) { showMsg("Error al borrar", true); }
+                    showMsg("Borrando...", false); const qRef = query(closedTablesCollectionRef, where("closedAt", ">=", new Date(start).toISOString()), where("closedAt", "<=", new Date(end).toISOString()));
+                    const snap = await getDocs(qRef); if(snap.empty) return;
+                    const batch = writeBatch(db); snap.forEach(d => batch.delete(d.ref)); await batch.commit(); showMsg("Eliminado"); fetchAudit();
+                } catch (e) { showMsg("Error", true); }
             });
         }
 
-        // NUEVO: Borrar mesa individual en auditoría
         window.deleteIndividualClosedTable = (id, name) => {
-            confirmDialog("Eliminar Registro", `¿Borrar la mesa "${name}" definitivamente del historial? No se podrá recuperar.`, async () => {
-                try {
-                    await deleteDoc(doc(closedTablesCollectionRef, id));
-                    showMsg("Mesa borrada del historial");
-                    fetchAudit(); // Recargar para actualizar lista y total recaudado
-                } catch (e) {
-                    showMsg("Error al borrar registro", true);
-                }
+            confirmDialog("Eliminar Registro", `¿Borrar "${name}" definitivamente?`, async () => {
+                try { await deleteDoc(doc(closedTablesCollectionRef, id)); showMsg("Borrado"); fetchAudit(); } catch (e) { showMsg("Error", true); }
             });
         };
 
         async function handleResetAllHistory() {
-            confirmDialog("🚨 RESET TOTAL", "¿BORRAR TODO EL HISTORIAL DE MESAS CERRADAS PERMANENTEMENTE?", async () => {
+            confirmDialog("🚨 RESET TOTAL", "¿BORRAR TODO EL HISTORIAL DEFINITIVAMENTE?", async () => {
                 try {
-                    showMsg("Limpiando...", false);
-                    const snap = await getDocs(closedTablesCollectionRef);
-                    if(snap.empty) { showMsg("Vacio"); return; }
-                    const docs = snap.docs; const chunks = [];
-                    for (let i = 0; i < docs.length; i += 500) chunks.push(docs.slice(i, i + 500));
-                    for (const chunk of chunks) {
-                        const batch = writeBatch(db); chunk.forEach(d => batch.delete(d.ref)); await batch.commit();
-                    }
-                    showMsg("Historial borrado"); document.getElementById('audit-modal').classList.add('hidden');
+                    showMsg("Limpiando...", false); const snap = await getDocs(closedTablesCollectionRef); if(snap.empty) return;
+                    const docs = snap.docs; const chunks = []; for (let i = 0; i < docs.length; i += 500) chunks.push(docs.slice(i, i + 500));
+                    for (const chunk of chunks) { const batch = writeBatch(db); chunk.forEach(d => batch.delete(d.ref)); await batch.commit(); }
+                    showMsg("Limpio"); document.getElementById('audit-modal').classList.add('hidden');
                 } catch (e) { showMsg("Error", true); }
             });
         }
 
         function exportExcel() {
             if(currentAuditProductStats.length === 0) return;
-            const dataWithTotal = [...currentAuditProductStats];
-            const totalMoney = dataWithTotal.reduce((sum, item) => sum + item.Total, 0);
-            dataWithTotal.push({}); 
-            dataWithTotal.push({ Producto: "TOTAL GENERAL RECAUDADO", Unidades: "", Total: totalMoney });
+            const dataWithTotal = [...currentAuditProductStats]; const totalMoney = dataWithTotal.reduce((sum, item) => sum + item.Total, 0);
+            dataWithTotal.push({}); dataWithTotal.push({ Producto: "TOTAL GENERAL RECAUDADO", Total: totalMoney });
             const ws = XLSX.utils.json_to_sheet(dataWithTotal); const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "Ventas");
-            XLSX.writeFile(wb, `Ventas_SportBar_${new Date().toLocaleDateString()}.xlsx`);
-            showMsg("Excel generado");
+            XLSX.utils.book_append_sheet(wb, ws, "Ventas"); XLSX.writeFile(wb, `Reporte_Ventas_${new Date().toLocaleDateString()}.xlsx`);
         }
 
-        window.showZoomFromAudit = async (docId) => {
-            const snap = await getDoc(doc(closedTablesCollectionRef, docId));
-            if(snap.exists()) showZoom(snap.data());
-        };
-
+        window.showZoomFromAudit = async (docId) => { const snap = await getDoc(doc(closedTablesCollectionRef, docId)); if(snap.exists()) showZoom(snap.data()); };
         window.reopenTable = (id) => {
             confirmDialog("Reabrir Mesa", "¿Regresar esta cuenta a mesas activas?", async () => {
                 const snap = await getDoc(doc(closedTablesCollectionRef, id)); const data = snap.data();
-                const check = await getDoc(doc(tablesCollectionRef, data.id));
-                if(check.exists()) return showMsg("La mesa ya está abierta", true);
-                const batch = writeBatch(db);
-                batch.set(doc(tablesCollectionRef, data.id), { ...data, status: 'open' });
-                batch.delete(doc(closedTablesCollectionRef, id));
-                await batch.commit(); showMsg("Mesa reabierta"); fetchAudit();
+                const check = await getDoc(doc(tablesCollectionRef, data.id)); if(check.exists()) return showMsg("Ya abierta", true);
+                const batch = writeBatch(db); batch.set(doc(tablesCollectionRef, data.id), { ...data, status: 'open' });
+                batch.delete(doc(closedTablesCollectionRef, id)); await batch.commit(); showMsg("Reabierta"); fetchAudit();
             });
         };
 
         window.askOwner = (tId, txId, isRound) => {
-            currentEditContext = { tId, txId, isRound };
-            const m = document.getElementById('edit-owner-name-modal'); const sug = document.getElementById('owner-name-suggestions');
-            const t = allTablesData.get(tId); const names = [...new Set(t.items.map(i => i.ownerName).filter(n => n))];
-            sug.innerHTML = names.map(n => `<button onclick="document.getElementById('owner-name-input').value='${n}'" class="bg-blue-600/30 text-blue-300 border border-blue-600/50 text-[10px] px-2 py-1 rounded font-bold uppercase hover:bg-blue-600/50 transition-all tracking-tighter">${n}</button>`).join('');
+            currentEditContext = { tId, txId, isRound }; const m = document.getElementById('edit-owner-name-modal');
+            const sug = document.getElementById('owner-name-suggestions'); const t = allTablesData.get(tId);
+            const names = [...new Set(t.items.map(i => i.ownerName).filter(n => n))];
+            sug.innerHTML = names.map(n => `<button onclick="document.getElementById('owner-name-input').value='${n}'" class="bg-blue-600/30 text-blue-300 border border-blue-600/50 text-[10px] px-2 py-1 rounded font-bold uppercase transition-all hover:bg-blue-600/50 tracking-tighter">${n}</button>`).join('');
             document.getElementById('owner-name-input').value = ''; m.classList.remove('hidden');
         };
-
         async function saveOwner() {
-            const name = document.getElementById('owner-name-input').value.trim();
-            const { tId, txId, isRound } = currentEditContext;
+            const name = document.getElementById('owner-name-input').value.trim(); const { tId, txId, isRound } = currentEditContext;
             const ref = doc(tablesCollectionRef, tId); const s = await getDoc(ref);
-            const items = s.data().items.map(i => {
-                if(isRound && i.roundId === txId) return { ...i, ownerName: name || null };
-                if(!isRound && i.id === txId) return { ...i, ownerName: name || null };
-                return i;
-            });
-            await updateDoc(ref, { items }); document.getElementById('edit-owner-name-modal').classList.add('hidden');
-            showHistory(allTablesData.get(tId));
+            const items = s.data().items.map(i => { if(isRound && i.roundId === txId) return { ...i, ownerName: name || null }; if(!isRound && i.id === txId) return { ...i, ownerName: name || null }; return i; });
+            await updateDoc(ref, { items }); document.getElementById('edit-owner-name-modal').classList.add('hidden'); showHistory(allTablesData.get(tId));
         }
 
         window.payRound = async (tId, rId, price) => {
             const ref = doc(tablesCollectionRef, tId); const s = await getDoc(ref);
             const items = s.data().items.map(i => i.roundId === rId || i.id === rId ? { ...i, isPaid: true } : i);
-            await updateDoc(ref, { items, total: increment(-price) });
-            showHistory(allTablesData.get(tId));
+            await updateDoc(ref, { items, total: increment(-price) }); showHistory(allTablesData.get(tId));
         };
-
         window.reversePayment = async (tId, rId, price) => {
             const ref = doc(tablesCollectionRef, tId); const s = await getDoc(ref);
             const items = s.data().items.map(i => i.roundId === rId || i.id === rId ? { ...i, isPaid: false } : i);
-            await updateDoc(ref, { items, total: increment(price) });
-            showHistory(allTablesData.get(tId));
+            await updateDoc(ref, { items, total: increment(price) }); showHistory(allTablesData.get(tId));
         };
-
         window.repeatRound = (id) => {
             for(let t of allTablesData.values()) {
-                const txs = groupHistoryByTransaction(t.items);
-                const found = txs.find(x => x.id === id);
-                if(found && found.isRound) {
-                    found.details.forEach(d => {
-                        const ex = currentRound.find(x => x.name === d.name);
-                        if(ex) ex.quantity += d.quantity; else currentRound.push({ name: d.name, price: d.price, quantity: d.quantity });
-                    });
-                    renderRound(); document.getElementById('history-modal').classList.add('hidden'); showMsg("Ronda copiada"); return;
-                }
+                const txs = groupHistoryByTransaction(t.items); const found = txs.find(x => x.id === id);
+                if(found && found.isRound) { found.details.forEach(d => { const ex = currentRound.find(x => x.name === d.name); if(ex) ex.quantity += d.quantity; else currentRound.push({ name: d.name, price: d.price, quantity: d.quantity }); }); renderRound(); document.getElementById('history-modal').classList.add('hidden'); showMsg("Copiado"); return; }
             }
         };
-
         window.deleteTx = (tId, id, isRound, price, isPaid) => {
-            confirmDialog("Eliminar Transacción", "¿Borrar este registro definitivamente?", async () => {
+            confirmDialog("Eliminar Transacción", "¿Borrar registro?", async () => {
                 const ref = doc(tablesCollectionRef, tId); const s = await getDoc(ref);
-                const items = s.data().items.filter(i => isRound ? i.roundId !== id : i.id !== id);
-                const adjust = isPaid ? 0 : -price;
-                await updateDoc(ref, { items, total: increment(adjust) });
-                showHistory(allTablesData.get(tId));
+                const items = s.data().items.filter(i => isRound ? i.roundId !== id : i.id !== id); const adjust = isPaid ? 0 : -price;
+                await updateDoc(ref, { items, total: increment(adjust) }); showHistory(allTablesData.get(tId));
             });
         };
 
         window.genFactura = async (e, id) => {
             if(e) e.stopPropagation(); const t = allTablesData.get(id);
             if(!pdfScriptsLoaded) {
-                showMsg("Iniciando PDF...");
-                try {
-                    await loadScript("https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js");
-                    await loadScript("https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js");
-                    pdfScriptsLoaded = true;
-                } catch (error) { showMsg("Error PDF", true); return; }
+                showMsg("Cargando PDF...");
+                try { await loadScript("https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"); await loadScript("https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"); pdfScriptsLoaded = true; } catch (error) { showMsg("Error PDF", true); return; }
             }
-            const { jsPDF } = window.jspdf; const docP = new jsPDF();
-            if (typeof docP.autoTable !== 'function') { showMsg("Error plugin PDF", true); return; }
+            const { jsPDF } = window.jspdf; const docP = new jsPDF(); if (typeof docP.autoTable !== 'function') { showMsg("Fallo plugin", true); return; }
             docP.setFontSize(22); docP.setTextColor(40); docP.text("Sanchez's Sport Bar", 105, 20, { align: 'center' });
             docP.setFontSize(10); docP.setTextColor(100); docP.text(`Mesa: ${t.name.toUpperCase()} | Consulta: ${new Date().toLocaleString()}`, 20, 30);
-            const grouped = groupItems(t.items);
-            const prodBody = Object.entries(grouped).map(([n, d]) => [n, d.quantity, formatCurrency(d.price), formatCurrency(d.totalPrice)]);
+            const grouped = groupItems(t.items); const prodBody = Object.entries(grouped).map(([n, d]) => [n, d.quantity, formatCurrency(d.price), formatCurrency(d.totalPrice)]);
             docP.autoTable({ startY: 35, head: [['Producto', 'Cant', 'Precio', 'Subtotal']], body: prodBody, theme: 'striped', headStyles: {fillColor:[6, 182, 212]} });
             let currentY = docP.lastAutoTable.finalY + 10;
-            const txs = groupHistoryByTransaction(t.items);
-            const ownersMap = new Map();
-            txs.forEach(tx => {
-                const owner = tx.ownerName || 'Sin Asignar';
-                if (!ownersMap.has(owner)) ownersMap.set(owner, { pending: 0, txs: [] });
-                const oData = ownersMap.get(owner);
-                if (!tx.isPaid) oData.pending += tx.price;
-                oData.txs.push(tx);
-            });
-            docP.setFontSize(14); docP.setTextColor(0); docP.text("Detalle por Persona (Pendiente)", 20, currentY);
-            currentY += 5;
-            const ownerBody = [];
-            ownersMap.forEach((data, owner) => {
-                ownerBody.push([{ content: owner.toUpperCase(), styles: { fontStyle: 'bold', fillColor: [230, 230, 230] } }, { content: formatCurrency(data.pending), styles: { fontStyle: 'bold', halign: 'right', fillColor: [230, 230, 230] } }]);
-                data.txs.forEach(tx => {
-                    const desc = tx.isRound ? `Ronda ${tx.roundNumber} (${tx.details.map(d=>`${d.quantity} ${d.name}`).join(', ')})` : tx.name;
-                    ownerBody.push([`  - ${desc}`, { content: formatCurrency(tx.price), styles: { halign: 'right' } }]);
-                });
-            });
+            const txs = groupHistoryByTransaction(t.items); const ownersMap = new Map();
+            txs.forEach(tx => { const owner = tx.ownerName || 'Sin Asignar'; if (!ownersMap.has(owner)) ownersMap.set(owner, { pending: 0, txs: [] }); const oData = ownersMap.get(owner); if (!tx.isPaid) oData.pending += tx.price; oData.txs.push(tx); });
+            docP.setFontSize(14); docP.setTextColor(0); docP.text("Detalle por Persona (Pendiente)", 20, currentY); currentY += 5;
+            const ownerBody = []; ownersMap.forEach((data, owner) => { ownerBody.push([{ content: owner.toUpperCase(), styles: { fontStyle: 'bold', fillColor: [230, 230, 230] } }, { content: formatCurrency(data.pending), styles: { fontStyle: 'bold', halign: 'right', fillColor: [230, 230, 230] } }]); data.txs.forEach(tx => { const desc = tx.isRound ? `Ronda ${tx.roundNumber} (${tx.details.map(d=>`${d.quantity} ${d.name}`).join(', ')})` : tx.name; ownerBody.push([`  - ${desc}`, { content: formatCurrency(tx.price), styles: { halign: 'right' } }]); }); });
             docP.autoTable({ startY: currentY, head: [['Nombre / Descripción', 'Valor']], body: ownerBody, theme: 'plain', styles: { fontSize: 8 } });
-            const finalY = docP.lastAutoTable.finalY;
-            docP.setFontSize(16); docP.setTextColor(0); docP.text(`TOTAL PENDIENTE: ${formatCurrency(t.total)}`, 190, finalY + 15, { align: 'right' });
-            docP.save(`Factura_${t.name}_${Date.now()}.pdf`); showMsg("PDF generado");
+            const finalY = docP.lastAutoTable.finalY; docP.setFontSize(16); docP.setTextColor(0); docP.text(`TOTAL PENDIENTE: ${formatCurrency(t.total)}`, 190, finalY + 15, { align: 'right' });
+            docP.save(`Factura_${t.name}.pdf`); showMsg("PDF generado");
         };
 
         window.closeTable = (e, id) => {
             if(e) e.stopPropagation(); const t = allTablesData.get(id);
-            confirmDialog(`Cerrar Mesa ${t.name}`, `Saldo final: ${formatCurrency(t.total)}. La mesa se enviará a auditoría y se cerrará definitivamente.`, async () => {
+            confirmDialog(`Cerrar Mesa ${t.name}`, `Saldo final: ${formatCurrency(t.total)}. ¿Proceder?`, async () => {
                 await setDoc(doc(closedTablesCollectionRef, `${id}-${Date.now()}`), { ...t, closedAt: new Date().toISOString(), status: 'closed' });
-                await deleteDoc(doc(tablesCollectionRef, id)); 
-                if(activeTableId === id) setActive(null);
-                showMsg("Mesa finalizada");
+                await deleteDoc(doc(tablesCollectionRef, id)); if(activeTableId === id) setActive(null); showMsg("Cerrada");
             });
         };
 
         function showZoom(t) {
             const mod = document.getElementById('zoom-modal'); document.getElementById('zoom-table-name').textContent = t.name;
-            const totalConsumed = t.items.reduce((sum, i) => sum + i.price, 0);
-            document.getElementById('zoom-total').textContent = formatCurrency(totalConsumed);
+            const totalConsumed = t.items.reduce((sum, i) => sum + i.price, 0); document.getElementById('zoom-total').textContent = formatCurrency(totalConsumed);
             const grouped = groupItems(t.items); let phtml = '<ul class="divide-y divide-gray-700/50 scroll-thin text-white">';
             for(let n in grouped) phtml += `<li class="py-3 flex justify-between px-2 font-medium tracking-tighter"><span>${n} x ${grouped[n].quantity}</span> <span class="font-bold text-cyan-400 uppercase tracking-tighter font-mono">${formatCurrency(grouped[n].totalPrice)}</span></li>`;
             document.getElementById('zoom-content').innerHTML = phtml + '</ul>';
             const txs = groupHistoryByTransaction(t.items); const ownersMap = new Map();
-            txs.forEach(tx => {
-                const owner = tx.ownerName || 'Sin Asignar';
-                if (!ownersMap.has(owner)) ownersMap.set(owner, { pending: 0, transactions: [] });
-                const oData = ownersMap.get(owner);
-                if (!tx.isPaid) oData.pending += tx.price;
-                oData.transactions.push(tx);
-            });
-            let ohtml = '<div class="space-y-6 text-white text-white">';
-            ownersMap.forEach((data, owner) => {
-                const isUnassigned = owner === 'Sin Asignar';
-                ohtml += `
-                    <div class="border-b border-gray-700/50 pb-4 text-white">
-                        <div class="flex justify-between items-center mb-3 px-1 text-white text-white">
-                            <h5 class="text-xl font-black ${isUnassigned ? 'text-gray-400' : 'text-cyan-400'} uppercase tracking-tighter font-black">${owner} (Pendiente)</h5>
-                            <span class="text-2xl font-black ${data.pending > 0 ? 'text-green-400' : (data.pending < 0 ? 'text-red-400' : 'text-gray-500')} tracking-tighter font-mono">${formatCurrency(data.pending)}</span>
-                        </div>
-                        <ul class="space-y-2 pl-4 border-l-2 border-gray-700">
-                            ${data.transactions.map(tx => {
-                                const time = new Date(tx.timestamp).toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' });
-                                let productsText = tx.isRound ? `(${tx.details.map(d => `${d.quantity} ${d.name}`).join(', ')})` : '';
-                                return `<li class="flex justify-between text-sm text-gray-300">
-                                    <span class="font-medium tracking-tight tracking-tight">${tx.isRound ? 'Ronda ' + tx.roundNumber : tx.name} ${productsText} <span class="text-[10px] text-gray-500 ml-2 font-black uppercase tracking-widest">${time}</span></span>
-                                    <span class="font-black text-gray-100 tracking-tighter font-mono tracking-tighter font-mono">${formatCurrency(tx.price)}</span>
-                                </li>`;
-                            }).join('')}
-                        </ul>
-                    </div>`;
-            });
-            document.getElementById('zoom-owner-content').innerHTML = ohtml + '</div>';
-            switchZoomTab('product'); mod.classList.remove('hidden');
+            txs.forEach(tx => { const owner = tx.ownerName || 'Sin Asignar'; if (!ownersMap.has(owner)) ownersMap.set(owner, { pending: 0, transactions: [] }); const oData = ownersMap.get(owner); if (!tx.isPaid) oData.pending += tx.price; oData.transactions.push(tx); });
+            let ohtml = '<div class="space-y-6 text-white">';
+            ownersMap.forEach((data, owner) => { const isUnassigned = owner === 'Sin Asignar'; ohtml += `<div class="border-b border-gray-700/50 pb-4 text-white"><div class="flex justify-between items-center mb-3 px-1 text-white text-white"><h5 class="text-xl font-black ${isUnassigned ? 'text-gray-400' : 'text-cyan-400'} uppercase tracking-tighter font-black">${owner} (Pendiente)</h5><span class="text-2xl font-black ${data.pending > 0 ? 'text-green-400' : (data.pending < 0 ? 'text-red-400' : 'text-gray-500')} tracking-tighter font-mono">${formatCurrency(data.pending)}</span></div><ul class="space-y-2 pl-4 border-l-2 border-gray-700 font-mono">${data.transactions.map(tx => { const time = new Date(tx.timestamp).toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' }); let productsText = tx.isRound ? `(${tx.details.map(d => `${d.quantity} ${d.name}`).join(', ')})` : ''; return `<li class="flex justify-between text-sm text-gray-300"><span class="font-medium tracking-tight tracking-tight">${tx.isRound ? 'Ronda ' + tx.roundNumber : tx.name} ${productsText} <span class="text-[10px] text-gray-500 ml-2 font-black uppercase tracking-widest font-mono font-mono">${time}</span></span><span class="font-black text-gray-100 tracking-tighter font-mono">${formatCurrency(tx.price)}</span></li>`; }).join('')}</ul></div>`; });
+            document.getElementById('zoom-owner-content').innerHTML = ohtml + '</div>'; switchZoomTab('product'); mod.classList.remove('hidden');
         }
 
         function switchZoomTab(tab) {
             const tp = document.getElementById('zoom-tab-product'); const to = document.getElementById('zoom-tab-owner');
             const cp = document.getElementById('zoom-content'); const co = document.getElementById('zoom-owner-content');
-            if(tab === 'product') { tp.classList.replace('bg-gray-700', 'bg-cyan-600'); to.classList.replace('bg-cyan-600', 'bg-gray-700'); cp.classList.remove('hidden'); co.classList.add('hidden'); }
-            else { to.classList.replace('bg-gray-700', 'bg-cyan-600'); tp.classList.replace('bg-cyan-600', 'bg-gray-700'); co.classList.remove('hidden'); cp.classList.add('hidden'); }
+            if(tab === 'product') { tp.classList.add('bg-cyan-600'); tp.classList.remove('bg-gray-700'); to.classList.add('bg-gray-700'); to.classList.remove('bg-cyan-600'); cp.classList.remove('hidden'); co.classList.add('hidden'); }
+            else { to.classList.add('bg-cyan-600'); to.classList.remove('bg-gray-700'); tp.classList.add('bg-gray-700'); tp.classList.remove('bg-cyan-600'); co.classList.remove('hidden'); cp.classList.add('hidden'); }
         }
 
         function formatCurrency(v) { return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 }).format(v); }
-        function groupItems(items) {
-            const g = {}; items.forEach(i => { if(!g[i.name]) g[i.name] = { quantity: 0, totalPrice: 0, price: i.price }; g[i.name].quantity++; g[i.name].totalPrice += i.price; });
-            return g;
-        }
+        function groupItems(items) { const g = {}; items.forEach(i => { if(!g[i.name]) g[i.name] = { quantity: 0, totalPrice: 0, price: i.price }; g[i.name].quantity++; g[i.name].totalPrice += i.price; }); return g; }
         function groupHistoryByTransaction(items) {
             const map = new Map(); items.forEach(i => { const k = i.roundId || i.id; if(!map.has(k)) map.set(k, []); map.get(k).push(i); });
-            const res = []; [...map.values()].forEach(arr => {
-                const f = arr[0]; const tx = { id: f.roundId || f.id, name: f.name, price: arr.reduce((s, x) => s + x.price, 0), timestamp: f.timestamp, isRound: !!f.roundId, ownerName: f.ownerName, isPaid: arr.every(x => x.isPaid), details: [], items: arr };
-                if(tx.isRound) { const g = groupItems(arr); tx.details = Object.entries(g).map(([n, d]) => ({ name: n, quantity: d.quantity, price: d.price })); }
-                res.push(tx);
-            });
-            const sorted = res.sort((a,b) => new Date(a.timestamp) - new Date(b.timestamp));
-            let rc = 1; sorted.forEach(tx => { if(tx.isRound) tx.roundNumber = rc++; });
-            return sorted.reverse();
+            const res = []; [...map.values()].forEach(arr => { const f = arr[0]; const tx = { id: f.roundId || f.id, name: f.name, price: arr.reduce((s, x) => s + x.price, 0), timestamp: f.timestamp, isRound: !!f.roundId, ownerName: f.ownerName, isPaid: arr.every(x => x.isPaid), details: [], items: arr }; if(tx.isRound) { const g = groupItems(arr); tx.details = Object.entries(g).map(([n, d]) => ({ name: n, quantity: d.quantity, price: d.price })); } res.push(tx); });
+            const sorted = res.sort((a,b) => new Date(a.timestamp) - new Date(b.timestamp)); let rc = 1; sorted.forEach(tx => { if(tx.isRound) tx.roundNumber = rc++; }); return sorted.reverse();
         }
         function setActive(id) { activeTableId = id; document.querySelectorAll('.table-card').forEach(c => c.classList.toggle('active', c.dataset.tableId === id)); applyGridFilter(); updateTableInd(); }
-        function updateTableInd() {
-            const i = document.getElementById('active-table-indicator'); const n = document.getElementById('active-table-name'); const as = document.getElementById('active-table-select'); const transferBtn = document.getElementById('transfer-table-btn');
-            const t = allTablesData.get(activeTableId);
-            if(t) { n.textContent = t.name; i.classList.remove('hidden'); as.value = activeTableId; transferBtn.classList.remove('hidden'); } 
-            else { i.classList.add('hidden'); as.value = ""; transferBtn.classList.add('hidden'); }
-        }
+        function updateTableInd() { const i = document.getElementById('active-table-indicator'); const n = document.getElementById('active-table-name'); const as = document.getElementById('active-table-select'); const transferBtn = document.getElementById('transfer-table-btn'); const t = allTablesData.get(activeTableId); if(t) { n.textContent = t.name; i.classList.remove('hidden'); as.value = activeTableId; transferBtn.classList.remove('hidden'); } else { i.classList.add('hidden'); as.value = ""; transferBtn.classList.add('hidden'); } }
         function toggleGridFilter() { isGridFiltered = !isGridFiltered; document.getElementById('toggle-filter-btn').textContent = isGridFiltered ? 'Mostrar Todas' : 'Mostrar Solo Activa'; applyGridFilter(); }
         function applyGridFilter() { const cards = document.querySelectorAll('.table-card'); cards.forEach(c => { c.style.display = (isGridFiltered && activeTableId && c.dataset.tableId !== activeTableId) ? 'none' : 'block'; }); }
-        function showMsg(m, err=false) { const el = document.getElementById('status-message'); el.textContent = m; el.className = `mt-4 text-center ${err ? 'text-red-400' : 'text-green-400'}`; setTimeout(() => el.textContent = '', 3000); }
+        function showMsg(m, err=false) { const el = document.getElementById('status-message'); el.textContent = m; el.className = `mt-4 text-center ${err ? 'text-red-400' : 'text-green-400'}`; setTimeout(() => { if(el.textContent === m) el.textContent = ''; }, 3000); }
         function confirmDialog(t, m, cb) { document.getElementById('confirmation-title').textContent = t; document.getElementById('confirmation-message').textContent = m; onConfirmAction = cb; document.getElementById('confirmation-modal').classList.remove('hidden'); }
         function toggleLayout() { const rp = document.getElementById('right-panel'); const lp = document.getElementById('left-panel'); const btn = document.getElementById('toggle-tables-btn'); if(rp.classList.contains('hidden')) { rp.classList.remove('hidden'); lp.classList.replace('w-full', 'md:w-1/3'); btn.textContent = 'Ocultar Mesas'; } else { rp.classList.add('hidden'); lp.classList.replace('md:w-1/3', 'w-full'); btn.textContent = 'Mostrar Mesas'; } }
         function setDefaultAuditDates() { const now = new Date(); const s = new Date(now.setHours(0,0,0,0)).toISOString().slice(0, 16); const e = new Date(now.setHours(23,59,59,999)).toISOString().slice(0, 16); document.getElementById('audit-start').value = s; document.getElementById('audit-end').value = e; }
@@ -1137,11 +928,7 @@
             r.onstart = () => b.classList.add('mic-listening'); r.onend = () => b.classList.remove('mic-listening');
             r.onresult = (e) => {
                 const t = e.results[0][0].transcript.toLowerCase(); const m = t.match(/(\d+)\s+(.+)/);
-                if(m) {
-                    const q = parseInt(m[1]); const n = m[2].trim();
-                    const p = products.find(px => n.includes(px.name.toLowerCase()));
-                    if(p) { const ex = currentRound.find(x => x.name === p.name); if(ex) ex.quantity += q; else currentRound.push({ name: p.name, price: p.price, quantity: q }); renderRound(); showMsg(`Voz: ${q} ${p.name}`); }
-                }
+                if(m) { const q = parseInt(m[1]); const n = m[2].trim(); const p = products.find(px => n.includes(px.name.toLowerCase())); if(p) { const ex = currentRound.find(x => x.name === p.name); if(ex) ex.quantity += q; else currentRound.push({ name: p.name, price: p.price, quantity: q }); renderRound(); showMsg(`Voz: ${q} ${p.name}`); } }
             };
             b.onclick = () => r.start();
         }
