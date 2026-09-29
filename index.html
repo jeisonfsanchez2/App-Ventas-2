@@ -10,54 +10,23 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #111827;
-            color: #f3f4f6;
-        }
+        body { font-family: 'Inter', sans-serif; background-color: #111827; color: #f3f4f6; }
         ::-webkit-scrollbar { width: 8px; height: 8px; }
         ::-webkit-scrollbar-track { background: #1f2937; border-radius: 10px; }
         ::-webkit-scrollbar-thumb { background: #4b5563; border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: #6b7280; }
 
-        .table-card.active {
-            border-color: #06b6d4;
-            box-shadow: 0 0 15px rgba(6, 182, 212, 0.5);
-            border-width: 2px;
-        }
+        .table-card.active { border-color: #06b6d4; box-shadow: 0 0 15px rgba(6, 182, 212, 0.5); border-width: 2px; }
 
-        @keyframes pulse-red {
-            0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
-            70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
-        }
-        .mic-listening {
-            animation: pulse-red 1.5s infinite;
-            background-color: #ef4444 !important;
-            color: white !important;
-        }
+        @keyframes pulse-red { 0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); } 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
+        .mic-listening { animation: pulse-red 1.5s infinite; background-color: #ef4444 !important; color: white !important; }
         
         .scroll-thin::-webkit-scrollbar { width: 4px; }
         
-        .qty-controls {
-            transition: all 0.2s ease-in-out;
-            max-width: 0;
-            overflow: hidden;
-            opacity: 0;
-        }
-        .qty-controls.show {
-            max-width: 120px;
-            opacity: 1;
-            margin-left: 8px;
-        }
+        .qty-controls { transition: all 0.2s ease-in-out; max-width: 0; overflow: hidden; opacity: 0; }
+        .qty-controls.show { max-width: 120px; opacity: 1; margin-left: 8px; }
 
-        #floating-undo-btn {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            z-index: 40;
-            display: none;
-        }
+        #floating-undo-btn { position: fixed; bottom: 20px; right: 20px; z-index: 40; display: none; }
     </style>
 </head>
 <body class="flex flex-col md:flex-row min-h-screen">
@@ -215,7 +184,7 @@
                 <select id="move-round-dest-select" class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg p-3 focus:outline-none"></select>
             </div>
             <div class="p-4 bg-gray-900/50 flex justify-end gap-3 font-bold text-xs uppercase">
-                <button id="move-round-cancel-btn" class="bg-gray-600 px-5 py-2 rounded">Cancelar</button>
+                <button onclick="document.getElementById('move-round-modal').classList.add('hidden')" class="bg-gray-600 px-5 py-2 rounded">Cancelar</button>
                 <button id="move-round-confirm-btn" class="bg-indigo-600 px-5 py-2 rounded shadow-lg">Traspasar</button>
             </div>
         </div>
@@ -284,8 +253,8 @@
                 </div>
             </div>
             <div class="flex border-b border-gray-700 bg-gray-900/30 md:hidden">
-                <button id="audit-tab-list" class="flex-1 py-3 font-bold text-[10px] uppercase bg-cyan-600 text-white">Listado</button>
-                <button id="audit-tab-summary" class="flex-1 py-3 font-bold text-[10px] uppercase bg-gray-700 text-white">Ventas</button>
+                <button id="audit-tab-list" class="flex-1 py-3 font-bold text-[10px] uppercase bg-cyan-600">Listado</button>
+                <button id="audit-tab-summary" class="flex-1 py-3 font-bold text-[10px] uppercase bg-gray-700">Ventas</button>
             </div>
             <div class="flex-1 overflow-hidden flex flex-col md:flex-row">
                 <div id="audit-summary-panel" class="w-full md:w-1/3 bg-gray-900/30 border-r border-gray-700 flex flex-col overflow-y-auto scroll-thin hidden md:flex">
@@ -313,13 +282,12 @@
         </div>
     </div>
 
-    <!-- === SCRIPT ÚNICO Y DEFINITIVO === -->
+    <!-- SCRIPT DE APLICACIÓN -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc, deleteDoc, onSnapshot, collection, updateDoc, increment, arrayUnion, arrayRemove, query, where, getDocs, writeBatch } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, setDoc, deleteDoc, onSnapshot, collection, updateDoc, increment, arrayUnion, query, where, getDocs, writeBatch } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // CONFIGURACIÓN DE FIREBASE
         const firebaseConfig = {
           apiKey: "AIzaSyCUGWQJDywozNv20i4IACVXaeXyHVpYPqg",
           authDomain: "ventas-spb.firebaseapp.com",
@@ -330,12 +298,12 @@
         };
 
         const products = [
-            { category: "Cervezas", name: "Aguila", price: 3300 },
-            { category: "Cervezas", name: "Poker", price: 3300 },
-            { category: "Cervezas", name: "Budwaiser", price: 3300 },
-            { category: "Cervezas", name: "Light", price: 3500 },
-            { category: "Cervezas", name: "Poker B", price: 3500 },
-            { category: "Cervezas", name: "Aguila B", price: 3500 },
+            { category: "Cervezas", name: "Aguila", price: 3500 },
+            { category: "Cervezas", name: "Poker", price: 3500 },
+            { category: "Cervezas", name: "Budwaiser", price: 3500 },
+            { category: "Cervezas", name: "Light", price: 3700 },
+            { category: "Cervezas", name: "Poker B", price: 3700 },
+            { category: "Cervezas", name: "Aguila B", price: 3700 },
             { category: "Cervezas", name: "Club", price: 4000 },
             { category: "Cervezas", name: "Coronita", price: 4000 },
             { category: "Cervezas", name: "Cerveza Lata", price: 4000 },
@@ -347,37 +315,38 @@
             { category: "RTD (Listos)", name: "Cuates", price: 6000 },
             { category: "RTD (Listos)", name: "Smirnoff Ice", price: 10000 },
             { category: "Licores", name: "Nectar 1/2", price: 34000 },
-            { category: "Licores", name: "Antioqueño Verde 1/2", price: 36000 },
+            { category: "Licores", name: "Antioqueño Verde 1/2", price: 38000 },
             { category: "Licores", name: "Whiskey 1/2", price: 40000 },
             { category: "Licores", name: "Smirnoff 1/2", price: 40000 },
             { category: "Licores", name: "Antioqueño Azul 1/2", price: 40000 },
             { category: "Licores", name: "Ron 1/2", price: 42000 },
-            { category: "Licores", name: "Amarillo 1/2", price: 43000 },
+            { category: "Licores", name: "Amarillo 1/2", price: 45000 },
             { category: "Licores", name: "Whiskey 1/4", price: 55000 },
             { category: "Licores", name: "Nectar Botella", price: 62000 },
             { category: "Licores", name: "Smirnoff Botella", price: 70000 },
-            { category: "Licores", name: "Amarillo Botella", price: 73000 },
+            { category: "Licores", name: "Amarillo Botella", price: 75000 },
             { category: "Licores", name: "Whiskey Botella", price: 75000 },
             { category: "Licores", name: "Tequila 1/2", price: 75000 },
             { category: "Shots", name: "Shot Aguardiente", price: 3700 },
             { category: "Shots", name: "Shot Whisky", price: 4500 },
+            { category: "Shots", name: "Shot Ron", price: 4500 },
             { category: "Shots", name: "Shot Tequila", price: 7500 },
             { category: "Sin Alcohol", name: "Agua", price: 2500 },
-            { category: "Sin Alcohol", name: "Pony Malta", price: 3300 },
-            { category: "Sin Alcohol", name: "Hit", price: 3300 },
-            { category: "Sin Alcohol", name: "Sporade", price: 3300 },
-            { category: "Sin Alcohol", name: "Cocacola", price: 3300 },
+            { category: "Sin Alcohol", name: "Pony Malta", price: 3500 },
+            { category: "Sin Alcohol", name: "Hit", price: 3500 },
+            { category: "Sin Alcohol", name: "Sporade", price: 3500 },
+            { category: "Sin Alcohol", name: "Cocacola", price: 4000 },
             { category: "Sin Alcohol", name: "Electrolit", price: 10000 },
             { category: "Petaquería", name: "Petaco AG-PK", price: 93000 },
             { category: "Petaquería", name: "Petaco Ligth", price: 95000 },
             { category: "Petaquería", name: "1/2 Petaco AG-PK", price: 48000 },
             { category: "Petaquería", name: "1/2 Petaco Lg", price: 49000 },
-            { category: "Snacks y Otros", name: "Mustang", price: 1300 },
-            { category: "Snacks y Otros", name: "Lucky", price: 1500 },
-            { category: "Snacks y Otros", name: "1/2 Mustang", price: 8000 },
-            { category: "Snacks y Otros", name: "1/2 Lucky", price: 9000 },
-            { category: "Snacks y Otros", name: "Doritos", price: 3300 },
-            { category: "Snacks y Otros", name: "Papas", price: 3300 },
+            { category: "Snacks y Otros", name: "Mustang", price: 1500 },
+            { category: "Snacks y Otros", name: "Lucky", price: 1700 },
+            { category: "Snacks y Otros", name: "1/2 Mustang", price: 9500 },
+            { category: "Snacks y Otros", name: "1/2 Lucky", price: 10000 },
+            { category: "Snacks y Otros", name: "Doritos", price: 3500 },
+            { category: "Snacks y Otros", name: "Papas", price: 3500 },
             { category: "Snacks y Otros", name: "Detodtito", price: 3700 },
             { category: "Snacks y Otros", name: "Todorico", price: 3700 },
             { category: "Snacks y Otros", name: "Bonfiest", price: 6000 },
@@ -388,7 +357,7 @@
 
         const predefinedTables = ['Amarillo', 'Verde', 'Azul', 'Roja', 'Barra', 'Ladrillo', 'Sofa', 'Ventana', 'Escalera', 'Reja', 'Entrada', 'TV'];
 
-        // VARIABLES GLOBALES
+        // Variables Globales
         let db, auth, tablesCollectionRef, closedTablesCollectionRef;
         let activeTableId = null, currentRound = [], allTablesData = new Map();
         let pdfScriptsLoaded = false, onConfirmAction = null, currentEditContext = null;
@@ -396,7 +365,7 @@
         let activeQtyControlsName = null, lastTransaction = null, currentMovingRound = null;
 
         // ==========================================
-        // 1. ASIGNACIONES A WINDOW (Para onclicks de HTML)
+        // 1. ASIGNACIONES A WINDOW (Para los onclick en el HTML)
         // ==========================================
         window.openHistory = (e, id) => { 
             if(e) e.stopPropagation(); 
@@ -412,10 +381,7 @@
                     await loadScript("https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js");
                     await loadScript("https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js");
                     pdfScriptsLoaded = true;
-                } catch (error) { 
-                    showMsg("Error PDF", true); 
-                    return; 
-                }
+                } catch (error) { showMsg("Error PDF", true); return; }
             }
             const { jsPDF } = window.jspdf; 
             const docP = new jsPDF();
@@ -424,7 +390,7 @@
             docP.setFontSize(22); docP.setTextColor(40); 
             docP.text("Sanchez's Sport Bar", 105, 20, { align: 'center' });
             docP.setFontSize(10); docP.setTextColor(100); 
-            docP.text(`Mesa: ${t.name.toUpperCase()} | Consulta: ${new Date().toLocaleString()}`, 20, 30);
+            docP.text(`Mesa: ${t.name.toUpperCase()} | Fecha: ${new Date().toLocaleString()}`, 20, 30);
             
             const grouped = groupItems(t.items);
             const prodBody = Object.entries(grouped).map(([n, d]) => [n, d.quantity, formatCurrency(d.price), formatCurrency(d.totalPrice)]);
@@ -444,7 +410,6 @@
             docP.setFontSize(14); docP.setTextColor(0); 
             docP.text("Detalle por Persona (Pendiente)", 20, currentY); 
             currentY += 5;
-            
             const ownerBody = [];
             ownersMap.forEach((data, owner) => {
                 ownerBody.push([{ content: owner.toUpperCase(), styles: { fontStyle: 'bold', fillColor: [230, 230, 230] } }, { content: formatCurrency(data.pending), styles: { fontStyle: 'bold', halign: 'right', fillColor: [230, 230, 230] } }]);
@@ -453,6 +418,7 @@
                     ownerBody.push([`  - ${desc}`, { content: formatCurrency(tx.price), styles: { halign: 'right' } }]);
                 });
             });
+            
             docP.autoTable({ startY: currentY, head: [['Nombre / Descripción', 'Valor']], body: ownerBody, theme: 'plain', styles: { fontSize: 8 } });
             
             const finalY = docP.lastAutoTable.finalY;
@@ -467,9 +433,18 @@
             if(e) e.stopPropagation(); 
             const t = allTablesData.get(id);
             confirmDialog(`Cerrar Mesa ${t.name}`, `Saldo final: ${formatCurrency(t.total)}. ¿Proceder con el cierre?`, async () => {
-                await setDoc(doc(closedTablesCollectionRef, `${id}-${Date.now()}`), { ...t, closedAt: new Date().toISOString(), status: 'closed' });
+                const closedId = `${id}-${Date.now()}`;
+                const tableToClose = { ...t, closedAt: new Date().toISOString(), status: 'closed', closedId: closedId };
+                
+                await setDoc(doc(closedTablesCollectionRef, closedId), tableToClose);
                 await deleteDoc(doc(tablesCollectionRef, id)); 
+                
                 if(activeTableId === id) setActive(null); 
+                
+                // PUNTO 4: Guardar mesa completa para poder deshacer el cierre
+                lastTransaction = { type: 'closeTable', tableId: id, closedId: closedId, tableData: t };
+                updateUndoVisibility();
+                
                 showMsg("Mesa finalizada");
             });
         };
@@ -604,7 +579,9 @@
         window.reopenTable = (id) => {
             confirmDialog("Reabrir Mesa", "¿Regresar esta cuenta a mesas activas?", async () => {
                 const snap = await getDoc(doc(closedTablesCollectionRef, id)); const data = snap.data();
-                const check = await getDoc(doc(tablesCollectionRef, data.id)); if(check.exists()) return showMsg("Mesa ya abierta", true);
+                const check = await getDoc(doc(tablesCollectionRef, data.id)); 
+                if(check.exists()) return showMsg("Mesa ya abierta", true);
+                
                 const batch = writeBatch(db); 
                 batch.set(doc(tablesCollectionRef, data.id), { ...data, status: 'open' });
                 batch.delete(doc(closedTablesCollectionRef, id)); 
@@ -617,6 +594,17 @@
             confirmDialog("Eliminar Registro", `¿Borrar "${name}" definitivamente? No se sumará a las cuentas.`, async () => {
                 try { await deleteDoc(doc(closedTablesCollectionRef, id)); showMsg("Mesa borrada"); fetchAudit(); } catch (e) { showMsg("Error", true); }
             });
+        };
+
+        window.applySpecial = async (type, val) => {
+            if(!activeTableId) return showMsg("Seleccione mesa", true);
+            const tData = allTablesData.get(activeTableId);
+            const id = `i-${Date.now()}-${Math.random()}`;
+            const item = { id, name: type, price: type === 'Descuento' ? -val : val, timestamp: new Date().toISOString(), isPaid: false };
+            await updateDoc(doc(tablesCollectionRef, activeTableId), { items: arrayUnion(item), total: increment(item.price) });
+            lastTransaction = { type: 'special', tableId: activeTableId, tableName: tData.name, itemIds: [id], totalReversed: item.price }; 
+            updateUndoVisibility(); 
+            showMsg(`${type} aplicado`);
         };
 
         window.switchAuditTab = (tab) => {
@@ -728,6 +716,10 @@
         // ==========================================
         function renderProducts(filterQuery = "") {
             const s = document.getElementById('product-select'); if(!s) return;
+            
+            // PUNTO 1: Mantener la selección actual del dropdown.
+            const currentSelection = s.value; 
+            
             const queryClean = filterQuery.toLowerCase().trim();
             s.innerHTML = ''; 
             const cats = {}; 
@@ -744,6 +736,11 @@
                     g.appendChild(o); 
                 }); 
                 s.appendChild(g); 
+            }
+            
+            // PUNTO 1: Restaurar la selección si no hay filtro de búsqueda
+            if(currentSelection && filterQuery === "") {
+                s.value = currentSelection;
             }
         }
 
@@ -850,12 +847,21 @@
         }
 
         async function openTable() {
-            const s = document.getElementById('table-select'); const other = document.getElementById('other-table-name').value.trim();
-            const name = s.value === '--- Otra ---' ? other : s.value; 
+            const s = document.getElementById('table-select'); 
+            const other = document.getElementById('other-table-name').value.trim();
+            const name = s.value === '--- Otra ---' ? other : s.value;
             if(!name) return showMsg("Nombre no válido", true);
             const id = name.replace(/\s+/g, '-').toLowerCase();
+            
+            // PUNTO 3: Validar que la mesa no exista ya en las activas
+            const check = await getDoc(doc(tablesCollectionRef, id)); 
+            if(check.exists()) {
+                showMsg("La mesa ya está abierta", true);
+                return;
+            }
+
             await setDoc(doc(tablesCollectionRef, id), { id, name, items: [], total: 0, status: 'open', createdAt: new Date().toISOString() });
-            document.getElementById('open-table-form').classList.add('hidden'); 
+            document.getElementById('open-table-form').classList.add('hidden');
             document.getElementById('toggle-open-table-form-btn').textContent = 'Nueva Mesa';
             setActive(id); 
             showMsg("Mesa abierta");
@@ -906,7 +912,7 @@
             const price = parseFloat(s.options[s.selectedIndex].dataset.price);
             
             if(name === 'Descuento' || name === 'Otros') { 
-                confirmDialog(`Aplicar ${name}`, `¿Aplicar ${formatCurrency(q)} de ${name}?`, () => applySpecial(name, q)); 
+                confirmDialog(`Aplicar ${name}`, `¿Aplicar ${formatCurrency(q)} de ${name}?`, () => window.applySpecial(name, q)); 
                 return; 
             }
             
@@ -914,8 +920,7 @@
             if(ex) ex.quantity += q; 
             else currentRound.push({ name, price, quantity: q });
             
-            document.getElementById('product-search').value = ""; 
-            renderProducts(""); 
+            // PUNTO 1: NO se resetea la búsqueda para que el producto quede seleccionado
             renderRound(); 
             document.getElementById('product-quantity').value = 1;
         }
@@ -926,28 +931,30 @@
             const time = editingRoundData ? editingRoundData.timestamp : new Date().toISOString();
             const owner = editingRoundData ? editingRoundData.ownerName : null; 
             const paid = editingRoundData ? editingRoundData.isPaid : false;
-            
-            const items = []; const itemIds = []; let sumToPending = 0;
+
+            const items = [];
+            const itemIds = [];
+            let sumToPending = 0;
             const tData = allTablesData.get(activeTableId);
-            
+
             currentRound.forEach(r => {
                 for(let i=0; i<r.quantity; i++) {
-                    const id = `i-${Date.now()}-${i}-${Math.random()}`; 
+                    const id = `i-${Date.now()}-${i}-${Math.random()}`;
                     itemIds.push(id);
                     items.push({ id, name: r.name, price: r.price, roundId: rId, timestamp: time, isPaid: paid, ownerName: owner });
                 }
                 if(!paid) sumToPending += (r.price * r.quantity);
             });
-            
+
             await updateDoc(doc(tablesCollectionRef, activeTableId), { items: arrayUnion(...items), total: increment(sumToPending) });
-            
-            if(!editingRoundData) { 
-                lastTransaction = { tableId: activeTableId, tableName: tData.name, itemIds: itemIds, totalReversed: sumToPending }; 
-                updateUndoVisibility(); 
+
+            // Guardar para Deshacer
+            if(!editingRoundData) {
+                lastTransaction = { type: 'round', tableId: activeTableId, tableName: tData.name, itemIds: itemIds, totalReversed: sumToPending };
+                updateUndoVisibility();
             }
-            
-            currentRound = []; editingRoundData = null; activeQtyControlsName = null; 
-            renderRound(); 
+
+            currentRound = []; editingRoundData = null; activeQtyControlsName = null; renderRound();
             showMsg("Registrado");
         }
 
@@ -956,9 +963,10 @@
             const tData = allTablesData.get(activeTableId);
             const id = `i-${Date.now()}-${Math.random()}`;
             const item = { id, name: type, price: type === 'Descuento' ? -val : val, timestamp: new Date().toISOString(), isPaid: false };
+            
             await updateDoc(doc(tablesCollectionRef, activeTableId), { items: arrayUnion(item), total: increment(item.price) });
             
-            lastTransaction = { tableId: activeTableId, tableName: tData.name, itemIds: [id], totalReversed: item.price }; 
+            lastTransaction = { type: 'special', tableId: activeTableId, tableName: tData.name, itemIds: [id], totalReversed: item.price }; 
             updateUndoVisibility(); 
             showMsg(`${type} aplicado`);
         }
@@ -988,10 +996,10 @@
                 const ownerBtn = tx.ownerName ? `<span onclick="window.askOwner('${t.id}', '${tx.id}', ${tx.isRound})" class="ml-2 bg-blue-900/50 text-blue-400 border border-blue-700 px-2 rounded text-[10px] cursor-pointer font-bold uppercase tracking-tighter">${tx.ownerName}</span>` : `<button onclick="window.askOwner('${t.id}', '${tx.id}', ${tx.isRound})" class="ml-2 bg-blue-600/20 text-blue-400 px-2 rounded text-[10px] border border-blue-600/30 uppercase font-bold transition-all tracking-tighter">Dueño</button>`;
                 html += `<li class="py-5 flex flex-col gap-2"><div class="flex justify-between items-start"><div><span class="font-black text-lg text-white uppercase tracking-tighter">${tx.isRound ? 'Ronda ' + tx.roundNumber : tx.name}</span>${ownerBtn}<p class="text-[11px] text-gray-500 font-mono">${new Date(tx.timestamp).toLocaleTimeString('es-CO')}</p></div>
                 <div class="flex items-center gap-4"><span class="text-xl font-black ${isPaid ? 'text-green-500/50 line-through' : 'text-white'} font-mono">${formatCurrency(tx.price)}</span>
-                <div class="flex gap-1 text-white">${isPaid ? `<button onclick="window.reversePayment('${t.id}', '${tx.id}', ${tx.price})" class="bg-gray-700 text-white font-bold py-2 px-3 rounded text-[10px] uppercase shadow-sm">PAGADO</button>` : `<button onclick="window.payRound('${t.id}', '${tx.id}', ${tx.price})" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-3 rounded text-[10px] uppercase shadow-sm">Pagar</button>`}
+                <div class="flex gap-1 text-white">${isPaid ? `<button onclick="window.reversePayment('${t.id}', '${tx.id}',${tx.price})" class="bg-gray-700 text-white font-bold py-2 px-3 rounded text-[10px] uppercase shadow-sm">PAGADO</button>` : `<button onclick="window.payRound('${t.id}', '${tx.id}',${tx.price})" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-3 rounded text-[10px] uppercase shadow-sm">Pagar</button>`}
                 <button onclick="window.repeatRound('${tx.id}')" class="bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-2 px-3 rounded text-[10px] uppercase shadow-sm">Repetir</button>
-                ${tx.isRound ? `<button onclick="window.moveRoundPrompt('${t.id}', '${tx.id}', ${tx.price})" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-3 rounded text-[10px] uppercase shadow-sm">Mover</button>` : ''}
-                ${tx.isRound ? `<button onclick="window.editRoundPrompt('${t.id}', '${tx.id}', ${tx.price})" class="bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 px-3 rounded text-[10px] shadow-sm"><i class="fas fa-edit"></i></button>` : ''}
+                ${tx.isRound ? `<button onclick="window.moveRoundPrompt('${t.id}', '${tx.id}',${tx.price})" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-3 rounded text-[10px] uppercase shadow-sm">Mover</button>` : ''}
+                ${tx.isRound ? `<button onclick="window.editRoundPrompt('${t.id}', '${tx.id}',${tx.price})" class="bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 px-3 rounded text-[10px] shadow-sm"><i class="fas fa-edit"></i></button>` : ''}
                 <button onclick="window.deleteTx('${t.id}', '${tx.id}', ${tx.isRound}, ${tx.price}, ${tx.isPaid})" class="text-red-500 font-black text-2xl px-2 transition-transform hover:scale-110">&times;</button></div></div></div>
                 ${tx.isRound ? `<ul class="pl-4 border-l-2 border-gray-700 mt-1 space-y-0.5 text-white">${tx.details.map(d => `<li class="text-xs text-gray-400 font-medium">${d.name} <span class="text-gray-200 font-bold">x ${d.quantity}</span></li>`).join('')}</ul>` : ''}</li>`;
             });
@@ -1045,26 +1053,47 @@
             mod.classList.remove('hidden');
         }
 
+        // --- DESHACER (CTRL+Z) PUNTO 4 ---
         function setupUndoButtons() {
             const btns = [document.getElementById('main-undo-btn'), document.getElementById('floating-undo-btn')];
             btns.forEach(btn => {
                 btn.onclick = () => {
                     if(!lastTransaction) return;
-                    confirmDialog("Deshacer", "¿Reversar último cambio?", async () => {
-                        const ref = doc(tablesCollectionRef, lastTransaction.tableId); const s = await getDoc(ref);
-                        if(!s.exists()) return; 
-                        const ids = new Set(lastTransaction.itemIds); 
-                        const newItems = s.data().items.filter(i => !ids.has(i.id));
-                        await updateDoc(ref, { items: newItems, total: increment(-lastTransaction.totalReversed) });
-                        lastTransaction = null; updateUndoVisibility(); showMsg("Reversado");
-                    });
+                    
+                    if(lastTransaction.type === 'closeTable') {
+                        // PUNTO 4: Deshacer el cierre de una mesa
+                        confirmDialog("Deshacer Cierre", `¿Reversar el cierre de la mesa y devolverla a las activas?`, async () => {
+                            try {
+                                const batch = writeBatch(db); 
+                                batch.set(doc(tablesCollectionRef, lastTransaction.tableId), { ...lastTransaction.tableData, status: 'open' });
+                                batch.delete(doc(closedTablesCollectionRef, lastTransaction.closedId)); 
+                                await batch.commit(); 
+                                showMsg("Cierre Reversado"); lastTransaction = null; updateUndoVisibility();
+                            } catch (e) { showMsg("Error al deshacer", true); }
+                        });
+                    } else {
+                        // Deshacer un ítem o ronda añadida
+                        confirmDialog("Deshacer Cambio", "¿Reversar el último registro realizado en " + lastTransaction.tableName + "?", async () => {
+                            try {
+                                const ref = doc(tablesCollectionRef, lastTransaction.tableId);
+                                const s = await getDoc(ref);
+                                if(!s.exists()) { showMsg("La mesa ya no existe", true); lastTransaction = null; updateUndoVisibility(); return; }
+                                
+                                const itemsIdToRem = new Set(lastTransaction.itemIds);
+                                const newItems = s.data().items.filter(i => !itemsIdToRem.has(i.id));
+                                
+                                await updateDoc(ref, { items: newItems, total: increment(-lastTransaction.totalReversed) });
+                                showMsg("Cambio reversado"); lastTransaction = null; updateUndoVisibility();
+                            } catch (e) { showMsg("Error al deshacer", true); }
+                        });
+                    }
                 };
             });
         }
         function updateUndoVisibility() { 
-            const v = !!lastTransaction; 
-            document.getElementById('main-undo-btn').classList.toggle('hidden', !v); 
-            document.getElementById('floating-undo-btn').style.display = (v && window.innerWidth < 768) ? 'flex' : 'none'; 
+            const visible = !!lastTransaction; 
+            document.getElementById('main-undo-btn').classList.toggle('hidden', !visible); 
+            document.getElementById('floating-undo-btn').style.display = (visible && window.innerWidth < 768) ? 'flex' : 'none'; 
         }
 
         // ==========================================
@@ -1097,12 +1126,12 @@
                     if(!prodMap.has(n)) prodMap.set(n, { q: 0, v: 0 }); 
                     const p = prodMap.get(n); p.q += grouped[n].quantity; p.v += grouped[n].totalPrice; 
                 }
-                listHtml += `<div class="bg-gray-900/40 p-4 rounded-xl border border-gray-700/50 shadow-lg text-white" ondblclick="window.showZoomFromAudit('${d.id}')">
+                listHtml += `<div class="audit-item bg-gray-900/40 p-4 rounded-xl border border-gray-700/50 shadow-lg text-white" data-table-name="${t.name}" ondblclick="window.showZoomFromAudit('${d.id}')">
                     <div class="flex justify-between items-start mb-2"><div><h5 class="font-black text-cyan-400 uppercase tracking-tighter">${t.name}</h5><p class="text-[10px] text-gray-500 font-mono">${new Date(t.closedAt).toLocaleString()}</p></div><span class="text-green-400 font-black text-lg font-mono">${formatCurrency(tTotal)}</span></div>
                     <div class="space-y-0.5 border-l-2 border-gray-700 pl-3 my-3 font-mono">${detail}</div>
                     <div class="flex gap-2">
                         <button onclick="window.reopenTable('${d.id}')" class="flex-1 bg-yellow-600 hover:bg-yellow-700 text-white font-black py-2 rounded uppercase text-[10px]">Reabrir</button>
-                        <button onclick="window.deleteIndividualClosedTable('${d.id}', '${t.name}')" class="bg-red-900/50 text-red-400 w-10 flex items-center justify-center rounded"><i class="fas fa-trash-alt"></i></button>
+                        <button onclick="window.deleteIndividualClosedTable('${d.id}', '${t.name}')" class="bg-red-900/50 text-red-400 hover:text-white w-10 flex items-center justify-center rounded transition-all"><i class="fas fa-trash-alt"></i></button>
                     </div></div>`;
             });
             document.getElementById('audit-total').textContent = formatCurrency(total); 
@@ -1170,7 +1199,7 @@
             document.getElementById('delete-filtered-audit-btn').onclick = () => handleDeleteFiltered();
             document.getElementById('reset-all-history-btn').onclick = () => handleResetAllHistory();
             
-            document.getElementById('transfer-table-btn').onclick = () => { if(!activeTableId) return showMsg("Seleccione mesa", true); const t = allTablesData.get(activeTableId); document.getElementById('transfer-from-name').textContent = t.name; document.getElementById('transfer-modal').classList.remove('hidden'); };
+            document.getElementById('transfer-table-btn').onclick = () => window.openTransferModal();
             document.getElementById('transfer-ok-btn').onclick = transferTable;
             document.getElementById('transfer-cancel-btn').onclick = () => document.getElementById('transfer-modal').classList.add('hidden');
             document.getElementById('close-transfer-modal-btn').onclick = () => document.getElementById('transfer-modal').classList.add('hidden');
@@ -1179,8 +1208,8 @@
             document.getElementById('close-audit-modal-btn').onclick = () => document.getElementById('audit-modal').classList.add('hidden');
             document.getElementById('close-zoom-modal-btn').onclick = () => document.getElementById('zoom-modal').classList.add('hidden');
             
-            document.getElementById('zoom-tab-product').onclick = () => { const tp = document.getElementById('zoom-tab-product'); const to = document.getElementById('zoom-tab-owner'); const cp = document.getElementById('zoom-content'); const co = document.getElementById('zoom-owner-content'); tp.classList.add('bg-cyan-600'); tp.classList.remove('bg-gray-700'); to.classList.add('bg-gray-700'); to.classList.remove('bg-cyan-600'); cp.classList.remove('hidden'); co.classList.add('hidden'); };
-            document.getElementById('zoom-tab-owner').onclick = () => { const tp = document.getElementById('zoom-tab-product'); const to = document.getElementById('zoom-tab-owner'); const cp = document.getElementById('zoom-content'); const co = document.getElementById('zoom-owner-content'); to.classList.add('bg-cyan-600'); to.classList.remove('bg-gray-700'); tp.classList.add('bg-gray-700'); tp.classList.remove('bg-cyan-600'); co.classList.remove('hidden'); cp.classList.add('hidden'); };
+            document.getElementById('zoom-tab-product').onclick = () => window.switchZoomTab('product');
+            document.getElementById('zoom-tab-owner').onclick = () => window.switchZoomTab('owner');
             
             document.getElementById('audit-tab-list').onclick = () => window.switchAuditTab('list');
             document.getElementById('audit-tab-summary').onclick = () => window.switchAuditTab('summary');
@@ -1196,10 +1225,14 @@
             
             document.getElementById('move-round-confirm-btn').onclick = confirmMoveRound;
             
+            // PUNTO 2: Buscador en Auditoría
             document.getElementById('audit-table-name').addEventListener('input', (e) => {
                 const queryStr = e.target.value.toLowerCase();
                 const items = document.querySelectorAll('#audit-content .audit-item');
-                items.forEach(item => { const name = item.dataset.tableName.toLowerCase(); item.style.display = name.includes(queryStr) ? 'block' : 'none'; });
+                items.forEach(item => {
+                    const name = item.dataset.tableName.toLowerCase();
+                    item.style.display = name.includes(queryStr) ? 'block' : 'none';
+                });
             });
         }
 
