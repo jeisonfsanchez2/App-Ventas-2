@@ -31,7 +31,6 @@
 </head>
 <body class="flex flex-col md:flex-row min-h-screen">
 
-    <!-- Botón Deshacer Flotante (Móvil) -->
     <button id="floating-undo-btn" class="bg-orange-600 hover:bg-orange-700 text-white w-14 h-14 rounded-full shadow-2xl flex items-center justify-center transition-all active:scale-95 border-2 border-white/20">
         <i class="fas fa-undo-alt text-xl"></i>
     </button>
@@ -140,7 +139,6 @@
 
     <!-- === MODALES === -->
     
-    <!-- Confirmación Global -->
     <div id="confirmation-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-[100] hidden">
         <div class="bg-gray-800 rounded-xl p-6 w-full max-w-sm border border-gray-700 shadow-2xl text-white">
             <h3 id="confirmation-title" class="text-xl font-bold text-white mb-2 uppercase tracking-tighter">Confirmar</h3>
@@ -152,7 +150,6 @@
         </div>
     </div>
 
-    <!-- Transferir Cuenta -->
     <div id="transfer-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-50 hidden">
         <div class="bg-gray-800 rounded-xl shadow-2xl w-full max-w-md border border-gray-700">
             <div class="p-5 border-b border-gray-700 flex justify-between items-center bg-gray-900/50 rounded-t-xl text-white">
@@ -173,7 +170,6 @@
         </div>
     </div>
 
-    <!-- Mover Ronda -->
     <div id="move-round-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-[70] hidden">
         <div class="bg-gray-800 rounded-xl shadow-2xl w-full max-w-sm border border-cyan-700 text-white">
             <div class="p-5 border-b border-gray-700 bg-gray-900/50 rounded-t-xl">
@@ -184,13 +180,12 @@
                 <select id="move-round-dest-select" class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg p-3 focus:outline-none"></select>
             </div>
             <div class="p-4 bg-gray-900/50 flex justify-end gap-3 font-bold text-xs uppercase">
-                <button onclick="document.getElementById('move-round-modal').classList.add('hidden')" class="bg-gray-600 px-5 py-2 rounded">Cancelar</button>
+                <button id="move-round-cancel-btn" class="bg-gray-600 px-5 py-2 rounded">Cancelar</button>
                 <button id="move-round-confirm-btn" class="bg-indigo-600 px-5 py-2 rounded shadow-lg">Traspasar</button>
             </div>
         </div>
     </div>
 
-    <!-- Historial -->
     <div id="history-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-50 hidden text-white">
         <div class="bg-gray-800 rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col border border-gray-700">
             <div class="flex justify-between items-center p-5 border-b border-gray-700 bg-gray-900/50 rounded-t-xl">
@@ -201,7 +196,6 @@
         </div>
     </div>
 
-    <!-- Zoom (Detalle) -->
     <div id="zoom-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-50 hidden text-white">
         <div class="bg-gray-800 rounded-xl shadow-2xl w-full max-w-lg max-h-[90vh] flex flex-col border border-gray-700">
             <div class="flex justify-between items-center p-4 border-b border-gray-700 bg-gray-900/50 rounded-t-xl">
@@ -209,7 +203,7 @@
                 <button id="close-zoom-modal-btn" class="text-gray-400 hover:text-white text-3xl leading-none">&times;</button>
             </div>
             <div class="flex border-b border-gray-700 bg-gray-900/30 text-[10px] font-bold uppercase">
-                <button id="zoom-tab-product" class="flex-1 py-3 bg-cyan-600">Por Producto</button>
+                <button id="zoom-tab-product" class="flex-1 py-3 bg-cyan-600 transition-all">Por Producto</button>
                 <button id="zoom-tab-owner" class="flex-1 py-3 bg-gray-700 hover:bg-gray-600 transition-all">Por Dueño</button>
             </div>
             <div class="flex-1 overflow-y-auto scroll-thin">
@@ -225,7 +219,6 @@
         </div>
     </div>
 
-    <!-- Auditoría Avanzada -->
     <div id="audit-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-40 hidden text-white">
         <div class="bg-gray-800 rounded-xl shadow-2xl w-full max-w-6xl max-h-[95vh] flex flex-col border border-gray-700">
             <div class="flex justify-between items-center p-4 border-b border-gray-700 bg-gray-900/50 rounded-t-xl">
@@ -269,7 +262,6 @@
         </div>
     </div>
 
-    <!-- Modal Editar Dueño -->
     <div id="edit-owner-name-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-[60] hidden text-white">
         <div class="bg-gray-800 rounded-xl p-6 w-full max-w-sm border border-gray-700 shadow-2xl">
             <h3 class="text-lg font-bold uppercase tracking-widest">Asignar Dueño</h3>
@@ -282,7 +274,7 @@
         </div>
     </div>
 
-    <!-- SCRIPT DE APLICACIÓN -->
+    <!-- SCRIPT BLINDADO (SIN REFERENCE ERRORS) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
@@ -357,7 +349,9 @@
 
         const predefinedTables = ['Amarillo', 'Verde', 'Azul', 'Roja', 'Barra', 'Ladrillo', 'Sofa', 'Ventana', 'Escalera', 'Reja', 'Entrada', 'TV'];
 
-        // Variables Globales
+        // ==========================================
+        // VARIABLES GLOBALES
+        // ==========================================
         let db, auth, tablesCollectionRef, closedTablesCollectionRef;
         let activeTableId = null, currentRound = [], allTablesData = new Map();
         let pdfScriptsLoaded = false, onConfirmAction = null, currentEditContext = null;
@@ -365,14 +359,16 @@
         let activeQtyControlsName = null, lastTransaction = null, currentMovingRound = null;
 
         // ==========================================
-        // 1. ASIGNACIONES A WINDOW (Para los onclick en el HTML)
+        // VINCULACIÓN ABSOLUTA A WINDOW 
         // ==========================================
-        window.openHistory = (e, id) => { 
+        // Declaramos todo explícitamente en 'window' ANTES de que cualquier botón pueda ser presionado
+        
+        window.openHistory = function(e, id) { 
             if(e) e.stopPropagation(); 
             showHistory(allTablesData.get(id)); 
         };
 
-        window.genFactura = async (e, id) => {
+        window.genFactura = async function(e, id) {
             if(e) e.stopPropagation(); 
             const t = allTablesData.get(id);
             if(!pdfScriptsLoaded) {
@@ -383,14 +379,11 @@
                     pdfScriptsLoaded = true;
                 } catch (error) { showMsg("Error PDF", true); return; }
             }
-            const { jsPDF } = window.jspdf; 
-            const docP = new jsPDF();
+            const { jsPDF } = window.jspdf; const docP = new jsPDF();
             if (typeof docP.autoTable !== 'function') { showMsg("Error plugin PDF", true); return; }
             
-            docP.setFontSize(22); docP.setTextColor(40); 
-            docP.text("Sanchez's Sport Bar", 105, 20, { align: 'center' });
-            docP.setFontSize(10); docP.setTextColor(100); 
-            docP.text(`Mesa: ${t.name.toUpperCase()} | Fecha: ${new Date().toLocaleString()}`, 20, 30);
+            docP.setFontSize(22); docP.setTextColor(40); docP.text("Sanchez's Sport Bar", 105, 20, { align: 'center' });
+            docP.setFontSize(10); docP.setTextColor(100); docP.text(`Mesa: ${t.name.toUpperCase()} | Fecha: ${new Date().toLocaleString()}`, 20, 30);
             
             const grouped = groupItems(t.items);
             const prodBody = Object.entries(grouped).map(([n, d]) => [n, d.quantity, formatCurrency(d.price), formatCurrency(d.totalPrice)]);
@@ -402,14 +395,10 @@
             txs.forEach(tx => {
                 const owner = tx.ownerName || 'Sin Asignar';
                 if (!ownersMap.has(owner)) ownersMap.set(owner, { pending: 0, txs: [] });
-                const oData = ownersMap.get(owner); 
-                if (!tx.isPaid) oData.pending += tx.price; 
-                oData.txs.push(tx);
+                const oData = ownersMap.get(owner); if (!tx.isPaid) oData.pending += tx.price; oData.txs.push(tx);
             });
 
-            docP.setFontSize(14); docP.setTextColor(0); 
-            docP.text("Detalle por Persona (Pendiente)", 20, currentY); 
-            currentY += 5;
+            docP.setFontSize(14); docP.setTextColor(0); docP.text("Detalle por Persona (Pendiente)", 20, currentY); currentY += 5;
             const ownerBody = [];
             ownersMap.forEach((data, owner) => {
                 ownerBody.push([{ content: owner.toUpperCase(), styles: { fontStyle: 'bold', fillColor: [230, 230, 230] } }, { content: formatCurrency(data.pending), styles: { fontStyle: 'bold', halign: 'right', fillColor: [230, 230, 230] } }]);
@@ -420,194 +409,150 @@
             });
             
             docP.autoTable({ startY: currentY, head: [['Nombre / Descripción', 'Valor']], body: ownerBody, theme: 'plain', styles: { fontSize: 8 } });
-            
             const finalY = docP.lastAutoTable.finalY;
-            docP.setFontSize(16); docP.setTextColor(0); 
-            docP.text(`TOTAL PENDIENTE: ${formatCurrency(t.total)}`, 190, finalY + 15, { align: 'right' });
-            
-            docP.save(`Factura_${t.name}_${Date.now()}.pdf`); 
-            showMsg("Descargado");
+            docP.setFontSize(16); docP.setTextColor(0); docP.text(`TOTAL PENDIENTE: ${formatCurrency(t.total)}`, 190, finalY + 15, { align: 'right' });
+            docP.save(`Factura_${t.name}_${Date.now()}.pdf`); showMsg("Descargado");
         };
 
-        window.closeTable = (e, id) => {
+        window.closeTable = function(e, id) {
             if(e) e.stopPropagation(); 
             const t = allTablesData.get(id);
             confirmDialog(`Cerrar Mesa ${t.name}`, `Saldo final: ${formatCurrency(t.total)}. ¿Proceder con el cierre?`, async () => {
                 const closedId = `${id}-${Date.now()}`;
                 const tableToClose = { ...t, closedAt: new Date().toISOString(), status: 'closed', closedId: closedId };
-                
                 await setDoc(doc(closedTablesCollectionRef, closedId), tableToClose);
                 await deleteDoc(doc(tablesCollectionRef, id)); 
-                
                 if(activeTableId === id) setActive(null); 
                 
-                // PUNTO 4: Guardar mesa completa para poder deshacer el cierre
                 lastTransaction = { type: 'closeTable', tableId: id, closedId: closedId, tableData: t };
-                updateUndoVisibility();
-                
-                showMsg("Mesa finalizada");
+                updateUndoVisibility(); showMsg("Mesa finalizada");
             });
         };
 
-        window.toggleQtyControls = (name) => { 
+        window.toggleQtyControls = function(name) { 
             activeQtyControlsName = (activeQtyControlsName === name) ? null : name; 
             renderRound(); 
         };
 
-        window.updateCurrentRoundQty = (e, name, delta) => { 
+        window.updateCurrentRoundQty = function(e, name, delta) { 
             if(e) e.stopPropagation(); 
             const item = currentRound.find(x => x.name === name); 
-            if(item) { 
-                item.quantity += delta; 
-                if(item.quantity < 1) item.quantity = 1; 
-                renderRound(); 
-            } 
+            if(item) { item.quantity += delta; if(item.quantity < 1) item.quantity = 1; renderRound(); } 
         };
 
-        window.removeItemFromCurrentRound = (name) => { 
+        window.removeItemFromCurrentRound = function(name) { 
             currentRound = currentRound.filter(item => item.name !== name); 
             if(currentRound.length === 0) { editingRoundData = null; activeQtyControlsName = null; } 
             renderRound(); 
         };
 
-        window.askOwner = (tId, txId, isRound) => {
+        window.askOwner = function(tId, txId, isRound) {
             currentEditContext = { tId, txId, isRound }; 
             const m = document.getElementById('edit-owner-name-modal');
             const sug = document.getElementById('owner-name-suggestions'); 
             const t = allTablesData.get(tId);
             const names = [...new Set(t.items.map(i => i.ownerName).filter(n => n))];
             sug.innerHTML = names.map(n => `<button onclick="window.setOwnerNameInput('${n}')" class="bg-blue-600/30 text-blue-300 border border-blue-600/50 text-[10px] px-2 py-1 rounded font-bold uppercase transition-all hover:bg-blue-600/50">${n}</button>`).join('');
-            document.getElementById('owner-name-input').value = ''; 
-            m.classList.remove('hidden');
+            document.getElementById('owner-name-input').value = ''; m.classList.remove('hidden');
         };
 
-        window.setOwnerNameInput = (name) => { 
+        window.setOwnerNameInput = function(name) { 
             document.getElementById('owner-name-input').value = name; 
         };
 
-        window.payRound = async (tId, rId, price) => { 
+        window.payRound = async function(tId, rId, price) { 
             const ref = doc(tablesCollectionRef, tId); const s = await getDoc(ref); 
             const items = s.data().items.map(i => i.roundId === rId || i.id === rId ? { ...i, isPaid: true } : i); 
-            await updateDoc(ref, { items, total: increment(-price) }); 
-            showHistory(allTablesData.get(tId)); 
+            await updateDoc(ref, { items, total: increment(-price) }); showHistory(allTablesData.get(tId)); 
         };
 
-        window.reversePayment = async (tId, rId, price) => { 
+        window.reversePayment = async function(tId, rId, price) { 
             const ref = doc(tablesCollectionRef, tId); const s = await getDoc(ref); 
             const items = s.data().items.map(i => i.roundId === rId || i.id === rId ? { ...i, isPaid: false } : i); 
-            await updateDoc(ref, { items, total: increment(price) }); 
-            showHistory(allTablesData.get(tId)); 
+            await updateDoc(ref, { items, total: increment(price) }); showHistory(allTablesData.get(tId)); 
         };
 
-        window.repeatRound = (id) => {
+        window.repeatRound = function(id) {
             for(let t of allTablesData.values()) {
-                const txs = groupHistoryByTransaction(t.items); 
-                const found = txs.find(x => x.id === id);
+                const txs = groupHistoryByTransaction(t.items); const found = txs.find(x => x.id === id);
                 if(found && found.isRound) { 
                     found.details.forEach(d => { 
                         const ex = currentRound.find(x => x.name === d.name); 
-                        if(ex) ex.quantity += d.quantity; 
-                        else currentRound.push({ name: d.name, price: d.price, quantity: d.quantity }); 
+                        if(ex) ex.quantity += d.quantity; else currentRound.push({ name: d.name, price: d.price, quantity: d.quantity }); 
                     }); 
-                    renderRound(); 
-                    document.getElementById('history-modal').classList.add('hidden'); 
-                    showMsg("Copiado a ronda"); 
-                    return; 
+                    renderRound(); document.getElementById('history-modal').classList.add('hidden'); showMsg("Copiado a ronda"); return; 
                 }
             }
         };
 
-        window.moveRoundPrompt = (sourceTableId, roundId, price) => {
+        window.moveRoundPrompt = function(sourceTableId, roundId, price) {
             currentMovingRound = { sourceTableId, roundId, price }; 
             const modal = document.getElementById('move-round-modal');
-            const select = document.getElementById('move-round-dest-select'); 
-            select.innerHTML = ''; 
-            let count = 0; 
-            allTablesData.forEach(t => { 
-                if(t.id !== sourceTableId) { 
-                    const opt = document.createElement('option'); opt.value = t.id; opt.textContent = t.name; select.appendChild(opt); count++; 
-                } 
-            });
-            if(count === 0) return showMsg("No hay otras mesas", true); 
-            modal.classList.remove('hidden');
+            const select = document.getElementById('move-round-dest-select'); select.innerHTML = ''; let count = 0; 
+            allTablesData.forEach(t => { if(t.id !== sourceTableId) { const opt = document.createElement('option'); opt.value = t.id; opt.textContent = t.name; select.appendChild(opt); count++; } });
+            if(count === 0) return showMsg("No hay otras mesas", true); modal.classList.remove('hidden');
         };
 
-        window.editRoundPrompt = (sourceTableId, roundId, price) => {
+        window.editRoundPrompt = function(sourceTableId, roundId, price) {
             confirmDialog("Editar Ronda", "¿Modificar esta ronda? Se conservará su orden original.", async () => {
                 try {
                     const sourceRef = doc(tablesCollectionRef, sourceTableId); const sourceSnap = await getDoc(sourceRef);
-                    const allItems = sourceSnap.data().items; 
-                    const roundItems = allItems.filter(i => i.roundId === roundId);
-                    const remainingItems = allItems.filter(i => i.roundId !== roundId); 
-                    const firstItem = roundItems[0];
-                    const txs = groupHistoryByTransaction(allItems); 
-                    const foundTx = txs.find(t => t.id === roundId);
-                    
+                    const allItems = sourceSnap.data().items; const roundItems = allItems.filter(i => i.roundId === roundId);
+                    const remainingItems = allItems.filter(i => i.roundId !== roundId); const firstItem = roundItems[0];
+                    const txs = groupHistoryByTransaction(allItems); const foundTx = txs.find(t => t.id === roundId);
                     editingRoundData = { roundId, timestamp: firstItem.timestamp, roundNumber: foundTx ? foundTx.roundNumber : null, ownerName: firstItem.ownerName || null, isPaid: firstItem.isPaid || false };
                     
-                    currentRound = []; 
-                    const grouped = groupItems(roundItems);
+                    currentRound = []; const grouped = groupItems(roundItems);
                     for(let name in grouped) { currentRound.push({ name, price: grouped[name].price, quantity: grouped[name].quantity }); }
                     
                     const unpaidPrice = roundItems.reduce((sum, item) => sum + (item.isPaid ? 0 : item.price), 0);
                     await updateDoc(sourceRef, { items: remainingItems, total: increment(-unpaidPrice) });
                     
-                    activeQtyControlsName = null; 
-                    renderRound(); 
-                    document.getElementById('history-modal').classList.add('hidden');
-                    document.getElementById('current-round-panel').scrollIntoView({ behavior: 'smooth' }); 
-                    setActive(sourceTableId); 
-                    showMsg("Modificando...");
+                    activeQtyControlsName = null; renderRound(); document.getElementById('history-modal').classList.add('hidden');
+                    document.getElementById('current-round-panel').scrollIntoView({ behavior: 'smooth' }); setActive(sourceTableId); showMsg("Modificando...");
                 } catch (err) { showMsg("Error al cargar", true); }
             });
         };
 
-        window.deleteTx = (tId, id, isRound, price, isPaid) => {
+        window.deleteTx = function(tId, id, isRound, price, isPaid) {
             confirmDialog("Borrar Registro", "¿Seguro que desea eliminar esta ronda definitivamente?", async () => {
                 const ref = doc(tablesCollectionRef, tId); const s = await getDoc(ref);
                 const items = s.data().items.filter(i => isRound ? i.roundId !== id : i.id !== id); const adjust = isPaid ? 0 : -price;
-                await updateDoc(ref, { items, total: increment(adjust) }); 
-                showHistory(allTablesData.get(tId));
+                await updateDoc(ref, { items, total: increment(adjust) }); showHistory(allTablesData.get(tId));
             });
         };
 
-        window.showZoomFromAudit = async (docId) => { 
+        window.showZoomFromAudit = async function(docId) { 
             const snap = await getDoc(doc(closedTablesCollectionRef, docId)); 
             if(snap.exists()) showZoom(snap.data()); 
         };
 
-        window.reopenTable = (id) => {
+        window.reopenTable = function(id) {
             confirmDialog("Reabrir Mesa", "¿Regresar esta cuenta a mesas activas?", async () => {
                 const snap = await getDoc(doc(closedTablesCollectionRef, id)); const data = snap.data();
-                const check = await getDoc(doc(tablesCollectionRef, data.id)); 
-                if(check.exists()) return showMsg("Mesa ya abierta", true);
-                
-                const batch = writeBatch(db); 
-                batch.set(doc(tablesCollectionRef, data.id), { ...data, status: 'open' });
-                batch.delete(doc(closedTablesCollectionRef, id)); 
-                await batch.commit(); 
-                showMsg("Reabierta"); fetchAudit();
+                const check = await getDoc(doc(tablesCollectionRef, data.id)); if(check.exists()) return showMsg("Mesa ya abierta", true);
+                const batch = writeBatch(db); batch.set(doc(tablesCollectionRef, data.id), { ...data, status: 'open' });
+                batch.delete(doc(closedTablesCollectionRef, id)); await batch.commit(); showMsg("Reabierta"); fetchAudit();
             });
         };
 
-        window.deleteIndividualClosedTable = (id, name) => {
+        window.deleteIndividualClosedTable = function(id, name) {
             confirmDialog("Eliminar Registro", `¿Borrar "${name}" definitivamente? No se sumará a las cuentas.`, async () => {
                 try { await deleteDoc(doc(closedTablesCollectionRef, id)); showMsg("Mesa borrada"); fetchAudit(); } catch (e) { showMsg("Error", true); }
             });
         };
 
-        window.applySpecial = async (type, val) => {
+        window.applySpecial = async function(type, val) {
             if(!activeTableId) return showMsg("Seleccione mesa", true);
             const tData = allTablesData.get(activeTableId);
             const id = `i-${Date.now()}-${Math.random()}`;
             const item = { id, name: type, price: type === 'Descuento' ? -val : val, timestamp: new Date().toISOString(), isPaid: false };
             await updateDoc(doc(tablesCollectionRef, activeTableId), { items: arrayUnion(item), total: increment(item.price) });
             lastTransaction = { type: 'special', tableId: activeTableId, tableName: tData.name, itemIds: [id], totalReversed: item.price }; 
-            updateUndoVisibility(); 
-            showMsg(`${type} aplicado`);
+            updateUndoVisibility(); showMsg(`${type} aplicado`);
         };
 
-        window.switchAuditTab = (tab) => {
+        window.switchAuditTab = function(tab) {
             const tl = document.getElementById('audit-tab-list'); const ts = document.getElementById('audit-tab-summary');
             const cl = document.getElementById('audit-content'); const cp = document.getElementById('audit-summary-panel');
             if(tab === 'list') { 
@@ -619,154 +564,64 @@
             }
         };
 
+        window.switchZoomTab = function(tab) { 
+            const tp = document.getElementById('zoom-tab-product'); const to = document.getElementById('zoom-tab-owner'); 
+            const cp = document.getElementById('zoom-content'); const co = document.getElementById('zoom-owner-content'); 
+            if(tab === 'product') { 
+                tp.classList.add('bg-cyan-600'); tp.classList.remove('bg-gray-700'); 
+                to.classList.add('bg-gray-700'); to.classList.remove('bg-cyan-600'); 
+                cp.classList.remove('hidden'); co.classList.add('hidden'); 
+            } else { 
+                to.classList.add('bg-cyan-600'); to.classList.remove('bg-gray-700'); 
+                tp.classList.add('bg-gray-700'); tp.classList.remove('bg-cyan-600'); 
+                co.classList.remove('hidden'); cp.classList.add('hidden'); 
+            } 
+        };
+
         // ==========================================
-        // 2. FUNCIONES BASE Y DE UTILIDAD
+        // FUNCIONES DE APOYO Y UTILIDAD (LOCALS)
         // ==========================================
         function formatCurrency(v) { return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 }).format(v); }
-        
-        function groupItems(items) { 
-            const g = {}; 
-            items.forEach(i => { if(!g[i.name]) g[i.name] = { quantity: 0, totalPrice: 0, price: i.price }; g[i.name].quantity++; g[i.name].totalPrice += i.price; }); 
-            return g; 
-        }
-
+        function groupItems(items) { const g = {}; items.forEach(i => { if(!g[i.name]) g[i.name] = { quantity: 0, totalPrice: 0, price: i.price }; g[i.name].quantity++; g[i.name].totalPrice += i.price; }); return g; }
         function groupHistoryByTransaction(items) {
-            const map = new Map(); 
-            items.forEach(i => { const k = i.roundId || i.id; if(!map.has(k)) map.set(k, []); map.get(k).push(i); });
-            const res = []; 
-            [...map.values()].forEach(arr => { 
-                const f = arr[0]; 
-                const tx = { id: f.roundId || f.id, name: f.name, price: arr.reduce((s, x) => s + x.price, 0), timestamp: f.timestamp, isRound: !!f.roundId, ownerName: f.ownerName, isPaid: arr.every(x => x.isPaid), details: [], items: arr }; 
-                if(tx.isRound) { 
-                    const g = groupItems(arr); 
-                    tx.details = Object.entries(g).map(([n, d]) => ({ name: n, quantity: d.quantity, price: d.price })); 
-                } 
-                res.push(tx); 
-            });
-            const sorted = res.sort((a,b) => new Date(a.timestamp) - new Date(b.timestamp)); 
-            let rc = 1; 
-            sorted.forEach(tx => { if(tx.isRound) tx.roundNumber = rc++; }); 
-            return sorted.reverse();
+            const map = new Map(); items.forEach(i => { const k = i.roundId || i.id; if(!map.has(k)) map.set(k, []); map.get(k).push(i); });
+            const res = []; [...map.values()].forEach(arr => { const f = arr[0]; const tx = { id: f.roundId || f.id, name: f.name, price: arr.reduce((s, x) => s + x.price, 0), timestamp: f.timestamp, isRound: !!f.roundId, ownerName: f.ownerName, isPaid: arr.every(x => x.isPaid), details: [], items: arr }; if(tx.isRound) { const g = groupItems(arr); tx.details = Object.entries(g).map(([n, d]) => ({ name: n, quantity: d.quantity, price: d.price })); } res.push(tx); });
+            const sorted = res.sort((a,b) => new Date(a.timestamp) - new Date(b.timestamp)); let rc = 1; sorted.forEach(tx => { if(tx.isRound) tx.roundNumber = rc++; }); return sorted.reverse();
         }
-
-        function showMsg(m, err=false) { 
-            const el = document.getElementById('status-message'); el.textContent = m; 
-            el.className = `mt-4 text-center ${err ? 'text-red-400' : 'text-green-400'} font-bold uppercase text-[10px] tracking-widest`; 
-            setTimeout(() => { if(el.textContent === m) el.textContent = ''; }, 3000); 
-        }
-
-        function confirmDialog(t, m, cb) { 
-            document.getElementById('confirmation-title').textContent = t; 
-            document.getElementById('confirmation-message').textContent = m; 
-            onConfirmAction = cb; 
-            document.getElementById('confirmation-modal').classList.remove('hidden'); 
-        }
-
-        function setActive(id) { 
-            activeTableId = id; 
-            document.querySelectorAll('.table-card').forEach(c => c.classList.toggle('active', c.dataset.tableId === id)); 
-            applyGridFilter(); 
-            updateTableInd(); 
-        }
-
-        function toggleGridFilter() { 
-            isGridFiltered = !isGridFiltered; 
-            document.getElementById('toggle-filter-btn').textContent = isGridFiltered ? 'Mostrar Todas' : 'Mostrar Activa'; 
-            applyGridFilter(); 
-        }
-
-        function applyGridFilter() { 
-            const cards = document.querySelectorAll('.table-card'); 
-            cards.forEach(c => { c.style.display = (isGridFiltered && activeTableId && c.dataset.tableId !== activeTableId) ? 'none' : 'block'; }); 
-        }
-
-        function updateTableInd() { 
-            const i = document.getElementById('active-table-indicator'); 
-            const n = document.getElementById('active-table-name'); 
-            const as = document.getElementById('active-table-select'); 
-            const btn = document.getElementById('transfer-table-btn'); 
-            const t = allTablesData.get(activeTableId); 
-            if(t) { 
-                n.textContent = t.name; i.classList.remove('hidden'); as.value = activeTableId; btn.classList.remove('hidden'); 
-            } else { 
-                i.classList.add('hidden'); as.value = ""; btn.classList.add('hidden'); 
-            } 
-        }
-
-        function toggleLayout() { 
-            const rp = document.getElementById('right-panel'); const lp = document.getElementById('left-panel'); const btn = document.getElementById('toggle-tables-btn'); 
-            if(rp.classList.contains('hidden')) { rp.classList.remove('hidden'); lp.classList.replace('w-full', 'md:w-1/3'); btn.textContent = 'Ocultar Mesas'; } 
-            else { rp.classList.add('hidden'); lp.classList.replace('md:w-1/3', 'w-full'); btn.textContent = 'Mostrar Mesas'; } 
-        }
-
-        function setDefaultAuditDates() { 
-            const now = new Date(); 
-            const s = new Date(now.setHours(0,0,0,0)).toISOString().slice(0, 16); 
-            const e = new Date(now.setHours(23,59,59,999)).toISOString().slice(0, 16); 
-            document.getElementById('audit-start').value = s; 
-            document.getElementById('audit-end').value = e; 
-        }
-
-        function loadScript(src) { 
-            return new Promise((res, rej) => { const s = document.createElement('script'); s.src = src; s.onload = res; s.onerror = rej; document.head.appendChild(s); }); 
-        }
+        function showMsg(m, err=false) { const el = document.getElementById('status-message'); el.textContent = m; el.className = `mt-4 text-center ${err ? 'text-red-400' : 'text-green-400'} font-bold uppercase text-[10px] tracking-widest`; setTimeout(() => { if(el.textContent === m) el.textContent = ''; }, 3000); }
+        function confirmDialog(t, m, cb) { document.getElementById('confirmation-title').textContent = t; document.getElementById('confirmation-message').textContent = m; onConfirmAction = cb; document.getElementById('confirmation-modal').classList.remove('hidden'); }
+        function setActive(id) { activeTableId = id; document.querySelectorAll('.table-card').forEach(c => c.classList.toggle('active', c.dataset.tableId === id)); applyGridFilter(); updateTableInd(); }
+        function toggleGridFilter() { isGridFiltered = !isGridFiltered; document.getElementById('toggle-filter-btn').textContent = isGridFiltered ? 'Mostrar Todas' : 'Mostrar Activa'; applyGridFilter(); }
+        function applyGridFilter() { const cards = document.querySelectorAll('.table-card'); cards.forEach(c => { c.style.display = (isGridFiltered && activeTableId && c.dataset.tableId !== activeTableId) ? 'none' : 'block'; }); }
+        function updateTableInd() { const i = document.getElementById('active-table-indicator'); const n = document.getElementById('active-table-name'); const as = document.getElementById('active-table-select'); const btn = document.getElementById('transfer-table-btn'); const t = allTablesData.get(activeTableId); if(t) { n.textContent = t.name; i.classList.remove('hidden'); as.value = activeTableId; btn.classList.remove('hidden'); } else { i.classList.add('hidden'); as.value = ""; btn.classList.add('hidden'); } }
+        function toggleLayout() { const rp = document.getElementById('right-panel'); const lp = document.getElementById('left-panel'); const btn = document.getElementById('toggle-tables-btn'); if(rp.classList.contains('hidden')) { rp.classList.remove('hidden'); lp.classList.replace('w-full', 'md:w-1/3'); btn.textContent = 'Ocultar Mesas'; } else { rp.classList.add('hidden'); lp.classList.replace('md:w-1/3', 'w-full'); btn.textContent = 'Mostrar Mesas'; } }
+        function setDefaultAuditDates() { const now = new Date(); const s = new Date(now.setHours(0,0,0,0)).toISOString().slice(0, 16); const e = new Date(now.setHours(23,59,59,999)).toISOString().slice(0, 16); document.getElementById('audit-start').value = s; document.getElementById('audit-end').value = e; }
+        function loadScript(src) { return new Promise((res, rej) => { const s = document.createElement('script'); s.src = src; s.onload = res; s.onerror = rej; document.head.appendChild(s); }); }
 
         // ==========================================
-        // 3. RENDERIZADOS INICIALES
+        // RENDERIZADO INICIAL Y ACTUALIZACIÓN UI
         // ==========================================
         function renderProducts(filterQuery = "") {
             const s = document.getElementById('product-select'); if(!s) return;
-            
-            // PUNTO 1: Mantener la selección actual del dropdown.
-            const currentSelection = s.value; 
-            
-            const queryClean = filterQuery.toLowerCase().trim();
-            s.innerHTML = ''; 
-            const cats = {}; 
-            products.forEach(p => { 
-                if (p.name.toLowerCase().includes(queryClean) || p.category.toLowerCase().includes(queryClean)) { 
-                    if(!cats[p.category]) cats[p.category] = []; 
-                    cats[p.category].push(p); 
-                } 
-            });
-            for(let c in cats) { 
-                const g = document.createElement('optgroup'); g.label = c; 
-                cats[c].forEach(p => { 
-                    const o = document.createElement('option'); o.value = p.name; o.dataset.price = p.price; o.dataset.name = p.name; o.textContent = `${p.name} ${p.price > 0 ? '- ' + formatCurrency(p.price) : ''}`; 
-                    g.appendChild(o); 
-                }); 
-                s.appendChild(g); 
-            }
-            
-            // PUNTO 1: Restaurar la selección si no hay filtro de búsqueda
-            if(currentSelection && filterQuery === "") {
-                s.value = currentSelection;
-            }
+            const currentSelection = s.value; const queryClean = filterQuery.toLowerCase().trim(); s.innerHTML = ''; const cats = {}; 
+            products.forEach(p => { if (p.name.toLowerCase().includes(queryClean) || p.category.toLowerCase().includes(queryClean)) { if(!cats[p.category]) cats[p.category] = []; cats[p.category].push(p); } });
+            for(let c in cats) { const g = document.createElement('optgroup'); g.label = c; cats[c].forEach(p => { const o = document.createElement('option'); o.value = p.name; o.dataset.price = p.price; o.dataset.name = p.name; o.textContent = `${p.name} ${p.price > 0 ? '- ' + formatCurrency(p.price) : ''}`; g.appendChild(o); }); s.appendChild(g); }
+            if(currentSelection && filterQuery === "") { s.value = currentSelection; } // PUNTO 1: Mantener seleccionado
         }
 
         function renderSelectors() {
-            const s = document.getElementById('table-select'); 
-            const ts = document.getElementById('transfer-table-select'); 
-            const mds = document.getElementById('move-round-dest-select');
-            if(!s || !ts) return; 
-            const opts = [...predefinedTables, '--- Otra ---'];
+            const s = document.getElementById('table-select'); const ts = document.getElementById('transfer-table-select'); const mds = document.getElementById('move-round-dest-select');
+            if(!s || !ts) return; const opts = [...predefinedTables, '--- Otra ---'];
             s.innerHTML = ''; ts.innerHTML = ''; if(mds) mds.innerHTML = '';
-            opts.forEach(t => { 
-                const o = document.createElement('option'); o.value = t; o.textContent = t; 
-                s.appendChild(o); ts.appendChild(o.cloneNode(true)); if(mds) mds.appendChild(o.cloneNode(true)); 
-            });
+            opts.forEach(t => { const o = document.createElement('option'); o.value = t; o.textContent = t; s.appendChild(o); ts.appendChild(o.cloneNode(true)); if(mds) mds.appendChild(o.cloneNode(true)); });
             s.onchange = () => document.getElementById('other-table-name-container').style.display = s.value === '--- Otra ---' ? 'block' : 'none';
             ts.onchange = () => document.getElementById('transfer-other-name-container').style.display = ts.value === '--- Otra ---' ? 'block' : 'none';
         }
 
         function renderRound() {
-            const p = document.getElementById('current-round-panel'); 
-            const l = document.getElementById('current-round-list'); 
-            const t = document.getElementById('current-round-total'); 
-            const titleEl = document.getElementById('round-panel-title');
+            const p = document.getElementById('current-round-panel'); const l = document.getElementById('current-round-list'); const t = document.getElementById('current-round-total'); const titleEl = document.getElementById('round-panel-title');
             if(!p || !l) return;
-            if(currentRound.length === 0) { p.classList.add('hidden'); return; } 
-            p.classList.remove('hidden');
+            if(currentRound.length === 0) { p.classList.add('hidden'); return; } p.classList.remove('hidden');
             titleEl.textContent = editingRoundData ? `Modificando Ronda ${editingRoundData.roundNumber || ""}` : "Ronda Actual";
             let h = '', s = 0; 
             currentRound.forEach(r => { 
@@ -778,38 +633,11 @@
                     <div class="qty-controls flex gap-1 ${isControlsVisible ? 'show' : ''} text-white">
                     <button onclick="window.updateCurrentRoundQty(event, '${r.name}', -1)" class="w-8 h-8 flex items-center justify-center bg-gray-700 text-red-400 font-black rounded border border-gray-600 shadow-sm">-</button>
                     <button onclick="window.updateCurrentRoundQty(event, '${r.name}', 1)" class="w-8 h-8 flex items-center justify-center bg-gray-700 text-green-400 font-black rounded border border-gray-600 shadow-sm">+</button>
-                    </div></div><div class="flex flex-col items-end min-w-[70px] ml-3 font-bold text-white"><span class="text-xs font-black text-yellow-500 font-mono tracking-tighter">${formatCurrency(r.price * r.quantity)}</span>
+                    </div></div><div class="flex flex-col items-end min-w-[70px] ml-3 font-bold text-white"><span class="text-xs font-black text-yellow-500 font-mono">${formatCurrency(r.price * r.quantity)}</span>
                     <button onclick="window.removeItemFromCurrentRound('${r.name}')" class="text-red-500 font-black text-xl leading-none mt-0.5 hover:text-red-400 transition-all">&times;</button></div></div></li>`; 
                 s += (r.price * r.quantity); 
             });
             l.innerHTML = h; t.textContent = formatCurrency(s);
-        }
-
-        // ==========================================
-        // 4. LÓGICA PRINCIPAL (MESAS Y RONDAS)
-        // ==========================================
-        function listenTables() {
-            onSnapshot(tablesCollectionRef, snap => {
-                const grid = document.getElementById('tables-grid'); 
-                const as = document.getElementById('active-table-select');
-                if(!grid || !as) return;
-                
-                allTablesData.clear(); 
-                grid.innerHTML = '';
-                const f = as.options[0]; 
-                as.innerHTML = ''; 
-                as.appendChild(f);
-                
-                snap.forEach(d => {
-                    const t = d.data(); allTablesData.set(t.id, t);
-                    grid.appendChild(createCard(t));
-                    const o = document.createElement('option'); o.value = t.id; o.textContent = t.name; as.appendChild(o);
-                });
-                
-                if(activeTableId) as.value = activeTableId; 
-                applyGridFilter(); 
-                updateTableInd();
-            });
         }
 
         function createCard(t) {
@@ -846,101 +674,60 @@
             return c;
         }
 
+        // ==========================================
+        // LÓGICA DE FIREBASE Y PROCESOS
+        // ==========================================
+        function listenTables() {
+            onSnapshot(tablesCollectionRef, snap => {
+                const grid = document.getElementById('tables-grid'); const as = document.getElementById('active-table-select');
+                if(!grid || !as) return;
+                
+                allTablesData.clear(); grid.innerHTML = '';
+                const f = as.options[0]; as.innerHTML = ''; as.appendChild(f);
+                
+                snap.forEach(d => {
+                    const t = d.data(); allTablesData.set(t.id, t);
+                    grid.appendChild(createCard(t));
+                    const o = document.createElement('option'); o.value = t.id; o.textContent = t.name; as.appendChild(o);
+                });
+                
+                if(activeTableId) as.value = activeTableId; applyGridFilter(); updateTableInd();
+            });
+        }
+
         async function openTable() {
-            const s = document.getElementById('table-select'); 
-            const other = document.getElementById('other-table-name').value.trim();
-            const name = s.value === '--- Otra ---' ? other : s.value;
+            const s = document.getElementById('table-select'); const other = document.getElementById('other-table-name').value.trim();
+            const name = s.value === '--- Otra ---' ? other : s.value; 
             if(!name) return showMsg("Nombre no válido", true);
             const id = name.replace(/\s+/g, '-').toLowerCase();
             
-            // PUNTO 3: Validar que la mesa no exista ya en las activas
+            // PUNTO 3: Validar mesa activa antes de crear
             const check = await getDoc(doc(tablesCollectionRef, id)); 
-            if(check.exists()) {
-                showMsg("La mesa ya está abierta", true);
-                return;
-            }
+            if(check.exists()) { showMsg("La mesa ya está abierta", true); return; }
 
             await setDoc(doc(tablesCollectionRef, id), { id, name, items: [], total: 0, status: 'open', createdAt: new Date().toISOString() });
-            document.getElementById('open-table-form').classList.add('hidden');
-            document.getElementById('toggle-open-table-form-btn').textContent = 'Nueva Mesa';
-            setActive(id); 
-            showMsg("Mesa abierta");
-        }
-
-        async function transferTable() {
-            const destSelect = document.getElementById('transfer-table-select'); const destOther = document.getElementById('transfer-other-name').value.trim();
-            const destName = destSelect.value === '--- Otra ---' ? destOther : destSelect.value;
-            if(!destName) return showMsg("Destino no válido", true); 
-            const destId = destName.replace(/\s+/g, '-').toLowerCase();
-            if(destId === activeTableId) return showMsg("Mismo destino", true);
-            const check = await getDoc(doc(tablesCollectionRef, destId)); 
-            if(check.exists()) return showMsg("Ya abierta", true);
-            const sourceData = allTablesData.get(activeTableId); 
-            const batch = writeBatch(db);
-            batch.set(doc(tablesCollectionRef, destId), { ...sourceData, id: destId, name: destName }); 
-            batch.delete(doc(tablesCollectionRef, activeTableId));
-            await batch.commit(); 
-            document.getElementById('transfer-modal').classList.add('hidden'); 
-            setActive(destId); 
-            showMsg("Transferida");
-        }
-
-        async function confirmMoveRound() {
-            if(!currentMovingRound) return; 
-            const destTableId = document.getElementById('move-round-dest-select').value;
-            const { sourceTableId, roundId, price } = currentMovingRound;
-            try {
-                const batch = writeBatch(db); 
-                const sourceRef = doc(tablesCollectionRef, sourceTableId); 
-                const destRef = doc(tablesCollectionRef, destTableId);
-                const sourceSnap = await getDoc(sourceRef); 
-                const itemsToMove = sourceSnap.data().items.filter(i => i.roundId === roundId);
-                const remainingItems = sourceSnap.data().items.filter(i => i.roundId !== roundId);
-                batch.update(sourceRef, { items: remainingItems, total: increment(-price) });
-                batch.update(destRef, { items: arrayUnion(...itemsToMove), total: increment(price) });
-                await batch.commit(); 
-                document.getElementById('move-round-modal').classList.add('hidden'); 
-                document.getElementById('history-modal').classList.add('hidden'); 
-                showMsg("Traspasado");
-            } catch (err) { showMsg("Error", true); }
+            document.getElementById('open-table-form').classList.add('hidden'); document.getElementById('toggle-open-table-form-btn').textContent = 'Nueva Mesa';
+            setActive(id); showMsg("Mesa abierta");
         }
 
         function addToRound() {
-            const s = document.getElementById('product-select'); 
-            const q = parseInt(document.getElementById('product-quantity').value) || 1;
-            const name = s.options[s.selectedIndex].dataset.name; 
-            const price = parseFloat(s.options[s.selectedIndex].dataset.price);
-            
-            if(name === 'Descuento' || name === 'Otros') { 
-                confirmDialog(`Aplicar ${name}`, `¿Aplicar ${formatCurrency(q)} de ${name}?`, () => window.applySpecial(name, q)); 
-                return; 
-            }
-            
-            const ex = currentRound.find(x => x.name === name); 
-            if(ex) ex.quantity += q; 
-            else currentRound.push({ name, price, quantity: q });
-            
-            // PUNTO 1: NO se resetea la búsqueda para que el producto quede seleccionado
-            renderRound(); 
-            document.getElementById('product-quantity').value = 1;
+            const s = document.getElementById('product-select'); const q = parseInt(document.getElementById('product-quantity').value) || 1;
+            const name = s.options[s.selectedIndex].dataset.name; const price = parseFloat(s.options[s.selectedIndex].dataset.price);
+            if(name === 'Descuento' || name === 'Otros') { confirmDialog(`Aplicar ${name}`, `¿Aplicar ${formatCurrency(q)} de ${name}?`, () => window.applySpecial(name, q)); return; }
+            const ex = currentRound.find(x => x.name === name); if(ex) ex.quantity += q; else currentRound.push({ name, price, quantity: q });
+            renderRound(); document.getElementById('product-quantity').value = 1;
         }
 
         async function registerRound() {
             if(!activeTableId || currentRound.length === 0) return;
             const rId = editingRoundData ? editingRoundData.roundId : `R-${Date.now()}`;
             const time = editingRoundData ? editingRoundData.timestamp : new Date().toISOString();
-            const owner = editingRoundData ? editingRoundData.ownerName : null; 
-            const paid = editingRoundData ? editingRoundData.isPaid : false;
+            const owner = editingRoundData ? editingRoundData.ownerName : null; const paid = editingRoundData ? editingRoundData.isPaid : false;
 
-            const items = [];
-            const itemIds = [];
-            let sumToPending = 0;
-            const tData = allTablesData.get(activeTableId);
-
+            const items = []; const itemIds = []; let sumToPending = 0; const tData = allTablesData.get(activeTableId);
             currentRound.forEach(r => {
                 for(let i=0; i<r.quantity; i++) {
-                    const id = `i-${Date.now()}-${i}-${Math.random()}`;
-                    itemIds.push(id);
+                    const id = `i-${Date.now()}-${i}-${Math.random()}`; itemIds.push(id);
                     items.push({ id, name: r.name, price: r.price, roundId: rId, timestamp: time, isPaid: paid, ownerName: owner });
                 }
                 if(!paid) sumToPending += (r.price * r.quantity);
@@ -948,48 +735,13 @@
 
             await updateDoc(doc(tablesCollectionRef, activeTableId), { items: arrayUnion(...items), total: increment(sumToPending) });
 
-            // Guardar para Deshacer
-            if(!editingRoundData) {
-                lastTransaction = { type: 'round', tableId: activeTableId, tableName: tData.name, itemIds: itemIds, totalReversed: sumToPending };
-                updateUndoVisibility();
-            }
-
-            currentRound = []; editingRoundData = null; activeQtyControlsName = null; renderRound();
-            showMsg("Registrado");
-        }
-
-        async function applySpecial(type, val) {
-            if(!activeTableId) return showMsg("Seleccione mesa", true);
-            const tData = allTablesData.get(activeTableId);
-            const id = `i-${Date.now()}-${Math.random()}`;
-            const item = { id, name: type, price: type === 'Descuento' ? -val : val, timestamp: new Date().toISOString(), isPaid: false };
-            
-            await updateDoc(doc(tablesCollectionRef, activeTableId), { items: arrayUnion(item), total: increment(item.price) });
-            
-            lastTransaction = { type: 'special', tableId: activeTableId, tableName: tData.name, itemIds: [id], totalReversed: item.price }; 
-            updateUndoVisibility(); 
-            showMsg(`${type} aplicado`);
-        }
-
-        async function saveOwner() {
-            const name = document.getElementById('owner-name-input').value.trim(); 
-            const { tId, txId, isRound } = currentEditContext;
-            const ref = doc(tablesCollectionRef, tId); const s = await getDoc(ref);
-            const items = s.data().items.map(i => { 
-                if(isRound && i.roundId === txId) return { ...i, ownerName: name || null }; 
-                if(!isRound && i.id === txId) return { ...i, ownerName: name || null }; 
-                return i; 
-            });
-            await updateDoc(ref, { items }); 
-            document.getElementById('edit-owner-name-modal').classList.add('hidden'); 
-            showHistory(allTablesData.get(tId));
+            if(!editingRoundData) { lastTransaction = { type: 'round', tableId: activeTableId, tableName: tData.name, itemIds: itemIds, totalReversed: sumToPending }; updateUndoVisibility(); }
+            currentRound = []; editingRoundData = null; activeQtyControlsName = null; renderRound(); showMsg("Registrado");
         }
 
         function showHistory(t) {
-            const mod = document.getElementById('history-modal'); 
-            document.getElementById('history-table-name').textContent = t.name;
-            const txs = groupHistoryByTransaction(t.items); 
-            let html = '<ul class="divide-y divide-gray-700">';
+            const mod = document.getElementById('history-modal'); document.getElementById('history-table-name').textContent = t.name;
+            const txs = groupHistoryByTransaction(t.items); let html = '<ul class="divide-y divide-gray-700">';
             
             txs.forEach(tx => {
                 const isPaid = tx.isPaid;
@@ -1003,129 +755,46 @@
                 <button onclick="window.deleteTx('${t.id}', '${tx.id}', ${tx.isRound}, ${tx.price}, ${tx.isPaid})" class="text-red-500 font-black text-2xl px-2 transition-transform hover:scale-110">&times;</button></div></div></div>
                 ${tx.isRound ? `<ul class="pl-4 border-l-2 border-gray-700 mt-1 space-y-0.5 text-white">${tx.details.map(d => `<li class="text-xs text-gray-400 font-medium">${d.name} <span class="text-gray-200 font-bold">x ${d.quantity}</span></li>`).join('')}</ul>` : ''}</li>`;
             });
-            document.getElementById('history-content').innerHTML = html + `</ul>`; 
-            mod.classList.remove('hidden');
+            document.getElementById('history-content').innerHTML = html + `</ul>`; mod.classList.remove('hidden');
         }
 
         function showZoom(t) {
-            const mod = document.getElementById('zoom-modal'); 
-            document.getElementById('zoom-table-name').textContent = t.name;
-            const totalConsumed = t.items.reduce((sum, i) => sum + i.price, 0); 
-            document.getElementById('zoom-total').textContent = formatCurrency(totalConsumed);
+            const mod = document.getElementById('zoom-modal'); document.getElementById('zoom-table-name').textContent = t.name;
+            const totalConsumed = t.items.reduce((sum, i) => sum + i.price, 0); document.getElementById('zoom-total').textContent = formatCurrency(totalConsumed);
             
-            const grouped = groupItems(t.items); 
-            let phtml = '<ul class="divide-y divide-gray-700/50 scroll-thin">';
-            for(let n in grouped) {
-                phtml += `<li class="py-3 flex justify-between px-2 font-medium tracking-tighter text-white"><span>${n} x ${grouped[n].quantity}</span> <span class="font-bold text-cyan-400 uppercase font-mono">${formatCurrency(grouped[n].totalPrice)}</span></li>`;
-            }
+            const grouped = groupItems(t.items); let phtml = '<ul class="divide-y divide-gray-700/50 scroll-thin">';
+            for(let n in grouped) { phtml += `<li class="py-3 flex justify-between px-2 font-medium tracking-tighter text-white"><span>${n} x ${grouped[n].quantity}</span> <span class="font-bold text-cyan-400 uppercase font-mono">${formatCurrency(grouped[n].totalPrice)}</span></li>`; }
             document.getElementById('zoom-content').innerHTML = phtml + '</ul>';
             
-            const txs = groupHistoryByTransaction(t.items); 
-            const ownersMap = new Map();
-            txs.forEach(tx => { 
-                const owner = tx.ownerName || 'Sin Asignar'; 
-                if (!ownersMap.has(owner)) ownersMap.set(owner, { pending: 0, transactions: [] }); 
-                const oData = ownersMap.get(owner); 
-                if (!tx.isPaid) oData.pending += tx.price; 
-                oData.transactions.push(tx); 
-            });
+            const txs = groupHistoryByTransaction(t.items); const ownersMap = new Map();
+            txs.forEach(tx => { const owner = tx.ownerName || 'Sin Asignar'; if (!ownersMap.has(owner)) ownersMap.set(owner, { pending: 0, transactions: [] }); const oData = ownersMap.get(owner); if (!tx.isPaid) oData.pending += tx.price; oData.transactions.push(tx); });
             
             let ohtml = '<div class="space-y-6">';
             ownersMap.forEach((data, owner) => { 
                 const isUnassigned = owner === 'Sin Asignar'; 
-                ohtml += `<div class="border-b border-gray-700/50 pb-4 text-white">
-                    <div class="flex justify-between items-center mb-3 px-1 text-white">
-                        <h5 class="text-xl font-black ${isUnassigned ? 'text-gray-400' : 'text-cyan-400'} uppercase tracking-tighter">${owner} (Pendiente)</h5>
-                        <span class="text-2xl font-black ${data.pending > 0 ? 'text-green-400' : (data.pending < 0 ? 'text-red-400' : 'text-gray-500')} font-mono">${formatCurrency(data.pending)}</span>
-                    </div>
-                    <ul class="space-y-2 pl-4 border-l-2 border-gray-700 font-mono">
-                        ${data.transactions.map(tx => { 
-                            const time = new Date(tx.timestamp).toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' }); 
-                            let productsText = tx.isRound ? `(${tx.details.map(d => `${d.quantity} ${d.name}`).join(', ')})` : ''; 
-                            return `<li class="flex justify-between text-sm text-gray-300"><span class="font-medium tracking-tight">${tx.isRound ? 'Ronda ' + tx.roundNumber : tx.name} ${productsText} <span class="text-[10px] text-gray-500 ml-2 font-black uppercase tracking-widest font-mono">${time}</span></span><span class="font-black text-gray-100 font-mono">${formatCurrency(tx.price)}</span></li>`; 
-                        }).join('')}
-                    </ul></div>`; 
+                ohtml += `<div class="border-b border-gray-700/50 pb-4 text-white"><div class="flex justify-between items-center mb-3 px-1 text-white"><h5 class="text-xl font-black ${isUnassigned ? 'text-gray-400' : 'text-cyan-400'} uppercase tracking-tighter">${owner} (Pendiente)</h5><span class="text-2xl font-black ${data.pending > 0 ? 'text-green-400' : (data.pending < 0 ? 'text-red-400' : 'text-gray-500')} font-mono">${formatCurrency(data.pending)}</span></div><ul class="space-y-2 pl-4 border-l-2 border-gray-700 font-mono">${data.transactions.map(tx => { const time = new Date(tx.timestamp).toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' }); let productsText = tx.isRound ? `(${tx.details.map(d => `${d.quantity} ${d.name}`).join(', ')})` : ''; return `<li class="flex justify-between text-sm text-gray-300"><span class="font-medium tracking-tight">${tx.isRound ? 'Ronda ' + tx.roundNumber : tx.name} ${productsText} <span class="text-[10px] text-gray-500 ml-2 font-black uppercase tracking-widest font-mono">${time}</span></span><span class="font-black text-gray-100 font-mono">${formatCurrency(tx.price)}</span></li>`; }).join('')}</ul></div>`; 
             });
             document.getElementById('zoom-owner-content').innerHTML = ohtml + '</div>'; 
             
-            const btnProd = document.getElementById('zoom-tab-product');
-            if (btnProd) btnProd.click(); 
+            window.switchZoomTab('product');
             mod.classList.remove('hidden');
         }
 
-        // --- DESHACER (CTRL+Z) PUNTO 4 ---
-        function setupUndoButtons() {
-            const btns = [document.getElementById('main-undo-btn'), document.getElementById('floating-undo-btn')];
-            btns.forEach(btn => {
-                btn.onclick = () => {
-                    if(!lastTransaction) return;
-                    
-                    if(lastTransaction.type === 'closeTable') {
-                        // PUNTO 4: Deshacer el cierre de una mesa
-                        confirmDialog("Deshacer Cierre", `¿Reversar el cierre de la mesa y devolverla a las activas?`, async () => {
-                            try {
-                                const batch = writeBatch(db); 
-                                batch.set(doc(tablesCollectionRef, lastTransaction.tableId), { ...lastTransaction.tableData, status: 'open' });
-                                batch.delete(doc(closedTablesCollectionRef, lastTransaction.closedId)); 
-                                await batch.commit(); 
-                                showMsg("Cierre Reversado"); lastTransaction = null; updateUndoVisibility();
-                            } catch (e) { showMsg("Error al deshacer", true); }
-                        });
-                    } else {
-                        // Deshacer un ítem o ronda añadida
-                        confirmDialog("Deshacer Cambio", "¿Reversar el último registro realizado en " + lastTransaction.tableName + "?", async () => {
-                            try {
-                                const ref = doc(tablesCollectionRef, lastTransaction.tableId);
-                                const s = await getDoc(ref);
-                                if(!s.exists()) { showMsg("La mesa ya no existe", true); lastTransaction = null; updateUndoVisibility(); return; }
-                                
-                                const itemsIdToRem = new Set(lastTransaction.itemIds);
-                                const newItems = s.data().items.filter(i => !itemsIdToRem.has(i.id));
-                                
-                                await updateDoc(ref, { items: newItems, total: increment(-lastTransaction.totalReversed) });
-                                showMsg("Cambio reversado"); lastTransaction = null; updateUndoVisibility();
-                            } catch (e) { showMsg("Error al deshacer", true); }
-                        });
-                    }
-                };
-            });
-        }
-        function updateUndoVisibility() { 
-            const visible = !!lastTransaction; 
-            document.getElementById('main-undo-btn').classList.toggle('hidden', !visible); 
-            document.getElementById('floating-undo-btn').style.display = (visible && window.innerWidth < 768) ? 'flex' : 'none'; 
-        }
-
-        // ==========================================
-        // 5. AUDITORÍA Y EXPORTACIÓN
-        // ==========================================
         async function fetchAudit() {
             const start = document.getElementById('audit-start').value; const end = document.getElementById('audit-end').value;
-            if(!start || !end) return; 
-            const content = document.getElementById('audit-content'); 
-            const summary = document.getElementById('audit-product-summary');
-            const delBtn = document.getElementById('delete-filtered-audit-btn'); 
-            const excBtn = document.getElementById('export-excel-btn');
-            
+            if(!start || !end) return; const content = document.getElementById('audit-content'); const summary = document.getElementById('audit-product-summary');
+            const delBtn = document.getElementById('delete-filtered-audit-btn'); const excBtn = document.getElementById('export-excel-btn');
             content.innerHTML = '<p class="animate-pulse text-cyan-400 font-bold text-center py-10 uppercase tracking-widest">Consultando...</p>';
             
             const qRef = query(closedTablesCollectionRef, where("closedAt", ">=", new Date(start).toISOString()), where("closedAt", "<=", new Date(end).toISOString()));
-            const snap = await getDocs(qRef); 
-            const prodMap = new Map(); let total = 0; let listHtml = '<div class="grid grid-cols-1 gap-3">';
+            const snap = await getDocs(qRef); const prodMap = new Map(); let total = 0; let listHtml = '<div class="grid grid-cols-1 gap-3">';
             
-            if(snap.empty) { 
-                content.innerHTML = '<p class="text-gray-500 italic text-center py-10">Vacío.</p>'; 
-                summary.innerHTML = ''; delBtn.classList.add('hidden'); excBtn.classList.add('hidden'); return; 
-            }
+            if(snap.empty) { content.innerHTML = '<p class="text-gray-500 italic text-center py-10">Vacío.</p>'; summary.innerHTML = ''; delBtn.classList.add('hidden'); excBtn.classList.add('hidden'); return; }
             
             snap.forEach(d => {
                 const t = d.data(); const tTotal = t.items.reduce((s, i) => s + i.price, 0); total += tTotal; 
                 const grouped = groupItems(t.items); let detail = '';
-                for(let n in grouped) { 
-                    detail += `<div class="flex justify-between text-[11px] text-gray-400 px-1 font-medium tracking-tight"><span>${n} x ${grouped[n].quantity}</span> <span>${formatCurrency(grouped[n].totalPrice)}</span></div>`; 
-                    if(!prodMap.has(n)) prodMap.set(n, { q: 0, v: 0 }); 
-                    const p = prodMap.get(n); p.q += grouped[n].quantity; p.v += grouped[n].totalPrice; 
-                }
+                for(let n in grouped) { detail += `<div class="flex justify-between text-[11px] text-gray-400 px-1 font-medium tracking-tight"><span>${n} x ${grouped[n].quantity}</span> <span>${formatCurrency(grouped[n].totalPrice)}</span></div>`; if(!prodMap.has(n)) prodMap.set(n, { q: 0, v: 0 }); const p = prodMap.get(n); p.q += grouped[n].quantity; p.v += grouped[n].totalPrice; }
                 listHtml += `<div class="audit-item bg-gray-900/40 p-4 rounded-xl border border-gray-700/50 shadow-lg text-white" data-table-name="${t.name}" ondblclick="window.showZoomFromAudit('${d.id}')">
                     <div class="flex justify-between items-start mb-2"><div><h5 class="font-black text-cyan-400 uppercase tracking-tighter">${t.name}</h5><p class="text-[10px] text-gray-500 font-mono">${new Date(t.closedAt).toLocaleString()}</p></div><span class="text-green-400 font-black text-lg font-mono">${formatCurrency(tTotal)}</span></div>
                     <div class="space-y-0.5 border-l-2 border-gray-700 pl-3 my-3 font-mono">${detail}</div>
@@ -1134,50 +803,22 @@
                         <button onclick="window.deleteIndividualClosedTable('${d.id}', '${t.name}')" class="bg-red-900/50 text-red-400 hover:text-white w-10 flex items-center justify-center rounded transition-all"><i class="fas fa-trash-alt"></i></button>
                     </div></div>`;
             });
-            document.getElementById('audit-total').textContent = formatCurrency(total); 
-            content.innerHTML = listHtml + '</div>';
-            
+            document.getElementById('audit-total').textContent = formatCurrency(total); content.innerHTML = listHtml + '</div>';
             currentAuditProductStats = []; let sumHtml = '<ul class="space-y-2 text-white">';
             const sorted = [...prodMap.entries()].sort((a,b) => b[1].q - a[1].q);
-            sorted.forEach(([n, d]) => { 
-                currentAuditProductStats.push({ Producto: n, Unidades: d.q, Total: d.v }); 
-                sumHtml += `<li class="flex justify-between border-b border-gray-800 pb-1.5 px-1 font-bold"><span class="uppercase text-xs tracking-tighter">${n}</span> <span class="text-cyan-400 font-mono">${d.q}</span></li>`; 
-            });
-            summary.innerHTML = sumHtml + '</ul>'; 
-            excBtn.classList.remove('hidden'); delBtn.classList.remove('hidden');
-            
+            sorted.forEach(([n, d]) => { currentAuditProductStats.push({ Producto: n, Unidades: d.q, Total: d.v }); sumHtml += `<li class="flex justify-between border-b border-gray-800 pb-1.5 px-1 font-bold"><span class="uppercase text-xs tracking-tighter">${n}</span> <span class="text-cyan-400 font-mono">${d.q}</span></li>`; });
+            summary.innerHTML = sumHtml + '</ul>'; excBtn.classList.remove('hidden'); delBtn.classList.remove('hidden');
             if(window.innerWidth < 768) window.switchAuditTab('list');
         }
 
-        async function handleDeleteFiltered() {
-            const start = document.getElementById('audit-start').value; const end = document.getElementById('audit-end').value;
-            if(!start || !end) return;
-            confirmDialog("⚠ BORRAR RANGO", "¿Eliminar permanentemente los registros mostrados?", async () => {
-                const qRef = query(closedTablesCollectionRef, where("closedAt", ">=", new Date(start).toISOString()), where("closedAt", "<=", new Date(end).toISOString()));
-                const snap = await getDocs(qRef); if(snap.empty) return;
-                const batch = writeBatch(db); snap.forEach(d => batch.delete(d.ref)); await batch.commit(); showMsg("Borrado"); fetchAudit();
-            });
-        }
-
-        async function handleResetAllHistory() {
-            confirmDialog("🚨 RESET TOTAL", "¿BORRAR TODO EL HISTORIAL DEFINITIVAMENTE?", async () => {
-                const snap = await getDocs(closedTablesCollectionRef); if(snap.empty) return;
-                const docs = snap.docs; const chunks = []; for (let i = 0; i < docs.length; i += 500) chunks.push(docs.slice(i, i + 500));
-                for (const chunk of chunks) { const batch = writeBatch(db); chunk.forEach(d => batch.delete(d.ref)); await batch.commit(); }
-                showMsg("Limpio"); document.getElementById('audit-modal').classList.add('hidden');
-            });
-        }
-
-        function exportExcel() {
-            if(currentAuditProductStats.length === 0) return;
-            const dataWithTotal = [...currentAuditProductStats]; const totalMoney = dataWithTotal.reduce((sum, item) => sum + item.Total, 0);
-            dataWithTotal.push({}); dataWithTotal.push({ Producto: "TOTAL GENERAL RECAUDADO", Total: totalMoney });
-            const ws = XLSX.utils.json_to_sheet(dataWithTotal); const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "Ventas"); XLSX.writeFile(wb, `Reporte_Ventas_${new Date().toLocaleDateString()}.xlsx`);
+        function updateUndoVisibility() { 
+            const visible = !!lastTransaction; 
+            document.getElementById('main-undo-btn').classList.toggle('hidden', !visible); 
+            document.getElementById('floating-undo-btn').style.display = (visible && window.innerWidth < 768) ? 'flex' : 'none'; 
         }
 
         // ==========================================
-        // 6. EVENTOS (SETUP EVENTS - SE EJECUTA UNA VEZ)
+        // SETUP DE EVENTOS DOM (Se ejecuta 1 vez)
         // ==========================================
         function setupEvents() {
             document.getElementById('open-table-btn').onclick = openTable;
@@ -1194,13 +835,46 @@
             document.getElementById('product-select').ondblclick = () => { const search = document.getElementById('product-search'); search.value = ""; renderProducts(""); search.focus(); };
             
             document.getElementById('show-audit-btn').onclick = () => document.getElementById('audit-modal').classList.remove('hidden');
-            document.getElementById('audit-filter-btn').onclick = () => fetchAudit();
-            document.getElementById('export-excel-btn').onclick = () => exportExcel();
-            document.getElementById('delete-filtered-audit-btn').onclick = () => handleDeleteFiltered();
-            document.getElementById('reset-all-history-btn').onclick = () => handleResetAllHistory();
+            document.getElementById('audit-filter-btn').onclick = fetchAudit;
             
-            document.getElementById('transfer-table-btn').onclick = () => window.openTransferModal();
-            document.getElementById('transfer-ok-btn').onclick = transferTable;
+            document.getElementById('export-excel-btn').onclick = () => {
+                if(currentAuditProductStats.length === 0) return;
+                const dataWithTotal = [...currentAuditProductStats]; const totalMoney = dataWithTotal.reduce((sum, item) => sum + item.Total, 0);
+                dataWithTotal.push({}); dataWithTotal.push({ Producto: "TOTAL GENERAL RECAUDADO", Total: totalMoney });
+                const ws = XLSX.utils.json_to_sheet(dataWithTotal); const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, "Ventas"); XLSX.writeFile(wb, `Reporte_Ventas_${new Date().toLocaleDateString()}.xlsx`);
+            };
+
+            document.getElementById('delete-filtered-audit-btn').onclick = () => {
+                const start = document.getElementById('audit-start').value; const end = document.getElementById('audit-end').value;
+                if(!start || !end) return;
+                confirmDialog("⚠ BORRAR RANGO", "¿Eliminar permanentemente los registros mostrados?", async () => {
+                    const qRef = query(closedTablesCollectionRef, where("closedAt", ">=", new Date(start).toISOString()), where("closedAt", "<=", new Date(end).toISOString()));
+                    const snap = await getDocs(qRef); if(snap.empty) return;
+                    const batch = writeBatch(db); snap.forEach(d => batch.delete(d.ref)); await batch.commit(); showMsg("Borrado"); fetchAudit();
+                });
+            };
+
+            document.getElementById('reset-all-history-btn').onclick = () => {
+                confirmDialog("🚨 RESET TOTAL", "¿BORRAR TODO EL HISTORIAL DEFINITIVAMENTE?", async () => {
+                    const snap = await getDocs(closedTablesCollectionRef); if(snap.empty) return;
+                    const docs = snap.docs; const chunks = []; for (let i = 0; i < docs.length; i += 500) chunks.push(docs.slice(i, i + 500));
+                    for (const chunk of chunks) { const batch = writeBatch(db); chunk.forEach(d => batch.delete(d.ref)); await batch.commit(); }
+                    showMsg("Limpio"); document.getElementById('audit-modal').classList.add('hidden');
+                });
+            };
+            
+            document.getElementById('transfer-table-btn').onclick = () => { if(!activeTableId) return showMsg("Seleccione mesa activa", true); const t = allTablesData.get(activeTableId); document.getElementById('transfer-from-name').textContent = t.name; document.getElementById('transfer-modal').classList.remove('hidden'); };
+            document.getElementById('transfer-ok-btn').onclick = async () => {
+                const destSelect = document.getElementById('transfer-table-select'); const destOther = document.getElementById('transfer-other-name').value.trim();
+                const destName = destSelect.value === '--- Otra ---' ? destOther : destSelect.value;
+                if(!destName) return showMsg("Destino no válido", true); const destId = destName.replace(/\s+/g, '-').toLowerCase();
+                if(destId === activeTableId) return showMsg("Mismo destino", true);
+                const check = await getDoc(doc(tablesCollectionRef, destId)); if(check.exists()) return showMsg("Ya abierta", true);
+                const sourceData = allTablesData.get(activeTableId); const batch = writeBatch(db);
+                batch.set(doc(tablesCollectionRef, destId), { ...sourceData, id: destId, name: destName }); batch.delete(doc(tablesCollectionRef, activeTableId));
+                await batch.commit(); document.getElementById('transfer-modal').classList.add('hidden'); setActive(destId); showMsg("Transferida");
+            };
             document.getElementById('transfer-cancel-btn').onclick = () => document.getElementById('transfer-modal').classList.add('hidden');
             document.getElementById('close-transfer-modal-btn').onclick = () => document.getElementById('transfer-modal').classList.add('hidden');
             
@@ -1208,23 +882,41 @@
             document.getElementById('close-audit-modal-btn').onclick = () => document.getElementById('audit-modal').classList.add('hidden');
             document.getElementById('close-zoom-modal-btn').onclick = () => document.getElementById('zoom-modal').classList.add('hidden');
             
+            // Pestañas (Zoom / Dueño)
             document.getElementById('zoom-tab-product').onclick = () => window.switchZoomTab('product');
             document.getElementById('zoom-tab-owner').onclick = () => window.switchZoomTab('owner');
             
+            // Pestañas Auditoría (Listado / Resumen)
             document.getElementById('audit-tab-list').onclick = () => window.switchAuditTab('list');
             document.getElementById('audit-tab-summary').onclick = () => window.switchAuditTab('summary');
             
-            document.getElementById('toggle-tables-btn').onclick = () => toggleLayout();
-            document.getElementById('toggle-filter-btn').onclick = () => toggleGridFilter();
+            document.getElementById('toggle-tables-btn').onclick = toggleLayout;
+            document.getElementById('toggle-filter-btn').onclick = toggleGridFilter;
             
-            document.getElementById('edit-owner-name-save-btn').onclick = saveOwner;
+            document.getElementById('edit-owner-name-save-btn').onclick = async () => {
+                const name = document.getElementById('owner-name-input').value.trim(); const { tId, txId, isRound } = currentEditContext;
+                const ref = doc(tablesCollectionRef, tId); const s = await getDoc(ref);
+                const items = s.data().items.map(i => { if(isRound && i.roundId === txId) return { ...i, ownerName: name || null }; if(!isRound && i.id === txId) return { ...i, ownerName: name || null }; return i; });
+                await updateDoc(ref, { items }); document.getElementById('edit-owner-name-modal').classList.add('hidden'); showHistory(allTablesData.get(tId));
+            };
             document.getElementById('edit-owner-name-cancel-btn').onclick = () => document.getElementById('edit-owner-name-modal').classList.add('hidden');
             
             document.getElementById('confirmation-ok-btn').onclick = () => { if(onConfirmAction) onConfirmAction(); document.getElementById('confirmation-modal').classList.add('hidden'); };
             document.getElementById('confirmation-cancel-btn').onclick = () => document.getElementById('confirmation-modal').classList.add('hidden');
             
-            document.getElementById('move-round-confirm-btn').onclick = confirmMoveRound;
-            
+            document.getElementById('move-round-confirm-btn').onclick = async () => {
+                if(!currentMovingRound) return; const destTableId = document.getElementById('move-round-dest-select').value;
+                const { sourceTableId, roundId, price } = currentMovingRound;
+                try {
+                    const batch = writeBatch(db); const sourceRef = doc(tablesCollectionRef, sourceTableId); const destRef = doc(tablesCollectionRef, destTableId);
+                    const sourceSnap = await getDoc(sourceRef); const itemsToMove = sourceSnap.data().items.filter(i => i.roundId === roundId);
+                    const remainingItems = sourceSnap.data().items.filter(i => i.roundId !== roundId);
+                    batch.update(sourceRef, { items: remainingItems, total: increment(-price) });
+                    batch.update(destRef, { items: arrayUnion(...itemsToMove), total: increment(price) });
+                    await batch.commit(); document.getElementById('move-round-modal').classList.add('hidden'); document.getElementById('history-modal').classList.add('hidden'); showMsg("Traspasado");
+                } catch (err) { showMsg("Error", true); }
+            };
+
             // PUNTO 2: Buscador en Auditoría
             document.getElementById('audit-table-name').addEventListener('input', (e) => {
                 const queryStr = e.target.value.toLowerCase();
@@ -1234,6 +926,40 @@
                     item.style.display = name.includes(queryStr) ? 'block' : 'none';
                 });
             });
+
+            // PUNTO 4: Botones Deshacer Cierres (CTRL+Z)
+            const undoAction = () => {
+                if(!lastTransaction) return;
+                
+                if(lastTransaction.type === 'closeTable') {
+                    confirmDialog("Deshacer Cierre", `¿Reversar el cierre de la mesa y devolverla a las activas?`, async () => {
+                        try {
+                            const batch = writeBatch(db); 
+                            batch.set(doc(tablesCollectionRef, lastTransaction.tableId), { ...lastTransaction.tableData, status: 'open' });
+                            batch.delete(doc(closedTablesCollectionRef, lastTransaction.closedId)); 
+                            await batch.commit(); 
+                            showMsg("Cierre Reversado"); lastTransaction = null; updateUndoVisibility();
+                        } catch (e) { showMsg("Error al deshacer", true); }
+                    });
+                } else {
+                    confirmDialog("Deshacer Cambio", "¿Reversar el último registro realizado en " + lastTransaction.tableName + "?", async () => {
+                        try {
+                            const ref = doc(tablesCollectionRef, lastTransaction.tableId);
+                            const s = await getDoc(ref);
+                            if(!s.exists()) { showMsg("La mesa ya no existe", true); lastTransaction = null; updateUndoVisibility(); return; }
+                            
+                            const itemsIdToRem = new Set(lastTransaction.itemIds);
+                            const newItems = s.data().items.filter(i => !itemsIdToRem.has(i.id));
+                            
+                            await updateDoc(ref, { items: newItems, total: increment(-lastTransaction.totalReversed) });
+                            showMsg("Cambio reversado"); lastTransaction = null; updateUndoVisibility();
+                        } catch (e) { showMsg("Error al deshacer", true); }
+                    });
+                }
+            };
+
+            document.getElementById('main-undo-btn').onclick = undoAction;
+            document.getElementById('floating-undo-btn').onclick = undoAction;
         }
 
         function setupVoice() {
@@ -1248,7 +974,7 @@
         }
 
         // ==========================================
-        // 7. ARRANQUE
+        // ARRANQUE SEGURO (MÓDULOS)
         // ==========================================
         function initApp() {
             renderProducts(); 
@@ -1257,7 +983,7 @@
             setupVoice(); 
             listenTables(); 
             setDefaultAuditDates(); 
-            setupUndoButtons();
+            updateUndoVisibility();
         }
 
         const initializeFirebase = () => {
@@ -1273,7 +999,7 @@
             });
         };
 
-        // Iniciar
+        // INICIAR
         initializeFirebase();
 
     </script>
